@@ -233,8 +233,7 @@ export default function Posts() {
 
                   {isExpanded && (
                     <Comments
-                      queryParams={{ postId: post.id, 
-                        authorId: user?.id }}
+                      queryParams={{ postId: post.id, authorId: user?.id }}
                     />
                   )}
                 </div>
@@ -243,9 +242,15 @@ export default function Posts() {
           );
         })}
       </div>
-
+      {/* 
+      Optional queryParams scope the create/edit forms and hide the
+      corresponding select fields.
+      When omitted, the related fields remain
+      available for selection.
+      */}
       <Modals
         selectedPost={selectedPost}
+        hiddenFields={{ authorId: user?.id }}
         modals={{
           view: { isOpen: viewModal.isOpen, close: viewModal.closeModal },
           edit: { isOpen: editModal.isOpen, close: editModal.closeModal },

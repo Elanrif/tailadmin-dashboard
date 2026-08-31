@@ -17,6 +17,9 @@ export async function GET(request: NextRequest) {
       : sp.has("perPage")
         ? Number(sp.get("perPage"))
         : undefined,
+    authorId: Number(sp.get("authorId"))
+      ? Number(sp.get("authorId"))
+      : undefined,
     search: sp.get("search") ?? undefined,
     sort: sp.get("sort") ?? undefined,
   };

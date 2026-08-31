@@ -31,39 +31,30 @@ import {
   commentUpdateSchema,
 } from "../../schemas/comment";
 import { Comment, CommentCreate, CommentUpdate } from "../../api/types";
+import { CommentsQueryProps } from "../comments";
 
 interface CommentFormProps {
   initialData: Comment | null;
   pageTitle: string;
   postId?: number;
   authorId?: number;
+  hiddenFields?: CommentsQueryProps["queryParams"];
   onSaved?: () => void;
 }
 
 export function CommentForm({
   initialData,
   pageTitle,
-  postId,
-  authorId,
   onSaved,
+  hiddenFields: { postId, authorId } = {},
 }: CommentFormProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const isEdit = !!initialData;
 
-  /*
-   * Priorité :
-   * 1. Relation du commentaire existant
-   * 2. Paramètre fourni par le parent
-   */
   const selectedPostId = initialData?.postId ?? postId;
   const selectedAuthorId = initialData?.author?.id ?? authorId;
-
-  /*
-   * Si la valeur est déjà connue, inutile d'afficher
-   * le Select correspondant.
-   */
   const showPostSelect = selectedPostId == null;
   const showAuthorSelect = selectedAuthorId == null;
 

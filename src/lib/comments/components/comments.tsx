@@ -45,7 +45,7 @@ export type CommentsQueryProps = {
   };
 };
 
-export function Comments({ queryParams }: CommentsQueryProps) {
+export function Comments({ queryParams}: CommentsQueryProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -257,8 +257,7 @@ export function Comments({ queryParams }: CommentsQueryProps) {
       */}
       <Modals
         selectedComment={selectedComment}
-        postId={postId}
-        authorId={authorId}
+        hiddenFields={{ authorId, postId }}
         modals={{
           view: {
             isOpen: viewModal.isOpen,

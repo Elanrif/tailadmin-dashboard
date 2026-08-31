@@ -2,7 +2,6 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import {
   useMutation,
   useQueryClient,
@@ -33,32 +32,33 @@ import {
 import { createPostMutation, updatePostMutation } from "../../api/mutations";
 import { postKeys } from "../../api/queries";
 import { Post } from "../../api/types";
+import { PostQueryProps } from "../posts";
 
 interface PostFormProps {
   initialData: Post | null;
   pageTitle: string;
   onSaved?: () => void;
-  authorId?: number;
-  redirectOnSave?: boolean;
+  hiddenFields?: PostQueryProps["queryParams"];
 }
 
 export function PostForm({
   initialData,
   pageTitle,
+  hiddenFields: { authorId } = {},
   onSaved,
-  authorId,
-  redirectOnSave = true,
 }: PostFormProps) {
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const isEdit = !!initialData;
+
+  const selectedAuthorId = initialData?.author?.id ?? authorId;
+  const showAuthorSelect = selectedAuthorId == null;
+
   const formSchema = isEdit ? postUpdateSchema : postCreateSchema;
 
   const { data: usersResult } = useSuspenseQuery(
     usersQueryOptions({ size: 1000 }),
   );
-
   const users = usersResult.ok ? usersResult.data.data : [];
 
   const image = useImageDraft({
@@ -112,11 +112,6 @@ export function PostForm({
       toast.success("Post created successfully");
 
       onSaved?.();
-
-      if (redirectOnSave) {
-        router.push("/dashboard/posts");
-        router.refresh();
-      }
     },
 
     onError: () => {
@@ -146,11 +141,6 @@ export function PostForm({
       toast.success("Post updated successfully");
 
       onSaved?.();
-
-      if (redirectOnSave) {
-        router.push("/dashboard/posts");
-        router.refresh();
-      }
     },
 
     onError: () => {
@@ -259,46 +249,50 @@ export function PostForm({
               </div>
 
               {/* Author */}
-              <div>
-                <Label>Author</Label>
+              {showAuthorSelect ? (
+                <div>
+                  <Label>Author</Label>
 
-                <div className="relative">
-                  <Select
-                    options={users.map((user: User) => ({
-                      value: String(user.id),
-                      label: `${user.firstName} ${user.lastName} (${user.email})`,
-                    }))}
-                    placeholder="Select an author"
-                    defaultValue={String(
-                      authorId ?? initialData?.author?.id ?? "",
-                    )}
-                    onChange={(value) =>
-                      setValue("authorId", Number(value), {
-                        shouldDirty: true,
-                        shouldValidate: true,
-                      })
-                    }
+                  <div className="relative">
+                    <Select
+                      options={users.map((user: User) => ({
+                        value: String(user.id),
+                        label: `${user.firstName} ${user.lastName} (${user.email})`,
+                      }))}
+                      placeholder="Select an author"
+                      defaultValue={String(
+                        authorId ?? initialData?.author?.id ?? "",
+                      )}
+                      onChange={(value) =>
+                        setValue("authorId", Number(value), {
+                          shouldDirty: true,
+                          shouldValidate: true,
+                        })
+                      }
+                    />
+
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+                      <ChevronDownIcon />
+                    </span>
+                  </div>
+
+                  <input
+                    type="hidden"
+                    {...register("authorId", {
+                      setValueAs: (value) =>
+                        value === "" ? undefined : Number(value),
+                    })}
                   />
 
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
-                    <ChevronDownIcon />
-                  </span>
+                  {errors.authorId && (
+                    <p className="text-sm text-error-500">
+                      {errors.authorId.message}
+                    </p>
+                  )}
                 </div>
-
-                <input
-                  type="hidden"
-                  {...register("authorId", {
-                    setValueAs: (value) =>
-                      value === "" ? undefined : Number(value),
-                  })}
-                />
-
-                {errors.authorId && (
-                  <p className="text-sm text-error-500">
-                    {errors.authorId.message}
-                  </p>
-                )}
-              </div>
+              ) : (
+                <input type="hidden" {...register("authorId")} />
+              )}
 
               {/* Likes */}
               <div>

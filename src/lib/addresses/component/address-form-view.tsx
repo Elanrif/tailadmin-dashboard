@@ -5,16 +5,17 @@ import { notFound } from "next/navigation";
 import { userAddressesByIdOptions } from "../api/queries/queries.client";
 import { Address } from "../api/types";
 import AddressForm from "./ui/address-form";
+import { AddressesQueryProps } from "./addresses";
 
 type TAddressViewPageProps = {
   addressId: string;
-  userId?: number;
   onSaved?: () => void;
+  hiddenFields: AddressesQueryProps["queryParams"];
 };
 
 export default function AddressFormView({
   addressId,
-  userId,
+  hiddenFields: { userId } = {},
   onSaved,
 }: TAddressViewPageProps) {
   if (addressId === "new") {
@@ -22,7 +23,7 @@ export default function AddressFormView({
       <AddressForm
         initialData={null}
         pageTitle="Create New Address"
-        userId={userId}
+        hiddenFields={{ userId }}
         onSaved={onSaved}
       />
     );
@@ -31,7 +32,7 @@ export default function AddressFormView({
   return (
     <EditAddressView
       addressId={Number(addressId)}
-      userId={userId}
+      hiddenFields={{ userId }}
       onSaved={onSaved}
     />
   );
@@ -40,11 +41,11 @@ export default function AddressFormView({
 function EditAddressView({
   addressId,
   onSaved,
-  userId,
+  hiddenFields: { userId } = {},
 }: {
   addressId: number;
-  userId?: number;
   onSaved?: () => void;
+  hiddenFields: AddressesQueryProps["queryParams"];
 }) {
   const { data } = useSuspenseQuery(userAddressesByIdOptions(addressId));
 
@@ -55,7 +56,7 @@ function EditAddressView({
     <AddressForm
       initialData={data.data as Address}
       pageTitle="Edit Address"
-      userId={userId}
+      hiddenFields={{ userId }}
       onSaved={onSaved}
     />
   );

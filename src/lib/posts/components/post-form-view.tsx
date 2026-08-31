@@ -4,21 +4,19 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
 import { Post } from "../api/types";
 import { postByIdOptions } from "../api/queries/queries.client";
-import PostDetails from "./post-details";
 import { PostForm } from "./ui/post-form";
+import { PostQueryProps } from "./posts";
 
 type TPostViewPageProps = {
   postId: string;
+  hiddenFields: PostQueryProps["queryParams"];
   onSaved?: () => void;
-  authorId?: number;
-  redirectOnSave?: boolean;
 };
 
 export default function PostFormView({
   postId,
   onSaved,
-  authorId,
-  redirectOnSave = true,
+  hiddenFields: { authorId } = {},
 }: TPostViewPageProps) {
   if (postId === "new") {
     return (
@@ -26,29 +24,20 @@ export default function PostFormView({
         initialData={null}
         pageTitle="Create New Post"
         onSaved={onSaved}
-        authorId={authorId}
-        redirectOnSave={redirectOnSave}
+        hiddenFields={{ authorId }}
       />
     );
   }
 
-  return (
-    <EditPostView
-      postId={Number(postId)}
-      onSaved={onSaved}
-      redirectOnSave={redirectOnSave}
-    />
-  );
+  return <EditPostView postId={Number(postId)} onSaved={onSaved} />;
 }
 
 function EditPostView({
   postId,
   onSaved,
-  redirectOnSave,
 }: {
   postId: number;
   onSaved?: () => void;
-  redirectOnSave: boolean;
 }) {
   const { data } = useSuspenseQuery(postByIdOptions(postId));
 
@@ -61,7 +50,6 @@ function EditPostView({
       initialData={data.data as Post}
       pageTitle="Edit Post"
       onSaved={onSaved}
-      redirectOnSave={redirectOnSave}
     />
   );
 }

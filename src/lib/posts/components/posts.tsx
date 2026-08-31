@@ -30,10 +30,23 @@ import { Post } from "../api/types";
 import { Modals } from "./ui/posts-table/modals";
 import { usePaginationParams } from "@/lib/use-pagination-params";
 import { usePostFilters } from "./ui/posts-table/use-filters";
-export function Posts() {
+import { usersQueryOptions } from "@/lib/users/api/queries/queries.client";
+
+export type PostQueryProps = {
+  // Optional parameters provided by the parent to scope the comments.
+  queryParams?: {
+    authorId?: number;
+  };
+};
+
+export function Posts({ queryParams }: PostQueryProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const { data: usersResult } = useSuspenseQuery(
+    usersQueryOptions({ size: 1000 }),
+  );
+  const authors = usersResult.ok ? usersResult.data.data : [];
 
   const { currentPage, itemsPerPage, handlePageChange, handleSizeChange } =
     usePaginationParams({
@@ -43,11 +56,13 @@ export function Posts() {
       defaultSize: 5,
     });
 
-  const { filters, searchQuery, handleSearch } = usePostFilters({
-    currentPage,
-    itemsPerPage,
-    onPageReset: () => handlePageChange(1),
-  });
+  const { filters, searchQuery, authorId, handleSearch, handleAuthorChange } =
+    usePostFilters({
+      currentPage,
+      itemsPerPage,
+      authorId: queryParams?.authorId,
+      onPageReset: () => handlePageChange(1),
+    });
 
   const { data } = useSuspenseQuery(postsQueryOptions(filters));
   const posts = data.ok ? data.data.data : [];
@@ -115,6 +130,9 @@ export function Posts() {
       <Filters
         searchQuery={searchQuery}
         onSearchChange={handleSearch}
+        authorId={authorId}
+        onAuthorChange={handleAuthorChange}
+        authors={authors}
         itemsPerPage={itemsPerPage}
         onLimitChange={handleSizeChange}
       />
@@ -172,8 +190,17 @@ export function Posts() {
           variant="both"
         />
       )}
+
+      {/* MODALS */}
+      {/* 
+      Optional queryParams scope the create/edit forms and hide the
+      corresponding select fields.
+      When omitted, the related fields remain
+      available for selection.
+      */}
       <Modals
         selectedPost={selectedPost}
+        hiddenFields={{ authorId }}
         modals={{
           view: { isOpen: viewModal.isOpen, close: viewModal.closeModal },
           edit: { isOpen: editModal.isOpen, close: editModal.closeModal },

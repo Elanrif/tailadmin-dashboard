@@ -3618,3 +3618,148 @@
 {"level":30,"time":1788198101644,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":16,"msg":"Users fetched"}
 {"level":30,"time":1788198101735,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
 {"level":30,"time":1788198114108,"pid":18204,"hostname":"ELTECH","id":16,"msg":"User fetched"}
+{"level":30,"time":1788198132850,"pid":18204,"hostname":"ELTECH","url":"http://localhost:8081/api/v1/addresses?page=1&size=5&userId=16","filters":{"current":1,"limit":5,"userId":16},"count":1,"msg":"User addresses fetched"}
+{"level":30,"time":1788198145903,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788198145925,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788198186660,"pid":18204,"hostname":"ELTECH","url":"http://localhost:8081/api/v1/addresses?userId=2","filters":{"userId":2},"count":7,"msg":"User addresses fetched"}
+{"level":30,"time":1788198275114,"pid":18204,"hostname":"ELTECH","url":"http://localhost:8081/api/v1/addresses?userId=2","filters":{"userId":2},"count":7,"msg":"User addresses fetched"}
+{"level":30,"time":1788198373047,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788198373065,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788198399580,"pid":18204,"hostname":"ELTECH","id":5,"msg":"Post fetched"}
+{"level":30,"time":1788198412671,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788198496745,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788198496754,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788198582878,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788199883449,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788199924449,"pid":18204,"hostname":"ELTECH","id":1,"msg":"Post fetched"}
+{"level":30,"time":1788199924457,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200012543,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788200025171,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200025254,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200029489,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200033050,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200035971,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200039499,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200044669,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200047181,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200050790,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200052094,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200054109,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200063096,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200081946,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788200084089,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200095363,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200104184,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200106965,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200109358,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200202078,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788200202091,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200202104,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200485220,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":3},"count":0,"msg":"Posts fetched"}
+{"level":30,"time":1788200485232,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788200485237,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200489081,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":13},"count":0,"msg":"Posts fetched"}
+{"level":30,"time":1788200491544,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":7},"count":0,"msg":"Posts fetched"}
+{"level":30,"time":1788200493909,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":16},"count":0,"msg":"Posts fetched"}
+{"level":30,"time":1788200495079,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200497707,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":1},"count":3,"msg":"Posts fetched"}
+{"level":30,"time":1788200500160,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":2,"msg":"Posts fetched"}
+{"level":30,"time":1788200505981,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":6},"count":0,"msg":"Posts fetched"}
+{"level":30,"time":1788200593648,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200595335,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788200595368,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":1},"count":3,"msg":"Posts fetched"}
+{"level":30,"time":1788200595372,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200598545,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":9},"count":0,"msg":"Posts fetched"}
+{"level":30,"time":1788200600574,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":2,"msg":"Posts fetched"}
+{"level":30,"time":1788200618070,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200709202,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788200709208,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200709211,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200833156,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788200833170,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788200833178,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788201524724,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788201593954,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788201618329,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788201641947,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788201678352,"pid":18204,"hostname":"ELTECH","url":"http://localhost:8081/api/v1/addresses?userId=2","filters":{"userId":2},"count":7,"msg":"User addresses fetched"}
+{"level":30,"time":1788201903738,"pid":18204,"hostname":"ELTECH","url":"http://localhost:8081/api/v1/addresses?userId=2","filters":{"userId":2},"count":7,"msg":"User addresses fetched"}
+{"level":30,"time":1788201968566,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788201968649,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788201977750,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":2,"msg":"Posts fetched"}
+{"level":30,"time":1788201977802,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788201978087,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788201978985,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788202062138,"pid":18204,"hostname":"ELTECH","id":4,"msg":"Post fetched"}
+{"level":30,"time":1788202071453,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788202125974,"pid":18204,"hostname":"ELTECH","id":4,"msg":"Post fetched"}
+{"level":30,"time":1788202158026,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788202158034,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788202208212,"pid":18204,"hostname":"ELTECH","url":"http://localhost:8081/api/v1/addresses?userId=2","filters":{"userId":2},"count":7,"msg":"User addresses fetched"}
+{"level":30,"time":1788202797404,"pid":18204,"hostname":"ELTECH","url":"http://localhost:8081/api/v1/addresses?userId=2","filters":{"userId":2},"count":7,"msg":"User addresses fetched"}
+{"level":30,"time":1788202801078,"pid":18204,"hostname":"ELTECH","url":"http://localhost:8081/api/v1/addresses?userId=2","filters":{"userId":2},"count":7,"msg":"User addresses fetched"}
+{"level":30,"time":1788202814995,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788202852694,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788202852868,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788202853100,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788202856377,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788202856648,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788202856750,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788202873129,"pid":18204,"hostname":"ELTECH","url":"http://localhost:8081/api/v1/addresses?userId=2","filters":{"userId":2},"count":7,"msg":"User addresses fetched"}
+{"level":30,"time":1788202874807,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788202874962,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788202875032,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788202885100,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788202885142,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":2,"msg":"Posts fetched"}
+{"level":30,"time":1788202885193,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788203013943,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788203013958,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":2,"msg":"Posts fetched"}
+{"level":30,"time":1788203013968,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788203167386,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788203167405,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":2,"msg":"Posts fetched"}
+{"level":30,"time":1788203167420,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788203169091,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788203169384,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":2,"msg":"Posts fetched"}
+{"level":30,"time":1788203169480,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788203170674,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788203170840,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788203170917,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788203253281,"pid":18204,"hostname":"ELTECH","id":4,"msg":"Post fetched"}
+{"level":30,"time":1788203270560,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788203287067,"pid":18204,"hostname":"ELTECH","id":4,"msg":"Post updated"}
+{"level":30,"time":1788203295213,"pid":18204,"hostname":"ELTECH","id":4,"msg":"Post fetched"}
+{"level":30,"time":1788203295241,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":2,"msg":"Posts fetched"}
+{"level":30,"time":1788203295258,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788203296059,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5},"count":5,"msg":"Posts fetched"}
+{"level":30,"time":1788203571485,"pid":18204,"hostname":"ELTECH","url":"http://localhost:8081/api/v1/addresses?userId=2","filters":{"userId":2},"count":7,"msg":"User addresses fetched"}
+{"level":30,"time":1788203583621,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788203583642,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":2,"msg":"Posts fetched"}
+{"level":30,"time":1788203583655,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":50,"time":1788203609789,"pid":18204,"hostname":"ELTECH","error":"Internal Server Error","timestamp":"2026-08-31T19:13:29.761Z","status":500,"message":"could not execute statement [ERROR: duplicate key value violates unique constraint \"posts_image_url_key\"\n  Détail : Key (image_url)=() already exists.] [insert into posts (author_id,created_at,created_by,description,image_url,likes,title,updated_at,updated_by) values (?,?,?,?,?,?,?,?,?)]; SQL [insert into posts (author_id,created_at,created_by,description,image_url,likes,title,updated_at,updated_by) values (?,?,?,?,?,?,?,?,?)]; constraint [posts_image_url_key]","path":"/api/v1/posts","msg":"API error"}
+{"level":50,"time":1788203609790,"pid":18204,"hostname":"ELTECH","timestamp":"2026-08-31T19:13:29.761Z","status":500,"error":"Internal Server Error","message":"could not execute statement [ERROR: duplicate key value violates unique constraint \"posts_image_url_key\"\n  Détail : Key (image_url)=() already exists.] [insert into posts (author_id,created_at,created_by,description,image_url,likes,title,updated_at,updated_by) values (?,?,?,?,?,?,?,?,?)]; SQL [insert into posts (author_id,created_at,created_by,description,image_url,likes,title,updated_at,updated_by) values (?,?,?,?,?,?,?,?,?)]; constraint [posts_image_url_key]","path":"/api/v1/posts","msg":"[API Error] [createPost]"}
+{"level":50,"time":1788203626894,"pid":18204,"hostname":"ELTECH","error":"Internal Server Error","timestamp":"2026-08-31T19:13:46.888Z","status":500,"message":"could not execute statement [ERROR: duplicate key value violates unique constraint \"posts_image_url_key\"\n  Détail : Key (image_url)=() already exists.] [insert into posts (author_id,created_at,created_by,description,image_url,likes,title,updated_at,updated_by) values (?,?,?,?,?,?,?,?,?)]; SQL [insert into posts (author_id,created_at,created_by,description,image_url,likes,title,updated_at,updated_by) values (?,?,?,?,?,?,?,?,?)]; constraint [posts_image_url_key]","path":"/api/v1/posts","msg":"API error"}
+{"level":50,"time":1788203626896,"pid":18204,"hostname":"ELTECH","timestamp":"2026-08-31T19:13:46.888Z","status":500,"error":"Internal Server Error","message":"could not execute statement [ERROR: duplicate key value violates unique constraint \"posts_image_url_key\"\n  Détail : Key (image_url)=() already exists.] [insert into posts (author_id,created_at,created_by,description,image_url,likes,title,updated_at,updated_by) values (?,?,?,?,?,?,?,?,?)]; SQL [insert into posts (author_id,created_at,created_by,description,image_url,likes,title,updated_at,updated_by) values (?,?,?,?,?,?,?,?,?)]; constraint [posts_image_url_key]","path":"/api/v1/posts","msg":"[API Error] [createPost]"}
+{"level":30,"time":1788203657619,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788203658023,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":2,"msg":"Posts fetched"}
+{"level":30,"time":1788203658143,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":5,"msg":"Posts fetched"}
+{"level":50,"time":1788203686910,"pid":18204,"hostname":"ELTECH","error":"Internal Server Error","timestamp":"2026-08-31T19:14:46.905Z","status":500,"message":"could not execute statement [ERROR: duplicate key value violates unique constraint \"posts_image_url_key\"\n  Détail : Key (image_url)=() already exists.] [insert into posts (author_id,created_at,created_by,description,image_url,likes,title,updated_at,updated_by) values (?,?,?,?,?,?,?,?,?)]; SQL [insert into posts (author_id,created_at,created_by,description,image_url,likes,title,updated_at,updated_by) values (?,?,?,?,?,?,?,?,?)]; constraint [posts_image_url_key]","path":"/api/v1/posts","msg":"API error"}
+{"level":50,"time":1788203686917,"pid":18204,"hostname":"ELTECH","timestamp":"2026-08-31T19:14:46.905Z","status":500,"error":"Internal Server Error","message":"could not execute statement [ERROR: duplicate key value violates unique constraint \"posts_image_url_key\"\n  Détail : Key (image_url)=() already exists.] [insert into posts (author_id,created_at,created_by,description,image_url,likes,title,updated_at,updated_by) values (?,?,?,?,?,?,?,?,?)]; SQL [insert into posts (author_id,created_at,created_by,description,image_url,likes,title,updated_at,updated_by) values (?,?,?,?,?,?,?,?,?)]; constraint [posts_image_url_key]","path":"/api/v1/posts","msg":"[API Error] [createPost]"}
+{"level":30,"time":1788203705156,"pid":18204,"hostname":"ELTECH","id":10,"msg":"Post created"}
+{"level":30,"time":1788203705421,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":3,"msg":"Posts fetched"}
+{"level":30,"time":1788203705510,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":6,"msg":"Posts fetched"}
+{"level":30,"time":1788203730669,"pid":18204,"hostname":"ELTECH","id":10,"msg":"Post fetched"}
+{"level":30,"time":1788203730875,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788203742903,"pid":18204,"hostname":"ELTECH","id":10,"msg":"Post updated"}
+{"level":30,"time":1788203744979,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":3,"msg":"Posts fetched"}
+{"level":30,"time":1788203745549,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":6,"msg":"Posts fetched"}
+{"level":30,"time":1788203745966,"pid":18204,"hostname":"ELTECH","id":10,"msg":"Post fetched"}
+{"level":30,"time":1788204011988,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788204011999,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":3,"msg":"Posts fetched"}
+{"level":30,"time":1788204012007,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":6,"msg":"Posts fetched"}
+{"level":30,"time":1788204142359,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788204142364,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":3,"msg":"Posts fetched"}
+{"level":30,"time":1788204142368,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":6,"msg":"Posts fetched"}
+{"level":30,"time":1788205387963,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":16,"msg":"Users fetched"}
+{"level":30,"time":1788205387972,"pid":18204,"hostname":"ELTECH","filters":{"page":1,"size":5,"authorId":2},"count":3,"msg":"Posts fetched"}
+{"level":30,"time":1788205388018,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":6,"msg":"Posts fetched"}
+{"level":30,"time":1788207331938,"pid":18204,"hostname":"ELTECH","filters":{"size":1000},"count":6,"msg":"Posts fetched"}

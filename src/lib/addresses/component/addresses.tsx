@@ -13,7 +13,7 @@ import Button from "@/components/ui/button/Button";
 import { UnifiedPagination } from "@/components/ui/paginations";
 import { useModal } from "@/hooks/useModal";
 import { exportToCSV } from "@/lib/utils";
-import { Address, AddressFilters } from "@/lib/addresses/api/types";
+import { Address } from "@/lib/addresses/api/types";
 import { userAddressesQueryOptions } from "@/lib/addresses/api/queries/queries.client";
 import { deleteUserAddressMutation } from "@/lib/addresses/api/mutations";
 import { addressKeys } from "@/lib/addresses/api/queries";
@@ -26,12 +26,14 @@ import { NoResult } from "./ui/addresses-card/no-result";
 import { Modals } from "./ui/addresses-card/modals";
 import { useAddressFilters } from "./ui/addresses-card/use-filters";
 
-type AddressesProps = {
+export type AddressesQueryProps = {
   // Optional parameters provided by the parent to scope the addresses.
-  queryParams?: Pick<AddressFilters, "userId">;
+  queryParams?: {
+    userId?: number;
+  };
 };
 
-export function Addresses({ queryParams }: AddressesProps) {
+export function Addresses({ queryParams }: AddressesQueryProps) {
   const queryClient = useQueryClient();
 
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
@@ -233,8 +235,10 @@ export function Addresses({ queryParams }: AddressesProps) {
       )}
       {/* MODALS */}
       <Modals
-        userId={queryParams?.userId}
         selectedAddress={selectedAddress}
+        hiddenFields={{
+          userId: queryParams?.userId,
+        }}
         modals={{
           view: {
             isOpen: viewModal.isOpen,

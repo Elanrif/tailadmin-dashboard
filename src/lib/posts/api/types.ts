@@ -38,6 +38,7 @@ export type PostFilters = {
   size?: number;
   search?: string;
   sort?: string;
+  authorId?: number;
 };
 
 export type PostCreate = {

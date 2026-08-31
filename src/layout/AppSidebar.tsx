@@ -30,8 +30,8 @@ type NavItem = {
 const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
-    name: "Dashboard",
-    subItems: [{ name: "Ecommerce", path: "/dashboard", pro: false }],
+    name: "Home",
+    path: "/dashboard",
   },
   {
     icon: <ShoppingBasket />,
@@ -323,26 +323,25 @@ const AppSidebar: React.FC = () => {
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <Image
-                className="dark:hidden w-32 h-auto"
+                className="dark:hidden"
                 src="/images/logo/logo.svg"
                 alt="Logo"
                 width={150}
-                height={70}
+                height={40}
                 style={{ height: "auto" }}
                 priority
               />
               <Image
-                className="hidden dark:block w-32 h-auto"
+                className="hidden dark:block"
                 src="/images/logo/logo-dark.svg"
                 alt="Logo"
                 width={150}
-                height={70}
+                height={40}
                 style={{ height: "auto" }}
               />
             </>
           ) : (
             <Image
-              className="w-32 h-auto"
               src="/images/logo/logo-icon.svg"
               alt="Logo"
               width={32}

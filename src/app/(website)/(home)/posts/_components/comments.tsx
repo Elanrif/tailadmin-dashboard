@@ -160,8 +160,10 @@ export default function Comments({ queryParams }: CommentsQueryProps) {
       */}
       <Modals
         selectedComment={selectedComment}
-        postId={queryParams?.postId}
-        authorId={queryParams?.authorId}
+        hiddenFields={{
+          postId: queryParams?.postId,
+          authorId: queryParams?.authorId,
+        }}
         modals={{
           view: {
             isOpen: viewModal.isOpen,

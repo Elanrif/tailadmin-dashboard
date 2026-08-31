@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
   BoxCubeIcon,
-  CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
@@ -15,7 +14,7 @@ import {
   UserCircleIcon,
 } from "../icons/index";
 import SidebarWidget from "./SidebarWidget";
-import { MapPinIcon } from "lucide-react";
+import { MapPinIcon, MessageCircleHeart } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -40,6 +39,11 @@ const navItems: NavItem[] = [
     name: "Addresses",
     path: "/account/addresses",
   },
+  {
+    icon: <MessageCircleHeart />,
+    name: "Posts",
+    path: "/account/posts",
+  }
 ];
 
 const othersItems: NavItem[] = [
@@ -88,7 +92,7 @@ const AccountSidebar: React.FC = () => {
     navItems: NavItem[],
     menuType: "main" | "others",
   ) => (
-    <ul className="flex flex-col gap-4">
+    <ul className="flex flex-col gap-2">
       {navItems.map((nav, index) => (
         <li key={nav.name}>
           {nav.subItems ? (
@@ -274,7 +278,7 @@ const AccountSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`py-8 flex ${
+        className={`py-4 flex ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >

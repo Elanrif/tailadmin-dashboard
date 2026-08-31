@@ -24,7 +24,6 @@ export function useCommentFilters({
   const [searchQuery, setSearchQuery] = useState("");
 
   const authorId = Number(searchParams.get("authorId")) || undefined;
-
   const postId = Number(searchParams.get("postId")) || postID || undefined;
 
   const filters = useMemo<CommentFilters>(

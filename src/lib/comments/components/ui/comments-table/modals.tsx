@@ -5,6 +5,7 @@ import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import CommentFormView from "@/lib/comments/components/comment-form-view";
 import { Comment } from "@/lib/comments/api/types";
+import { CommentsQueryProps } from "../../comments";
 
 // Shared modals reusable across different contexts.
 // When postId or authorId is provided, the corresponding form field is hidden
@@ -15,8 +16,7 @@ export function Modals({
   modals,
   onConfirmDelete,
   isDeleting,
-  postId,
-  authorId,
+  hiddenFields: { postId, authorId } = {},
 }: {
   selectedComment: Comment | null;
   modals: {
@@ -27,8 +27,7 @@ export function Modals({
   };
   onConfirmDelete: () => void;
   isDeleting: boolean;
-  postId?: number;
-  authorId?: number;
+  hiddenFields: CommentsQueryProps["queryParams"];
 }) {
   return (
     <>
@@ -54,8 +53,7 @@ export function Modals({
       >
         <CommentFormView
           commentId="new"
-          postId={postId}
-          authorId={authorId}
+          hiddenFields={{ postId, authorId }}
           onSaved={modals.create.close}
         />
       </Modal>
@@ -67,8 +65,7 @@ export function Modals({
         {selectedComment && (
           <CommentFormView
             commentId={String(selectedComment.id)}
-            postId={postId}
-            authorId={authorId}
+            hiddenFields={{ postId, authorId }}
             onSaved={modals.edit.close}
           />
         )}

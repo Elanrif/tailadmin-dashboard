@@ -1,11 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 import Button from "@/components/ui/button/Button";
 import { Input } from "@/components/ui/input";
@@ -23,23 +22,34 @@ import {
   addressUpdateSchema,
 } from "@/lib/addresses/schemas/address";
 import { Address } from "@/lib/addresses/api/types";
-import { LoaderIcon, PenIcon, PlusIcon } from "lucide-react";
+import { ChevronDownIcon, LoaderIcon, PenIcon, PlusIcon } from "lucide-react";
+import { AddressesQueryProps } from "../addresses";
+import Select from "@/components/form/Select";
+import { User } from "@/lib/users/api/types";
+import { usersQueryOptions } from "@/lib/users/api/queries/queries.client";
 
 export default function AddressForm({
   initialData,
   pageTitle,
-  userId,
+  hiddenFields: { userId } = {},
   onSaved,
 }: {
   initialData: Address | null;
   pageTitle: string;
-  userId?: number;
+  hiddenFields?: AddressesQueryProps["queryParams"];
   onSaved?: () => void;
 }) {
-  const router = useRouter();
   const queryClient = useQueryClient();
+
   const isEdit = !!initialData;
+  const selectedAuthorId = initialData?.userId ?? userId;
+  const showAuthorSelect = selectedAuthorId == null;
+
   const formSchema = isEdit ? addressUpdateSchema : addressCreateSchema;
+  const { data: usersResult } = useSuspenseQuery(
+    usersQueryOptions({ size: 1000 }),
+  );
+  const users = usersResult.ok ? usersResult.data.data : [];
 
   const {
     register,
@@ -81,7 +91,6 @@ export default function AddressForm({
       await queryClient.invalidateQueries({ queryKey: addressKeys.all });
       toast.success("Address created successfully");
       onSaved?.();
-      router.refresh();
     },
     onError: () => {
       toast.error("Failed to create address");
@@ -99,7 +108,6 @@ export default function AddressForm({
       await queryClient.invalidateQueries({ queryKey: addressKeys.all });
       toast.success("Address updated successfully");
       onSaved?.();
-      router.refresh();
     },
     onError: () => {
       toast.error("Failed to update address");
@@ -211,6 +219,49 @@ export default function AddressForm({
             </p>
           )}
         </div>
+        {/* Author */}
+        {showAuthorSelect ? (
+          <div>
+            <Label>Author</Label>
+
+            <div className="relative">
+              <Select
+                options={users.map((user: User) => ({
+                  value: String(user.id),
+                  label: `${user.firstName} ${user.lastName} (${user.email})`,
+                }))}
+                placeholder="Select an author"
+                defaultValue={String(userId ?? initialData?.userId ?? "")}
+                onChange={(value) =>
+                  setValue("userId", Number(value), {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
+              />
+
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+                <ChevronDownIcon />
+              </span>
+            </div>
+
+            <input
+              type="hidden"
+              {...register("userId", {
+                setValueAs: (value) =>
+                  value === "" ? undefined : Number(value),
+              })}
+            />
+
+            {errors.userId && (
+              <p className="text-sm text-error-500">
+                {errors.userId.message}
+              </p>
+            )}
+          </div>
+        ) : (
+          <input type="hidden" {...register("userId")} />
+        )}
       </div>
       <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
         <Switch

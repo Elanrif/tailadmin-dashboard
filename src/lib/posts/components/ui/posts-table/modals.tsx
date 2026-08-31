@@ -6,12 +6,18 @@ import { Button } from "@/components/ui/button";
 import PostDetails from "../../post-details";
 import PostFormView from "../../post-form-view";
 import { Post } from "@/lib/posts/api/types";
+import { PostQueryProps } from "../../posts";
 
+// Shared modals reusable across different contexts.
+// When postId or authorId is provided, the corresponding form field is hidden
+// and its value is set from the provided prop; otherwise, the field remains
+// visible for selection.
 export function Modals({
   selectedPost,
   modals,
   onConfirmDelete,
   isDeleting,
+  hiddenFields: { authorId } = {},
 }: {
   selectedPost: Post | null;
   modals: {
@@ -22,6 +28,7 @@ export function Modals({
   };
   onConfirmDelete: () => void;
   isDeleting: boolean;
+  hiddenFields: PostQueryProps["queryParams"];
 }) {
   return (
     <>
@@ -40,7 +47,11 @@ export function Modals({
         onClose={modals.create.close}
         className="max-h-[90vh] max-w-4xl p-0"
       >
-        <PostFormView postId="new" onSaved={modals.create.close} />
+        <PostFormView
+          postId="new"
+          hiddenFields={{ authorId }}
+          onSaved={modals.create.close}
+        />
       </Modal>
 
       {/* Edit Post */}
@@ -51,8 +62,9 @@ export function Modals({
       >
         {selectedPost && (
           <PostFormView
-            postId={String(selectedPost.id)}
-            onSaved={modals.edit.close}
+          postId={String(selectedPost.id)}
+          hiddenFields={{ authorId }}
+          onSaved={modals.edit.close}
           />
         )}
       </Modal>

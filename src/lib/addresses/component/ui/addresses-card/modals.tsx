@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Address } from "@/lib/addresses/api/types";
 import AddressFormView from "../../address-form-view";
 import AddressDetails from "../../address-details";
+import { AddressesQueryProps } from "../../addresses";
 
 interface ModalState {
   isOpen: boolean;
@@ -14,7 +15,6 @@ interface ModalState {
 }
 
 interface AddressModalsProps {
-  userId?: number;
   selectedAddress: Address | null;
   modals: {
     view: ModalState;
@@ -24,14 +24,15 @@ interface AddressModalsProps {
   };
   onConfirmDelete: () => void;
   isDeleting: boolean;
+  hiddenFields: AddressesQueryProps["queryParams"];
 }
 
 export function Modals({
-  userId,
   selectedAddress,
   modals,
   onConfirmDelete,
   isDeleting,
+  hiddenFields: { userId } = {},
 }: AddressModalsProps) {
   return (
     <>
@@ -52,7 +53,7 @@ export function Modals({
       >
         <AddressFormView
           addressId="new"
-          userId={userId}
+          hiddenFields={{ userId}}
           onSaved={modals.create.close}
         />
       </Modal>
@@ -65,7 +66,7 @@ export function Modals({
       >
         <AddressFormView
           addressId={selectedAddress ? String(selectedAddress.id) : "new"}
-          userId={userId}
+          hiddenFields={{ userId}}
           onSaved={modals.edit.close}
         />
       </Modal>
