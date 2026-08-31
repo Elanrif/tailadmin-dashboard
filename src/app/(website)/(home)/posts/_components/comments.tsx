@@ -11,31 +11,28 @@ import { toast } from "sonner";
 import { MessageSquare, Pencil, Plus, Trash2 } from "lucide-react";
 
 import Button from "@/components/ui/button/Button";
-import { Modal } from "@/components/ui/modal";
 import { useModal } from "@/hooks/useModal";
 import { commentsQueryOptions } from "@/lib/comments/api/queries/queries.client";
 import { deleteCommentMutation } from "@/lib/comments/api/mutations";
 import { commentKeys } from "@/lib/comments/api/queries";
 import { Comment } from "@/lib/comments/api/types";
-import CommentFormView from "@/lib/comments/components/comment-form-view";
+import { Modals } from "@/lib/comments/components/ui/comments-table/modals";
+import { CommentsQueryProps } from "@/lib/comments/components/comments";
 
-type PostCommentsProps = {
-  postId: number;
-  authorId?: number;
-};
-
-export default function PostComments({ postId, authorId }: PostCommentsProps) {
+export default function Comments({ queryParams }: CommentsQueryProps) {
   const queryClient = useQueryClient();
 
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
 
+  /* Modals */
+  const viewModal = useModal();
   const editModal = useModal();
   const createModal = useModal();
   const deleteModal = useModal();
 
   const { data } = useSuspenseQuery(
     commentsQueryOptions({
-      postId,
+      postId: queryParams?.postId,
       size: 100,
     }),
   );
@@ -154,55 +151,40 @@ export default function PostComments({ postId, authorId }: PostCommentsProps) {
           </div>
         )}
       </div>
-
-      {/* Create */}
-      <Modal
-        isOpen={createModal.isOpen}
-        onClose={createModal.closeModal}
-        className="max-h-[90vh] max-w-3xl p-6"
-      >
-        <CommentFormView
-          commentId="new"
-          postId={postId}
-          authorId={authorId}
-          //redirectOnSave={false}
-          onSaved={createModal.closeModal}
-        />
-      </Modal>
-
-      {/* Edit */}
-      <Modal
-        isOpen={editModal.isOpen}
-        onClose={editModal.closeModal}
-        className="max-h-[90vh] max-w-3xl p-6"
-      >
-        {selectedComment && (
-          <CommentFormView
-            commentId={String(selectedComment.id)}
-            postId={postId}
-            //redirectOnSave={false}
-            onSaved={editModal.closeModal}
-          />
-        )}
-      </Modal>
-
-      {/* Delete */}
-      <Modal
-        isOpen={deleteModal.isOpen}
-        onClose={deleteModal.closeModal}
-        className="max-w-md p-6"
-      >
-        <ConfirmDelete
-          label="ce commentaire"
-          loading={deleteMutation.isPending}
-          onCancel={deleteModal.closeModal}
-          onConfirm={() => {
-            if (selectedComment) {
-              deleteMutation.mutate(selectedComment.id);
-            }
-          }}
-        />
-      </Modal>
+      {/* MODALS */}
+      {/* 
+      Optional queryParams scope the create/edit forms and hide the
+      corresponding select fields.
+      When omitted, the related fields remain
+      available for selection.
+      */}
+      <Modals
+        selectedComment={selectedComment}
+        postId={queryParams?.postId}
+        authorId={queryParams?.authorId}
+        modals={{
+          view: {
+            isOpen: viewModal.isOpen,
+            close: viewModal.closeModal,
+          },
+          edit: {
+            isOpen: editModal.isOpen,
+            close: editModal.closeModal,
+          },
+          create: {
+            isOpen: createModal.isOpen,
+            close: createModal.closeModal,
+          },
+          delete: {
+            isOpen: deleteModal.isOpen,
+            close: deleteModal.closeModal,
+          },
+        }}
+        onConfirmDelete={() =>
+          selectedComment && deleteMutation.mutate(selectedComment.id)
+        }
+        isDeleting={deleteMutation.isPending}
+      />
     </>
   );
 }
@@ -230,40 +212,6 @@ function Avatar({ src, name }: { src?: string; name: string }) {
       ) : (
         initials || "?"
       )}
-    </div>
-  );
-}
-
-function ConfirmDelete({
-  label,
-  loading,
-  onCancel,
-  onConfirm,
-}: {
-  label: string;
-  loading: boolean;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
-  return (
-    <div className="space-y-5 text-center">
-      <Trash2 className="mx-auto text-red-500" size={36} />
-
-      <h3 className="text-xl font-semibold">Confirmer la suppression</h3>
-
-      <p className="text-sm text-stone-500">
-        Voulez-vous vraiment supprimer {label} ?
-      </p>
-
-      <div className="flex justify-center gap-3">
-        <Button variant="outline" onClick={onCancel}>
-          Annuler
-        </Button>
-
-        <Button variant="primary" onClick={onConfirm} disabled={loading}>
-          {loading ? "Suppression…" : "Supprimer"}
-        </Button>
-      </div>
     </div>
   );
 }

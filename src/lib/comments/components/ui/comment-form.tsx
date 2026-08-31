@@ -109,10 +109,9 @@ export function CommentForm({
       });
 
       toast.success("Comment created successfully");
-
       onSaved?.();
 
-      router.push("/dashboard/comments");
+      //router.push("/dashboard/comments");
       router.refresh();
     },
 
@@ -139,7 +138,7 @@ export function CommentForm({
 
       onSaved?.();
 
-      router.push("/dashboard/comments");
+      //router.push("/dashboard/comments");
       router.refresh();
     },
 

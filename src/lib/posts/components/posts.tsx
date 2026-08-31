@@ -53,10 +53,13 @@ export function Posts() {
   const posts = data.ok ? data.data.data : [];
   const meta = data.ok ? data.data.meta : null;
   const allQuery = useSuspenseQuery(postsQueryOptions({ size: 1000 }));
+
+  /* Modals */
   const viewModal = useModal();
   const editModal = useModal();
   const createModal = useModal();
   const deleteModal = useModal();
+
   const deleteMutation = useMutation({
     ...deletePostMutation,
     onSuccess: (result) => {

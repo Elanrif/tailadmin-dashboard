@@ -21,7 +21,7 @@ import { usePaginationParams } from "@/lib/use-pagination-params";
 import { commentKeys } from "../api/queries";
 import { commentsQueryOptions } from "../api/queries/queries.client";
 import { deleteCommentMutation } from "../api/mutations";
-import { Comment, CommentFilters } from "../api/types";
+import { Comment } from "../api/types";
 
 import { Filters } from "./ui/comments-table/filters";
 import { Columns } from "./ui/comments-table/columns";
@@ -37,12 +37,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-type CommentsProps = {
+export type CommentsQueryProps = {
   // Optional parameters provided by the parent to scope the comments.
-  queryParams?: Pick<CommentFilters, "postId">;
+  queryParams?: {
+    postId?: number;
+    authorId?: number;
+  };
 };
 
-export function Comments({ queryParams }: CommentsProps) {
+export function Comments({ queryParams }: CommentsQueryProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -246,8 +249,16 @@ export function Comments({ queryParams }: CommentsProps) {
       )}
 
       {/* MODALS */}
+      {/* 
+      Optional queryParams scope the create/edit forms and hide the
+      corresponding select fields.
+      When omitted, the related fields remain
+      available for selection.
+      */}
       <Modals
         selectedComment={selectedComment}
+        postId={postId}
+        authorId={authorId}
         modals={{
           view: {
             isOpen: viewModal.isOpen,

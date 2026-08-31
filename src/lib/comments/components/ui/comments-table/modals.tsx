@@ -3,14 +3,20 @@
 import { Trash2 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
+import CommentFormView from "@/lib/comments/components/comment-form-view";
 import { Comment } from "@/lib/comments/api/types";
-import CommentFormView from "../../comment-form-view";
 
+// Shared modals reusable across different contexts.
+// When postId or authorId is provided, the corresponding form field is hidden
+// and its value is set from the provided prop; otherwise, the field remains
+// visible for selection.
 export function Modals({
   selectedComment,
   modals,
   onConfirmDelete,
   isDeleting,
+  postId,
+  authorId,
 }: {
   selectedComment: Comment | null;
   modals: {
@@ -21,6 +27,8 @@ export function Modals({
   };
   onConfirmDelete: () => void;
   isDeleting: boolean;
+  postId?: number;
+  authorId?: number;
 }) {
   return (
     <>
@@ -42,18 +50,25 @@ export function Modals({
       <Modal
         isOpen={modals.create.isOpen}
         onClose={modals.create.close}
-        className="max-h-[90vh] max-w-4xl overflow-y-auto p-6 lg:p-10"
+        className="max-h-[90vh] max-w-4xl p-6 lg:p-10"
       >
-        <CommentFormView commentId="new" onSaved={modals.create.close} />
+        <CommentFormView
+          commentId="new"
+          postId={postId}
+          authorId={authorId}
+          onSaved={modals.create.close}
+        />
       </Modal>
       <Modal
         isOpen={modals.edit.isOpen}
         onClose={modals.edit.close}
-        className="max-h-[90vh] max-w-4xl overflow-y-auto p-6 lg:p-10"
+        className="max-h-[90vh] max-w-4xl p-6 lg:p-10"
       >
         {selectedComment && (
           <CommentFormView
             commentId={String(selectedComment.id)}
+            postId={postId}
+            authorId={authorId}
             onSaved={modals.edit.close}
           />
         )}

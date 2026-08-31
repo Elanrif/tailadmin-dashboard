@@ -31,12 +31,18 @@ export default function PostDetails({ postId }: { postId: number }) {
   return (
     <div className="flex flex-col max-h-[90vh] overflow-y-auto">
       {/* Sticky Header */}
-      <div className="sticky top-0 z-20 bg-white dark:bg-gray-900 px-6 lg:px-10 pt-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+      <div
+        className="sticky top-0 z-20 bg-white dark:bg-gray-900 px-6 lg:px-10 pt-6 pb-4
+       border-b border-gray-200 dark:border-gray-700"
+      >
         <div className="mb-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 truncate">
             {post.title?.slice(0, 20) || "N/A"}
           </h1>
-          <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 flex-wrap">
+          <div
+            className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 
+          flex-wrap"
+          >
             <span>ID: {post.id}</span>
             <span>•</span>
             <span>
@@ -76,106 +82,128 @@ export default function PostDetails({ postId }: { postId: number }) {
       <div>
         {/* Description Tab */}
         {activeTab === "description" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
-            {/* Image Section */}
-            <div className="lg:col-span-2">
-              {post.imageUrl ? (
-                <div className="relative w-full h-64 rounded-lg overflow-hidden shadow-lg mb-6">
-                  <Image
-                    src={post.imageUrl}
-                    alt={post.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="w-full h-96 rounded-lg bg-linear-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center mb-6">
-                  <span className="text-5xl font-bold text-gray-400 dark:text-gray-500">
-                    {post.title?.slice(0, 5)?.toUpperCase() || "📄"}
-                  </span>
-                </div>
-              )}
+          <div className="max-w-7xl mx-auto bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Left column: Image + Description */}
+              <div className="lg:col-span-2">
+                {post.imageUrl ? (
+                  <div className="relative w-full h-80 rounded-lg overflow-hidden mb-4">
+                    <Image
+                      src={post.imageUrl}
+                      alt={post.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-80 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+                    <span className="text-4xl font-bold text-gray-300 dark:text-gray-600">
+                      {post.title?.slice(0, 5)?.toUpperCase() || "📄"}
+                    </span>
+                  </div>
+                )}
 
-              {/* Description */}
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                  Description
-                </h2>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  {post.description || "Pas de description disponible"}
-                </p>
-              </div>
-            </div>
-
-            {/* Sidebar Info */}
-            <div className="lg:col-span-1">
-              {/* Author Card */}
-              {post.author && (
-                <div className="bg-linear-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-lg p-5 mb-6 border border-blue-100 dark:border-gray-600">
-                  <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-3 uppercase tracking-wide">
-                    Auteur
-                  </h3>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {post.author.firstName} {post.author.lastName}
-                  </p>
-                </div>
-              )}
-
-              {/* Stats */}
-              <div className="space-y-3">
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1 uppercase tracking-wide">
-                    J&apos;aime
-                  </p>
-                  <p className="text-2xl font-bold text-red-600 dark:text-red-500">
-                    {post.likes}
-                  </p>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1 uppercase tracking-wide">
-                    Commentaires
-                  </p>
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-500">
-                    {post.commentSize ?? 0}
-                  </p>
-                </div>
-              </div>
-
-              {/* Meta Info */}
-              <div className="mt-6 space-y-2 text-sm">
                 <div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                    Créé le
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                    Description
                   </p>
-                  <p className="text-gray-900 dark:text-white font-medium">
-                    {new Date(post.createdAt).toLocaleDateString("fr-FR", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                  <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {post.description || "Pas de description disponible"}
                   </p>
                 </div>
-                {post.updatedAt && (
-                  <div>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                      Modifié le
-                    </p>
-                    <p className="text-gray-900 dark:text-white font-medium">
-                      {new Date(post.updatedAt).toLocaleDateString("fr-FR", {
+              </div>
+
+              {/* Right column: Author, Stats, Meta, Button */}
+              <div className="lg:col-span-1 flex flex-col">
+                {/* Author */}
+                {post.author && (
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center font-semibold text-sm text-green-700 dark:text-green-400">
+                      {post.author.firstName?.[0]}
+                      {post.author.lastName?.[0]}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white text-sm">
+                        {post.author.firstName} {post.author.lastName}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Auteur du cours
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Stats */}
+                <div className="flex border-t border-b border-gray-200 dark:border-gray-700 py-3 mb-4">
+                  <div className="flex-1 flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-red-500">♥</span>
+                      <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                        {post.likes}
+                      </span>
+                    </div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      J&apos;aime
+                    </span>
+                  </div>
+                  <div className="w-px bg-gray-200 dark:bg-gray-700" />
+                  <div className="flex-1 flex flex-col gap-1 pl-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-500">💬</span>
+                      <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                        {post.commentSize ?? 0}
+                      </span>
+                    </div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      Commentaires
+                    </span>
+                  </div>
+                </div>
+
+                {/* Meta info */}
+                <div className="space-y-2 text-sm mb-4">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500 dark:text-gray-400">
+                      Créé le
+                    </span>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {new Date(post.createdAt).toLocaleDateString("fr-FR", {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
                       })}
-                    </p>
+                    </span>
                   </div>
-                )}
+                  {post.updatedAt && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-500 dark:text-gray-400">
+                        Modifié le
+                      </span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {new Date(post.updatedAt).toLocaleDateString("fr-FR", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Edit button */}
+                <button className="mt-auto w-full flex items-center justify-center gap-2 bg-green-700
+                 hover:bg-green-800 text-white font-medium text-sm py-2.5 rounded-lg transition-colors">
+                  ✏️ Modifier
+                </button>
               </div>
             </div>
           </div>
         )}
 
         {/* Comments Tab */}
-        {activeTab === "comments" && <Comments queryParams={{ postId: post.id }} />}
+        {activeTab === "comments" && (
+          <Comments queryParams={{ postId: post.id }} />
+        )}
       </div>
     </div>
   );

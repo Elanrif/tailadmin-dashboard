@@ -9,7 +9,7 @@ import React, { useState } from "react";
 
 const navItems = [
   { label: "Home", href: "/" },
-  { label: "Comments", href: "/comments" },
+  { label: "Posts", href: "/posts" },
   { label: "About", href: "#about" },
   { label: "How It Works", href: "#how-it-works" },
   { label: "Support", href: "#support" },

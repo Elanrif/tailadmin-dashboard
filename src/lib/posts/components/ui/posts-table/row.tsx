@@ -38,18 +38,18 @@ export function Row({
       </TableCell>
       <TableCell className="px-4 py-3 text-center align-middle">
         <div className="flex items-center gap-3">
-          <div className="flex h-20 w-28 shrink-0 items-center justify-center overflow-hidden rounded-md bg-gray-200 dark:bg-gray-700">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
             {post.imageUrl ? (
               <Image
-                width={112}
-                height={80}
+                width={56}
+                height={56}
                 src={post.imageUrl}
-                alt={post.title ? `${post.title?.slice(0, 7)} image` : "User"}
+                alt={post.title ? `${post.title.slice(0, 7)} image` : "Post"}
                 className="h-full w-full object-cover"
               />
             ) : (
-              <span className="text-sm text-gray-600 dark:text-gray-300">
-                {post.title?.slice(0, 5) || "N/N"}
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                {post.title?.slice(0, 2).toUpperCase() || "N/A"}
               </span>
             )}
           </div>

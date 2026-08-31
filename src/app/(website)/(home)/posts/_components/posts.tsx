@@ -20,7 +20,6 @@ import {
 import { toast } from "sonner";
 
 import Button from "@/components/ui/button/Button";
-import { Modal } from "@/components/ui/modal";
 import { useModal } from "@/hooks/useModal";
 import { useSession } from "@/lib/auth/components/auth.context";
 
@@ -29,8 +28,8 @@ import { postKeys } from "@/lib/posts/api/queries";
 import { deletePostMutation } from "@/lib/posts/api/mutations";
 
 import type { Post } from "@/lib/posts/api/types";
-import PostComments from "./post-comments";
-import PostFormView from "@/lib/posts/components/post-form-view";
+import { Modals } from "@/lib/posts/components/ui/posts-table/modals";
+import Comments from "./comments";
 
 export default function Posts() {
   const { user, isLoading } = useSession();
@@ -39,9 +38,11 @@ export default function Posts() {
   const [expandedPost, setExpandedPost] = useState<number | null>(null);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
-  const postModal = useModal();
-  const createPostModal = useModal();
-  const deletePostModal = useModal();
+  /* Modals */
+  const viewModal = useModal();
+  const editModal = useModal();
+  const createModal = useModal();
+  const deleteModal = useModal();
 
   const { data: postsResult } = useSuspenseQuery(
     postsQueryOptions({ size: 1000 }),
@@ -49,7 +50,7 @@ export default function Posts() {
 
   const posts = postsResult.ok ? postsResult.data.data : [];
 
-  const deletePost = useMutation({
+  const deleteMutation = useMutation({
     ...deletePostMutation,
 
     onSuccess: async (result) => {
@@ -61,10 +62,9 @@ export default function Posts() {
       await queryClient.invalidateQueries({
         queryKey: postKeys.all,
       });
-
       toast.success("Post supprimé");
 
-      deletePostModal.closeModal();
+      deleteModal.closeModal();
       setSelectedPost(null);
     },
   });
@@ -73,7 +73,7 @@ export default function Posts() {
 
   const openPostEdit = (post: Post) => {
     setSelectedPost(post);
-    postModal.openModal();
+    editModal.openModal();
   };
 
   return (
@@ -94,7 +94,7 @@ export default function Posts() {
             size="sm"
             variant="outline"
             startIcon={<Plus size={16} />}
-            onClick={createPostModal.openModal}
+            onClick={createModal.openModal}
           >
             Nouveau post
           </Button>
@@ -177,7 +177,7 @@ export default function Posts() {
                             type="button"
                             onClick={() => {
                               setSelectedPost(post);
-                              deletePostModal.openModal();
+                              deleteModal.openModal();
                             }}
                             className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
                           >
@@ -232,7 +232,10 @@ export default function Posts() {
                   </div>
 
                   {isExpanded && (
-                    <PostComments postId={post.id} authorId={user?.id} />
+                    <Comments
+                      queryParams={{ postId: post.id, 
+                        authorId: user?.id }}
+                    />
                   )}
                 </div>
               </div>
@@ -241,52 +244,19 @@ export default function Posts() {
         })}
       </div>
 
-      {/* Create post */}
-      <Modal
-        isOpen={createPostModal.isOpen}
-        onClose={createPostModal.closeModal}
-        className="max-h-[90vh] max-w-4xl p-0"
-      >
-        <PostFormView
-          postId="new"
-          authorId={user?.id}
-          redirectOnSave={false}
-          onSaved={createPostModal.closeModal}
-        />
-      </Modal>
-
-      {/* Edit post */}
-      <Modal
-        isOpen={postModal.isOpen}
-        onClose={postModal.closeModal}
-        className="max-h-[90vh] max-w-4xl p-0"
-      >
-        {selectedPost && (
-          <PostFormView
-            postId={String(selectedPost.id)}
-            redirectOnSave={false}
-            onSaved={postModal.closeModal}
-          />
-        )}
-      </Modal>
-
-      {/* Delete post */}
-      <Modal
-        isOpen={deletePostModal.isOpen}
-        onClose={deletePostModal.closeModal}
-        className="max-w-md p-6"
-      >
-        <ConfirmDelete
-          label={`le post « ${selectedPost?.title} »`}
-          loading={deletePost.isPending}
-          onCancel={deletePostModal.closeModal}
-          onConfirm={() => {
-            if (selectedPost) {
-              deletePost.mutate(selectedPost.id);
-            }
-          }}
-        />
-      </Modal>
+      <Modals
+        selectedPost={selectedPost}
+        modals={{
+          view: { isOpen: viewModal.isOpen, close: viewModal.closeModal },
+          edit: { isOpen: editModal.isOpen, close: editModal.closeModal },
+          create: { isOpen: createModal.isOpen, close: createModal.closeModal },
+          delete: { isOpen: deleteModal.isOpen, close: deleteModal.closeModal },
+        }}
+        onConfirmDelete={() =>
+          selectedPost && deleteMutation.mutate(selectedPost.id)
+        }
+        isDeleting={deleteMutation.isPending}
+      />
     </section>
   );
 }
@@ -314,40 +284,6 @@ function Avatar({ src, name }: { src?: string; name: string }) {
       ) : (
         initials || "?"
       )}
-    </div>
-  );
-}
-
-function ConfirmDelete({
-  label,
-  loading,
-  onCancel,
-  onConfirm,
-}: {
-  label: string;
-  loading: boolean;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
-  return (
-    <div className="space-y-5 text-center">
-      <Trash2 className="mx-auto text-red-500" size={36} />
-
-      <h3 className="text-xl font-semibold">Confirmer la suppression</h3>
-
-      <p className="text-sm text-stone-500">
-        Voulez-vous vraiment supprimer {label} ?
-      </p>
-
-      <div className="flex justify-center gap-3">
-        <Button variant="outline" onClick={onCancel}>
-          Annuler
-        </Button>
-
-        <Button variant="primary" onClick={onConfirm} disabled={loading}>
-          {loading ? "Suppression…" : "Supprimer"}
-        </Button>
-      </div>
     </div>
   );
 }

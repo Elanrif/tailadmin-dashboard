@@ -1,5 +1,4 @@
 import ComponentCard from "@/components/common/ComponentCard";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PostDetails from "@/lib/posts/components/post-details";
 
 export default async function PostPage({
@@ -11,7 +10,6 @@ export default async function PostPage({
 
   return (
     <div>
-      <PageBreadcrumb pageTitle={id === "new" ? "Add new post" : "Edit post"} />
       <div className="space-y-6">
         <ComponentCard>
           <PostDetails postId={Number(id)} />
