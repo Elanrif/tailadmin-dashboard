@@ -15,6 +15,7 @@ const Switch: React.FC<SwitchProps> = ({
   disabled = false,
   onChange,
   color = "blue", // Default to blue color
+  ...props
 }) => {
   const [isChecked, setIsChecked] = useState(defaultChecked);
 
@@ -55,10 +56,8 @@ const Switch: React.FC<SwitchProps> = ({
     >
       <div className="relative">
         <div
-          className={`block transition duration-150 ease-linear h-6 w-11 rounded-full ${
-            disabled
-              ? "bg-gray-100 pointer-events-none dark:bg-gray-800"
-              : switchColors.background
+          className={`block transition duration-150 ease-linear h-6 w-11 rounded-full ${switchColors.background} ${
+            disabled ? "opacity-70 pointer-events-none" : ""
           }`}
         ></div>
         <div

@@ -6,14 +6,20 @@ import { z } from "zod";
  * ❌ Someone can bypass the form
  */
 export const commentCreateSchema = z.object({
-  content: z.string().min(1, "Le commentaire ne peut pas être vide"),
+  content: z
+    .string()
+    .trim()
+    .min(1, "Le commentaire ne peut pas être vide")
+    .max(2000, "Le commentaire doit contenir au maximum 2000 caractères"),
+  postId: z.number().int().positive("Veuillez sélectionner un post"),
+  authorId: z.number().int().positive("Veuillez sélectionner un auteur"),
 });
 
 export type CommentFormValues = z.infer<typeof commentCreateSchema>;
 export const parseCommentCreate =
   commentCreateSchema.safeParse.bind(commentCreateSchema);
 
-export const commentUpdateSchema = commentCreateSchema.partial();
+export const commentUpdateSchema = commentCreateSchema;
 export type CommentUpdateFormValues = z.infer<typeof commentUpdateSchema>;
 export const parseCommentUpdate =
   commentUpdateSchema.safeParse.bind(commentUpdateSchema);

@@ -1,250 +1,369 @@
-"server-only";
+import "server-only";
 
 import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
-import { AxiosResponse } from "axios";
-import { parseResetPassword } from "@lib/users/schemas/user";
 import { getLogger } from "@/config/logger.config";
 import {
-  ChangePasswordProfileFormData,
-  parseChangePasswordProfile,
-  parseLogin,
-  parseProfileUser,
-  parseRegister,
-  ProfileUserFormData,
-  RegisterFormData,
-} from "@lib/auth/schemas/auth.schema";
-import { Login } from "../types";
-import { ResetPassword, User } from "@/lib/users/api/types";
-import { ApiErrorResponse } from "@/lib/_/errors/api-error.server";
-import { Result } from "@/lib/_/errors/response.model";
-import { ApiError, badRequestApiError } from "@/lib/_/errors/api-error";
-import { validateId } from "@/utils";
+  loginFormSchema,
+  registerFormSchema,
+  changePasswordSchema,
+  type LoginPayload,
+  type RegisterPayload,
+  type ChangePwdPayload,
+  type ResetPwdPayload,
+  resetPasswordSchema,
+  UserSchema,
+  type UserPayload,
+  type DeletePayload,
+  deleteFormSchema,
+} from "@lib/auth/schemas/auth";
+import { User } from "@/lib/users/api/types";
+import { Result } from "@/lib/shared/types";
+import { ApiError } from "@/lib/shared/api-error";
 
-/**
- * ⚠️ Never trust the client input
- * ❌ Someone can bypass the form
- * ✅ Protection against malicious bugs
- */
 const {
   api: {
     rest: {
       endpoints: {
         auth: {
+          deleteMyAccount: deleteMyAccountUrl,
           login: loginUrl,
           register: registerUrl,
-          editProfile: editProfileUrl,
-          updatePassword: updatePwdUrl,
+          editMyAccount: editMyAccountUrl,
+          changeMyPwd: changeMyPwdUrl,
           resetPassword: resetPasswordUrl,
         },
       },
     },
   },
 } = environment;
+
 const logger = getLogger("server");
 
-/**
- * Sign in a user with email and password
- */
-export async function signIn(login: Login): Promise<Result<User, ApiError>> {
-  const validation = parseLogin(login);
-  if (!validation.success) {
-    logger.warn({ email: login.email }, "Invalid login attempt");
+export async function signIn(
+  login: LoginPayload,
+): Promise<Result<User, ApiError>> {
+  const parse = loginFormSchema.safeParse(login);
+
+  // Zod validation error: the error is already known locally,
+  // so we directly create an ApiError with HTTP 400.
+  if (!parse.success) {
+    logger.warn(
+      {
+        email: login.email,
+        errors: parse.error.format(),
+      },
+      "Validation failed",
+    );
+
+    const error: ApiError = {
+      status: 400,
+      error: "Bad Request",
+      message: parse.error.message,
+    };
+
     return {
       ok: false,
-      error: badRequestApiError(validation.error.message),
+      error,
     };
   }
 
   try {
-    const { data } = await apiClient(true).post<any, AxiosResponse<User>>(
-      loginUrl,
-      login,
+    const response = await apiClient().post<User>(loginUrl, parse.data);
+
+    logger.info(
+      {
+        id: response.data.id,
+        email: response.data.email,
+      },
+      "User signed in",
     );
-    logger.info({ email: data.email }, "User signed in successfully");
-    return { ok: true, data };
+
+    return {
+      ok: true,
+      data: response.data,
+    };
   } catch (error) {
-    logger.error({ email: login.email }, "Failed to sign in");
+    // Backend/Axios error: ApiError normalizes the Spring Boot response
+    // and handles the corresponding logging.
     return {
       ok: false,
-      error: ApiErrorResponse(error, "signIn"),
+      error: ApiError(error, "signIn"),
     };
   }
 }
 
-/**
- * Register a new user with email and password
- */
 export async function signUp(
-  registration: RegisterFormData,
+  registration: RegisterPayload,
 ): Promise<Result<User, ApiError>> {
-  const validation = parseRegister(registration);
-  if (!validation.success) {
-    logger.warn({ email: registration.email }, "Invalid registration attempt");
-    return {
-      ok: false,
-      error: badRequestApiError(validation.error.message),
-    };
-  }
+  const parse = registerFormSchema.safeParse(registration);
 
-  try {
-    await apiClient(true).post<any, AxiosResponse<any>>(
-      registerUrl,
-      registration,
-    );
-  } catch (error) {
-    logger.error({ email: registration.email }, "Failed to register user");
-    return {
-      ok: false,
-      error: ApiErrorResponse(error, "signUp"),
-    };
-  }
-
-  const maybeUser = await signIn(registration);
-  if (!maybeUser.ok) {
-    logger.error(
+  // Zod validation error: directly create the ApiError.
+  if (!parse.success) {
+    logger.warn(
       {
         email: registration.email,
-        detail: maybeUser.error.detail,
+        errors: parse.error.format(),
       },
-      "Error after registration during sign in",
+      "Validation failed",
     );
-    throw new Error(maybeUser.error.detail);
-  }
-  return maybeUser;
-}
 
-export async function changeUserPassword(
-  userId: number,
-  oldPassword: string,
-  newPassword: string,
-): Promise<Result<User, ApiError>> {
-  const idError = validateId(userId);
-  if (idError) return idError;
+    const error: ApiError = {
+      status: 400,
+      error: "Bad Request",
+      message: parse.error.message,
+    };
+
+    return {
+      ok: false,
+      error,
+    };
+  }
 
   try {
-    const body = {
-      old_password: oldPassword,
-      new_password: newPassword,
+    await apiClient().post(registerUrl, parse.data);
+  } catch (error) {
+    // Backend/Axios error: normalize it through ApiError.
+    return {
+      ok: false,
+      error: ApiError(error, "signUp"),
     };
-    const url = `/${userId}`;
-    const result = await apiClient(true) //
-      .patch<any, AxiosResponse<User>>(url, body);
-    logger.info({ userId }, "changeUserPassword");
-    return { ok: true, data: result.data };
-  } catch (error: any) {
+  }
+
+  const signInResult = await signIn({
+    email: parse.data.email,
+    password: parse.data.password,
+  });
+
+  if (!signInResult.ok) {
     logger.error(
       {
-        userId,
-        err: error.response?.data ?? error,
+        context: "signUp",
+        email: parse.data.email,
+        error: signInResult.error,
       },
-      "Error during changeUserPassword",
+      "Automatic sign-in after registration failed",
     );
-    return {
-      ok: false,
-      error: ApiErrorResponse(error, "changeUserPassword"),
-    };
+
+    throw new Error(signInResult.error.message);
   }
+
+  logger.info(
+    {
+      id: signInResult.data.id,
+      email: signInResult.data.email,
+    },
+    "User registered successfully",
+  );
+
+  return signInResult;
 }
 
-/**
- * Change password for a user
- */
 export async function resetPassword(
-  data: ResetPassword,
+  data: ResetPwdPayload,
 ): Promise<Result<User, ApiError>> {
-  const validation = parseResetPassword(data);
-  if (!validation.success) {
-    logger.warn({ email: data.email }, "Invalid reset password attempt");
+  const parse = resetPasswordSchema.safeParse(data);
+
+  // Zod validation error: directly create the ApiError.
+  if (!parse.success) {
+    logger.warn(
+      {
+        email: data.email,
+        errors: parse.error.format(),
+      },
+      "Validation failed",
+    );
+
+    const error: ApiError = {
+      status: 400,
+      error: "Bad Request",
+      message: parse.error.message,
+    };
+
     return {
       ok: false,
-      error: badRequestApiError(validation.error.message),
+      error,
     };
   }
 
   try {
-    const res = await apiClient(true).patch<any, AxiosResponse<User>>(
+    const response = await apiClient().patch<User>(
       resetPasswordUrl,
-      data,
+      parse.data,
     );
-    logger.info({ id: res.data.id }, "Password reset successfully");
-    return { ok: true, data: res.data };
-  } catch (error: any) {
-    logger.error(
-      { err: error.response?.data ?? error },
-      "Failed to reset password",
+
+    logger.info(
+      {
+        id: response.data.id,
+        email: response.data.email,
+      },
+      "Password reset successfully",
     );
+
+    return {
+      ok: true,
+      data: response.data,
+    };
+  } catch (error) {
+    // Backend/Axios error: normalize it through ApiError.
     return {
       ok: false,
-      error: ApiErrorResponse(error, "resetPassword"),
+      error: ApiError(error, "resetPassword"),
     };
   }
 }
 
-/**
- * Edit user profile
- */
-export async function editProfile(
-  data: ProfileUserFormData,
+export async function updateMyAccount(
+  data: UserPayload,
 ): Promise<Result<User, ApiError>> {
-  const validation = parseProfileUser(data);
-  if (!validation.success) {
-    logger.warn({ id: data.email }, "Invalid profile update attempt");
+  const parse = UserSchema.safeParse(data);
+
+  // Zod validation error: directly create the ApiError.
+  if (!parse.success) {
+    logger.warn(
+      {
+        email: data.email,
+        errors: parse.error.format(),
+      },
+      "Validation failed",
+    );
+
+    const error: ApiError = {
+      status: 400,
+      error: "Bad Request",
+      message: parse.error.message,
+    };
+
     return {
       ok: false,
-      error: badRequestApiError(validation.error.message),
+      error,
     };
   }
 
   try {
-    const res = await apiClient(true).patch<any, AxiosResponse<User>>(
-      editProfileUrl,
-      data,
+    const response = await apiClient().patch<User>(
+      editMyAccountUrl,
+      parse.data,
     );
-    logger.info({ id: res.data.id }, "Profile updated successfully");
-    return { ok: true, data: res.data };
-  } catch (error: any) {
-    logger.error(
-      { err: error.response?.data ?? error },
-      "Failed to update profile",
+
+    logger.info(
+      {
+        id: response.data.id,
+        email: response.data.email,
+      },
+      "Profile updated successfully",
     );
+
+    return {
+      ok: true,
+      data: response.data,
+    };
+  } catch (error) {
+    // Backend/Axios error: normalize it through ApiError.
     return {
       ok: false,
-      error: ApiErrorResponse(error, "editProfile"),
+      error: ApiError(error, "updateMyAccount"),
     };
   }
 }
 
-/**
- * Change user profile password
- */
-export async function changePasswordProfile(
-  data: ChangePasswordProfileFormData,
+export async function updateMyPassword(
+  data: ChangePwdPayload,
 ): Promise<Result<User, ApiError>> {
-  const validation = parseChangePasswordProfile(data);
-  if (!validation.success) {
-    logger.warn({ id: data.email }, "Invalid password change attempt");
+  const parse = changePasswordSchema.safeParse(data);
+
+  // Zod validation error: directly create the ApiError.
+  if (!parse.success) {
+    logger.warn(
+      {
+        email: data.email,
+        errors: parse.error.format(),
+      },
+      "Validation failed",
+    );
+
+    const error: ApiError = {
+      status: 400,
+      error: "Bad Request",
+      message: parse.error.message,
+    };
+
     return {
       ok: false,
-      error: badRequestApiError(validation.error.message),
+      error,
     };
   }
 
   try {
-    const res = await apiClient(true).patch<any, AxiosResponse<User>>(
-      updatePwdUrl,
-      data,
+    const response = await apiClient().patch<User>(changeMyPwdUrl, parse.data);
+
+    logger.info(
+      {
+        id: response.data.id,
+        email: response.data.email,
+      },
+      "Password updated successfully",
     );
-    logger.info({ id: res.data.id }, "Profile updated successfully");
-    return { ok: true, data: res.data };
-  } catch (error: any) {
-    logger.error(
-      { err: error.response?.data ?? error },
-      "Failed to update profile",
-    );
+
+    return {
+      ok: true,
+      data: response.data,
+    };
+  } catch (error) {
+    // Backend/Axios error: normalize it through ApiError.
     return {
       ok: false,
-      error: ApiErrorResponse(error, "changeProfilePassword"),
+      error: ApiError(error, "updateMyPassword"),
+    };
+  }
+}
+
+export async function deleteMyAccount(
+  data: DeletePayload,
+): Promise<Result<void, ApiError>> {
+  const parse = deleteFormSchema.safeParse(data);
+
+  // Zod validation error: directly create the ApiError.
+  if (!parse.success) {
+    logger.warn(
+      {
+        email: data.emailInput,
+        errors: parse.error.format(),
+      },
+      "Validation failed",
+    );
+
+    const error: ApiError = {
+      status: 400,
+      error: "Bad Request",
+      message: parse.error.message,
+    };
+
+    return {
+      ok: false,
+      error,
+    };
+  }
+
+  try {
+    await apiClient().post(deleteMyAccountUrl, parse.data);
+
+    logger.info(
+      {
+        email: parse.data.emailInput,
+      },
+      "Account deleted successfully",
+    );
+
+    return {
+      ok: true,
+      data: undefined,
+    };
+  } catch (error) {
+    // Backend/Axios error: normalize it through ApiError.
+    return {
+      ok: false,
+      error: ApiError(error, "deleteMyAccount"),
     };
   }
 }

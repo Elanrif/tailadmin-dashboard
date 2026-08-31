@@ -1,11 +1,17 @@
 "use client";
-import React, { useState } from 'react';
-import ComponentCard from '../../common/ComponentCard';
-import Label from '../Label';
-import Input from '../input/InputField';
-import Select from '../Select';
-import { ChevronDownIcon, EyeCloseIcon, EyeIcon, TimeIcon } from '../../../icons';
-import DatePicker from '@/components/form/date-picker';
+import React, { useState } from "react";
+import ComponentCard from "../../common/ComponentCard";
+import Label from "../Label";
+import Input from "../input/InputField";
+import Select from "../Select";
+import {
+  ChevronDownIcon,
+  EyeCloseIcon,
+  EyeIcon,
+  TimeIcon,
+} from "../../../icons";
+import DatePicker from "@/components/form/date-picker";
+import { InputOTPPattern } from "./InputOTPPattern";
 
 export default function DefaultInputs() {
   const [showPassword, setShowPassword] = useState(false);
@@ -32,13 +38,13 @@ export default function DefaultInputs() {
           <Label>Select Input</Label>
           <div className="relative">
             <Select
-            options={options}
-            placeholder="Select an option"
-            onChange={handleSelectChange}
-            className="dark:bg-dark-900"
-          />
-             <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
-              <ChevronDownIcon/>
+              options={options}
+              placeholder="Select an option"
+              onChange={handleSelectChange}
+              className="dark:bg-dark-900"
+            />
+            <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+              <ChevronDownIcon />
             </span>
           </div>
         </div>
@@ -61,6 +67,8 @@ export default function DefaultInputs() {
             </button>
           </div>
         </div>
+        {/* OTP (One-Time Password) */}
+        <InputOTPPattern />
 
         <div>
           <DatePicker
@@ -73,7 +81,6 @@ export default function DefaultInputs() {
             }}
           />
         </div>
-
         <div>
           <Label htmlFor="tm">Time Picker Input</Label>
           <div className="relative">

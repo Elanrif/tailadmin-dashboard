@@ -1,38 +1,39 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { Post, PostCreate, PostUpdate } from "./types";
+import { Post } from "./types";
 import { createPost, deletePost, updatePost } from "./services/post.server";
-import { ApiError } from "@/lib/_/errors/api-error";
-import { Result } from "@/lib/_/errors/response.model";
+import { PostCreatePayload, PostUpdatePayload } from "../schemas/post";
+import { Result } from "@/lib/shared/types";
+import { ApiError } from "@/lib/shared/api-error";
 
 export async function createPostAction(
-  data: PostCreate,
+  data: PostCreatePayload,
 ): Promise<Result<Post, ApiError>> {
   const result = await createPost(data);
   if (result.ok) {
-    revalidatePath("/users");
+    revalidatePath("/dashboard/posts");
   }
   return result;
 }
 
 export async function updatePostAction(
   id: number,
-  data: PostUpdate,
+  data: PostUpdatePayload,
 ): Promise<Result<Post, ApiError>> {
   const result = await updatePost(id, data);
   if (result.ok) {
-    revalidatePath("/users");
+    revalidatePath("/dashboard/posts");
   }
   return result;
 }
 
 export async function deletePostAction(
   id: number,
-): Promise<Result<{ success: boolean }, ApiError>> {
+): Promise<Result<void, ApiError>> {
   const result = await deletePost(id);
   if (result.ok) {
-    revalidatePath("/users");
+    revalidatePath("/dashboard/posts");
   }
   return result;
 }

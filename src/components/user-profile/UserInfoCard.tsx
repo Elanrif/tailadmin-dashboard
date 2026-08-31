@@ -5,14 +5,100 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { useSession } from "@/lib/auth/components/auth.context";
+import {
+  UserUpdateFormValues,
+  UserUpdatePayload,
+  userUpdateSchema,
+} from "@/lib/users/schemas/user";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateUserMutation } from "@/lib/users/api/mutations";
+import { toast } from "sonner";
+import { userKeys } from "@/lib/users/api/queries";
+import { UserRole, UserStatus } from "@/lib/users/api/types";
+import ComponentCard from "../common/ComponentCard";
+import PhoneInput from "../form/group-input/PhoneInput";
+import Switch from "../form/switch/Switch";
+
+const countries = [
+  { code: "KM", label: "+269" },
+  { code: "MA", label: "+212" },
+  { code: "US", label: "+1" },
+  { code: "GB", label: "+44" },
+  { code: "CA", label: "+1" },
+  { code: "AU", label: "+61" },
+];
 
 export default function UserInfoCard() {
+  const { user, setUser } = useSession();
   const { isOpen, openModal, closeModal } = useModal();
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
-    closeModal();
+  const queryClient = useQueryClient();
+  // react-hook-form avec validation Zod
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<UserUpdateFormValues>({
+    resolver: zodResolver(userUpdateSchema),
+    defaultValues: {
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      email: user?.email,
+      phoneNumber: user?.phoneNumber,
+      avatarUrl: user?.avatarUrl ?? "",
+    },
+  });
+
+  // Mutation modification
+  const updateMutation = useMutation({
+    ...updateUserMutation,
+    onSuccess: async (result) => {
+      if (!result.ok) {
+        toast.error(result.error?.message || "Failed to update user");
+        return;
+      }
+      setUser(result.data);
+      await queryClient.invalidateQueries({ queryKey: userKeys.all });
+      toast.success("User updated successfully");
+      closeModal();
+    },
+    onError: () => {
+      toast.error("Failed to update user");
+    },
+  });
+
+  const onSubmit = (values: UserUpdateFormValues) => {
+    const updateValues = values as UserUpdateFormValues;
+    const payload: UserUpdatePayload = {
+      firstName: updateValues.firstName,
+      lastName: updateValues.lastName,
+      email: updateValues.email,
+      phoneNumber: updateValues.phoneNumber,
+      role: updateValues.role ?? UserRole.USER,
+      status: updateValues.status ?? UserStatus.ACTIVE,
+      avatarUrl: updateValues.avatarUrl,
+    };
+    // Solution : Ne pas inclure les champs vides dans le payload
+    if (updateValues.password && updateValues.password.trim() !== "") {
+      payload.password = updateValues.password;
+      payload.confirmPassword = updateValues.confirmPassword;
+    }
+    updateMutation.mutate({
+      id: user?.id as number,
+      values: payload,
+    });
   };
+
+  const handlePhoneNumberChange = (phoneNumber: string) => {
+    setValue("phoneNumber", phoneNumber, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -27,7 +113,7 @@ export default function UserInfoCard() {
                 First Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Musharof
+                {user?.firstName ?? "N/A"}
               </p>
             </div>
 
@@ -36,7 +122,7 @@ export default function UserInfoCard() {
                 Last Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Chowdhury
+                {user?.lastName ?? "N/A"}
               </p>
             </div>
 
@@ -45,7 +131,7 @@ export default function UserInfoCard() {
                 Email address
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                randomuser@pimjo.com
+                {user?.email ?? "N/A"}
               </p>
             </div>
 
@@ -54,8 +140,19 @@ export default function UserInfoCard() {
                 Phone
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                +09 363 398 46
+                {user?.phoneNumber ?? "N/A"}
               </p>
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                Compte activé?
+              </p>
+              <Switch
+                label={user?.status === UserStatus.ACTIVE ? "Oui" : "Non"}
+                defaultChecked={user?.status === UserStatus.ACTIVE}
+                disabled
+              />
             </div>
 
             <div>
@@ -102,7 +199,23 @@ export default function UserInfoCard() {
               Update your details to keep your profile up-to-date.
             </p>
           </div>
-          <form className="flex flex-col">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+            {Object.keys(errors).length > 0 && (
+              <ComponentCard>
+                <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
+                  <span className="text-xl">⚠️</span>
+                  <div>
+                    <h4 className="font-semibold text-red-700">
+                      Impossible de soumettre le formulaire
+                    </h4>
+                    <p className="mt-1 text-sm text-red-600">
+                      Certains champs contiennent des erreurs. Veuillez les
+                      corriger avant de réessayer.
+                    </p>
+                  </div>
+                </div>
+              </ComponentCard>
+            )}
             <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
               <div>
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
@@ -147,25 +260,33 @@ export default function UserInfoCard() {
 
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>First Name</Label>
-                    <Input type="text" defaultValue="Musharof" />
+                    <Label required>First Name</Label>
+                    <Input {...register("firstName")} type="text" />
                   </div>
-
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Last Name</Label>
-                    <Input type="text" defaultValue="Chowdhury" />
+                    <Label required>Last Name</Label>
+                    <Input {...register("lastName")} type="text" />
                   </div>
-
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Email Address</Label>
-                    <Input type="text" defaultValue="randomuser@pimjo.com" />
+                    <Label required>Email Address</Label>
+                    <Input {...register("email")} type="text" />
                   </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Phone</Label>
-                    <Input type="text" defaultValue="+09 363 398 46" />
-                  </div>
-
+                  <div>
+                    <Label required>Phone</Label>
+                    <PhoneInput
+                      {...register("phoneNumber")}
+                      selectPosition="start"
+                      countries={countries}
+                      placeholder="+1 (555) 000-0000"
+                      onChange={handlePhoneNumberChange}
+                      value={user?.phoneNumber}
+                    />
+                    {errors.phoneNumber && (
+                      <p className="mt-1 text-sm text-error-500">
+                        {errors.phoneNumber.message}
+                      </p>
+                    )}
+                  </div>{" "}
                   <div className="col-span-2">
                     <Label>Bio</Label>
                     <Input type="text" defaultValue="Team Manager" />
@@ -177,8 +298,8 @@ export default function UserInfoCard() {
               <Button size="sm" variant="outline" onClick={closeModal}>
                 Close
               </Button>
-              <Button size="sm" onClick={handleSave}>
-                Save Changes
+              <Button type="submit" size="sm">
+                {isSubmitting ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>

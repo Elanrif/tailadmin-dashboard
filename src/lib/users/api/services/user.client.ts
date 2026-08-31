@@ -1,9 +1,9 @@
 import { AxiosResponse } from "axios";
 import { proxyEnvironment } from "@config/proxy-api.config";
-import { User, UserFilters, UsersResult } from "@lib/users/api/types";
+import { User, UserFilters, UsersResponse } from "@lib/users/api/types";
 import { frontendHttp } from "@config/axios/frontend-http.config";
-import { ApiError } from "@/lib/_/errors/api-error";
-import { Result } from "@/lib/_/errors/response.model";
+import { Result } from "@/lib/shared/types";
+import { ApiError } from "@/lib/shared/api-error";
 
 /**
  * ⚠️ NO Logging and error Handling is needed here as the proxy API routes will handle logging.
@@ -19,12 +19,9 @@ const {
   },
 } = proxyEnvironment;
 
-/**
- * Fetch all users (client-side)
- */
 export async function fetchUsers(
-  filters: UserFilters,
-): Promise<Result<UsersResult, ApiError>> {
+  filters: UserFilters = {},
+): Promise<Result<UsersResponse, ApiError>> {
   // 🔥 Clean undefined params
   const cleanParams: Record<string, string> = {};
 
@@ -38,14 +35,11 @@ export async function fetchUsers(
 
   const res = await frontendHttp().get<
     unknown,
-    AxiosResponse<Result<UsersResult, ApiError>>
+    AxiosResponse<Result<UsersResponse, ApiError>>
   >(url);
   return res.data;
 }
 
-/**
- * Fetch a single user by ID (client-side)
- */
 export async function fetchUserById(
   id: number,
 ): Promise<Result<User, ApiError>> {

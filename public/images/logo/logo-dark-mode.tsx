@@ -1,0 +1,81 @@
+export default function LogoDarkMode() {
+  return (
+    <svg
+      width="420"
+      height="160"
+      viewBox="0 0 420 160"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      <rect width="420" height="160" fill="#0B1220" />
+
+      <text
+        x="30"
+        y="120"
+        font-size="110"
+        font-family="Arial, sans-serif"
+        font-weight="800"
+        fill="#FFFFFF"
+        filter="url(#glow)"
+      >
+        E
+      </text>
+
+      <line
+        x1="105"
+        y1="40"
+        x2="155"
+        y2="40"
+        stroke="#3B82F6"
+        stroke-width="4"
+      />
+      <line
+        x1="105"
+        y1="75"
+        x2="145"
+        y2="75"
+        stroke="#3B82F6"
+        stroke-width="3"
+      />
+      <line
+        x1="105"
+        y1="110"
+        x2="155"
+        y2="110"
+        stroke="#3B82F6"
+        stroke-width="4"
+      />
+
+      <text
+        x="170"
+        y="85"
+        font-size="34"
+        font-family="Arial, sans-serif"
+        fill="#FFFFFF"
+        letter-spacing="1"
+      >
+        El-Anrif
+      </text>
+
+      <text
+        x="172"
+        y="115"
+        font-size="14"
+        font-family="Arial, sans-serif"
+        fill="#FFFFFF"
+        letter-spacing="2"
+      >
+        TECH • INNOVATION
+      </text>
+    </svg>
+  );
+}

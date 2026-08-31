@@ -9,12 +9,12 @@ export const proxyEnvironment = {
   api: {
     rest: {
       endpoints: {
+        addresses: `/addresses`,
         comments: `/comments`,
         posts: `/posts`,
         login: `/auth/login`,
         signOut: `/auth/logout`,
         register: `/auth/register`,
-        passwordChange: `/auth/password-change`,
         users: `/users`,
       },
     },

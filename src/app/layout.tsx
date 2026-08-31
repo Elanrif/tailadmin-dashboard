@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "sonner";
 import QueryProvider from "@/providers/query-provider";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { SidebarProvider } from "@/context/SidebarContext";
-
+import { Toaster } from "@/components/ui/sonner";
+import { AuthUserProvider } from "@/lib/auth/components/auth.context";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -30,12 +30,14 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
-          <SidebarProvider>
-            <QueryProvider>
-              <Toaster />
-              {children}
-            </QueryProvider>
-          </SidebarProvider>
+            <AuthUserProvider>
+              <SidebarProvider>
+                <QueryProvider>
+                  <Toaster />
+                  {children}
+                </QueryProvider>
+              </SidebarProvider>
+            </AuthUserProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,25 +1,31 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import React, { useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
+import { useSession } from "@/lib/auth/components/auth.context";
+import { UserRole } from "@/lib/users/api/types";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, signOut } = useSession();
+  const pathname = window.location.pathname;
+  const isAdmin =
+    user?.role?.includes(UserRole.ADMIN) && !pathname.startsWith("/dashboard");
 
-function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-  e.stopPropagation();
-  setIsOpen((prev) => !prev);
-}
+  function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    e.stopPropagation();
+    setIsOpen((prev) => !prev);
+  }
 
   function closeDropdown() {
     setIsOpen(false);
   }
+
   return (
     <div className="relative">
       <button
-        onClick={toggleDropdown} 
+        onClick={toggleDropdown}
         className="flex items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
       >
         <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
@@ -31,7 +37,9 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
           />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Musharof</span>
+        <span className="block mr-1 font-medium text-theme-sm">
+          {user?.firstName}
+        </span>
 
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
@@ -60,19 +68,45 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Musharof Chowdhury
+            {user?.firstName} {user?.lastName}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            randomuser@pimjo.com
+            {user?.email}
           </span>
         </div>
 
         <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
+          {isAdmin && (
+            <li>
+              <DropdownItem
+                onItemClick={closeDropdown}
+                tag="a"
+                href="/dashboard"
+                className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+              >
+                <svg
+                  className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M3 5C3 3.89543 3.89543 3 5 3H9C10.1046 3 11 3.89543 11 5V11C11 12.1046 10.1046 13 9 13H5C3.89543 13 3 12.1046 3 11V5ZM5 4.5H9C9.27614 4.5 9.5 4.72386 9.5 5V11C9.5 11.2761 9.27614 11.5 9 11.5H5C4.72386 11.5 4.5 11.2761 4.5 11V5C4.5 4.72386 4.72386 4.5 5 4.5ZM13 5C13 3.89543 13.8954 3 15 3H19C20.1046 3 21 3.89543 21 5V7C21 8.10457 20.1046 9 19 9H15C13.8954 9 13 8.10457 13 7V5ZM15 4.5H19C19.2761 4.5 19.5 4.72386 19.5 5V7C19.5 7.27614 19.2761 7.5 19 7.5H15C14.7239 7.5 14.5 7.27614 14.5 7V5C14.5 4.72386 14.7239 4.5 15 4.5ZM13 13C13 11.8954 13.8954 11 15 11H19C20.1046 11 21 11.8954 21 13V19C21 20.1046 20.1046 21 19 21H15C13.8954 21 13 20.1046 13 19V13ZM15 12.5H19C19.2761 12.5 19.5 12.7239 19.5 13V19C19.5 19.2761 19.2761 19.5 19 19.5H15C14.7239 19.5 14.5 19.2761 14.5 19V13C14.5 12.7239 14.7239 12.5 15 12.5ZM3 17C3 15.8954 3.89543 15 5 15H9C10.1046 15 11 15.8954 11 17V19C11 20.1046 10.1046 21 9 21H5C3.89543 21 3 20.1046 3 19V17ZM5 16.5H9C9.27614 16.5 9.5 16.7239 9.5 17V19C9.5 19.2761 9.27614 19.5 9 19.5H5C4.72386 19.5 4.5 19.2761 4.5 19V17C4.5 16.7239 4.72386 16.5 5 16.5Z"
+                  />
+                </svg>
+                Dashboard
+              </DropdownItem>
+            </li>
+          )}
           <li>
             <DropdownItem
               onItemClick={closeDropdown}
               tag="a"
-              href="/profile"
+              href="/account/profile"
               className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
               <svg
@@ -90,14 +124,14 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
                   fill=""
                 />
               </svg>
-              Edit profile
+              Manage Account
             </DropdownItem>
           </li>
           <li>
             <DropdownItem
               onItemClick={closeDropdown}
               tag="a"
-              href="/profile"
+              href="/account/settings"
               className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
               <svg
@@ -144,9 +178,9 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
             </DropdownItem>
           </li>
         </ul>
-        <Link
-          href="/signin"
-          className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+        <span
+          onClick={signOut}
+          className="flex hover:cursor-pointer items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
         >
           <svg
             className="fill-gray-500 group-hover:fill-gray-700 dark:group-hover:fill-gray-300"
@@ -164,7 +198,7 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
             />
           </svg>
           Sign out
-        </Link>
+        </span>
       </Dropdown>
     </div>
   );

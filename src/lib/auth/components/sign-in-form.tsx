@@ -5,11 +5,56 @@ import Label from "@/components/form/Label";
 import { EyeCloseIcon, EyeIcon } from "@/icons";
 import BackButton from "@/layout/back-button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { useSession } from "./auth.context";
+import { useForm } from "react-hook-form";
+// Remplacement par les nouveaux noms explicites
+import { LoginFormValues, loginFormSchema } from "../schemas/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signInAction } from "../api/action";
+import { toast } from "sonner";
 
 export default function SignInForm() {
+  const router = useRouter();
+  const { setUser } = useSession();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting: loading },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: { email: "visitor@gmail.com", password: "visitor123" },
+  });
+
+  const [errorFromApi, setErrorFromApi] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      setErrorFromApi(null);
+      const result = await signInAction({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (!result.ok) {
+        toast.error("Oups! Une erreur est survenue.");
+        setErrorFromApi(result.error.message || "Une erreur est survenue.");
+        return;
+      }
+
+      setUser(result.data);
+      router.push(result.data.role === "ADMIN" ? "/dashboard" : "/account");
+      toast.success("Connexion réussie !");
+    } catch (error: any) {
+      toast.error("Oups! Une erreur est survenue.");
+      setErrorFromApi(error.message || "Une erreur est survenue.");
+    }
+  };
+
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full">
       <BackButton link="/" text="Back to Home" />
@@ -76,22 +121,34 @@ export default function SignInForm() {
                 </span>
               </div>
             </div>
-            <form>
+
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-6">
+                {errorFromApi && (
+                  <p className="p-3 text-sm text-center text-red-500 bg-red-100 rounded">
+                    {errorFromApi}
+                  </p>
+                )}
                 <div>
-                  <Label>
-                    Email <span className="text-red-500">*</span>{" "}
-                  </Label>
-                  <Input placeholder="info@gmail.com" type="email" />
+                  <Label required>Email</Label>
+                  <Input
+                    placeholder="info@gmail.com"
+                    type="email"
+                    {...register("email")}
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-error-500">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
                 <div>
-                  <Label>
-                    Password <span className="text-red-500">*</span>{" "}
-                  </Label>
+                  <Label required>Password</Label>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
+                      {...register("password")}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -104,6 +161,11 @@ export default function SignInForm() {
                       )}
                     </span>
                   </div>
+                  {errors.password && (
+                    <p className="mt-1 text-sm text-error-500">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -119,10 +181,13 @@ export default function SignInForm() {
                     Forgot password?
                   </Link>
                 </div>
-                {/* <!-- Button --> */}
                 <div>
-                  <button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-blue-500 shadow-theme-xs hover:bg-blue-600">
-                    Sign In
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="hover:cursor-pointer flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-blue-500 shadow-theme-xs hover:bg-blue-600 disabled:opacity-50"
+                  >
+                    {loading ? "Signing in..." : "Sign In"}
                   </button>
                 </div>
               </div>
@@ -130,7 +195,7 @@ export default function SignInForm() {
 
             <div className="mt-5">
               <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                Don&apos;t have an account? {""}
+                Don&apos;t have an account?{" "}
                 <Link
                   href="/sign-up"
                   className="text-blue-500 hover:text-blue-600 dark:text-blue-400"

@@ -5,13 +5,82 @@ import Label from "@/components/form/Label";
 import { EyeCloseIcon, EyeIcon } from "@/icons";
 import BackButton from "@/layout/back-button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { useSession } from "./auth.context";
+// Remplacement par tes nouvelles conventions unifiées
+import { RegisterFormValues, registerFormSchema } from "../schemas/auth";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { signUpAction } from "../api/action";
+import PhoneInput from "@/components/form/group-input/PhoneInput";
+import { UserRole } from "@/lib/users/api/types";
 
 export default function SignUpForm() {
+  const router = useRouter();
+  const { setUser } = useSession();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting: loading },
+    control,
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerFormSchema), // Plus besoin de casting "as any"
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      phoneNumber: "",
+      email: "",
+      password: "",
+      confirmNewPassword: "",
+    },
+  });
+
+  const [errorFromApi, setErrorFromApi] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [showconfirmNewPassword, setShowconfirmNewPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+
+  const onSubmit = async (data: RegisterFormValues) => {
+    if (!isChecked) {
+      toast.error("Veuillez accepter les termes et conditions.");
+      return;
+    }
+
+    try {
+      setErrorFromApi(null);
+      const result = await signUpAction({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+        password: data.password,
+        confirmNewPassword: data.confirmNewPassword,
+      });
+
+      if (!result.ok) {
+        setErrorFromApi(
+          result.error.message || "Échec de la création du compte",
+        );
+        toast.error("Erreur de création de compte !");
+        return;
+      }
+
+      setUser(result.data);
+      router.push(
+        result.data.role === UserRole.ADMIN ? "/dashboard" : "/account",
+      );
+      toast.success("Compte créé avec succès !");
+    } catch (error: any) {
+      setErrorFromApi(error?.message || "Une erreur inattendue est survenue");
+      toast.error("Erreur de création de compte !");
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 lg:w-1/2 w-full overflow-y-auto no-scrollbar">
+    <div className="flex flex-col pb-4 flex-1 lg:w-1/2 w-full overflow-y-auto no-scrollbar">
       <BackButton link="/" text="Back to Home" />
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
@@ -76,55 +145,91 @@ export default function SignUpForm() {
                 </span>
               </div>
             </div>
-            <form>
+
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-5">
+                {errorFromApi && (
+                  <p className="p-3 text-sm text-center text-red-500 bg-red-100 rounded">
+                    {errorFromApi}
+                  </p>
+                )}
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  {/* <!-- First Name --> */}
+                  {/* */}
                   <div className="sm:col-span-1">
-                    <Label>
-                      First Name<span className="text-red-500">*</span>
-                    </Label>
+                    <Label required>First Name</Label>
                     <Input
                       type="text"
-                      id="fname"
-                      name="fname"
+                      id="firstName"
+                      {...register("firstName")}
                       placeholder="Enter your first name"
                     />
+                    {errors.firstName && (
+                      <p className="mt-1 text-sm text-error-500">
+                        {errors.firstName.message}
+                      </p>
+                    )}
                   </div>
-                  {/* <!-- Last Name --> */}
+                  {/* */}
                   <div className="sm:col-span-1">
-                    <Label>
-                      Last Name<span className="text-red-500">*</span>
-                    </Label>
+                    <Label required>Last Name</Label>
                     <Input
                       type="text"
-                      id="lname"
-                      name="lname"
+                      id="lastName"
                       placeholder="Enter your last name"
+                      {...register("lastName")}
                     />
+                    {errors.lastName && (
+                      <p className="mt-1 text-sm text-error-500">
+                        {errors.lastName.message}
+                      </p>
+                    )}
                   </div>
                 </div>
-                {/* <!-- Email --> */}
+                {/* */}
                 <div>
-                  <Label>
-                    Email<span className="text-red-500">*</span>
-                  </Label>
+                  <Label required>Email</Label>
                   <Input
                     type="email"
                     id="email"
-                    name="email"
+                    {...register("email")}
                     placeholder="Enter your email"
                   />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-error-500">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
-                {/* <!-- Password --> */}
+                {/* */}
                 <div>
-                  <Label>
-                    Password<span className="text-red-500">*</span>
-                  </Label>
+                  <Label required>Phone</Label>
+                  <Controller
+                    name="phoneNumber"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <PhoneInput
+                        selectPosition="start"
+                        countries={countries}
+                        placeholder="+212 (600) 000-000"
+                        value={value}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                  {errors.phoneNumber && (
+                    <p className="mt-1 text-sm text-error-500">
+                      {errors.phoneNumber.message}
+                    </p>
+                  )}
+                </div>
+                {/* */}
+                <div>
+                  <Label required>Password</Label>
                   <div className="relative">
                     <Input
-                      placeholder="Enter your password"
                       type={showPassword ? "text" : "password"}
+                      {...register("password")}
+                      placeholder="Enter your password"
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -137,8 +242,42 @@ export default function SignUpForm() {
                       )}
                     </span>
                   </div>
+                  {errors.password && (
+                    <p className="mt-1 text-sm text-error-500">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
-                {/* <!-- Checkbox --> */}
+                {/* */}
+                <div>
+                  <Label required>Confirm Password</Label>
+                  <div className="relative">
+                    <Input
+                      type={showconfirmNewPassword ? "text" : "password"}
+                      {...register("confirmNewPassword")}
+                      placeholder="Confirm your password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowconfirmNewPassword(!showconfirmNewPassword)
+                      }
+                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                    >
+                      {showconfirmNewPassword ? (
+                        <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
+                      ) : (
+                        <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.confirmNewPassword && (
+                    <p className="mt-1 text-sm text-error-500">
+                      {errors.confirmNewPassword.message}
+                    </p>
+                  )}
+                </div>
+                {/* */}
                 <div className="flex items-center gap-3">
                   <Checkbox
                     className="w-5 h-5"
@@ -156,10 +295,14 @@ export default function SignUpForm() {
                     </span>
                   </p>
                 </div>
-                {/* <!-- Button --> */}
+                {/* */}
                 <div>
-                  <button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-blue-500 shadow-theme-xs hover:bg-blue-600">
-                    Sign Up
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="hover: cursor-pointer flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-blue-500 shadow-theme-xs hover:bg-blue-600 disabled:opacity-50"
+                  >
+                    {loading ? "Signing up..." : "Sign Up"}
                   </button>
                 </div>
               </div>
@@ -167,7 +310,7 @@ export default function SignUpForm() {
 
             <div className="mt-5">
               <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                Already have an account?
+                Already have an account?{" "}
                 <Link
                   href="/sign-in"
                   className="text-blue-500 hover:text-blue-600 dark:text-blue-400"
@@ -182,3 +325,12 @@ export default function SignUpForm() {
     </div>
   );
 }
+
+const countries = [
+  { code: "KM", label: "+269" },
+  { code: "MA", label: "+212" },
+  { code: "US", label: "+1" },
+  { code: "GB", label: "+44" },
+  { code: "CA", label: "+1" },
+  { code: "AU", label: "+61" },
+];

@@ -1,3 +1,4 @@
+import { Meta } from "@/lib/shared/types";
 import { UserSummary } from "@/lib/users/api/types";
 
 // ============================================================================
@@ -21,18 +22,18 @@ export type CommentFilters = {
   postId?: number;
   authorId?: number;
   page?: number;
+  limit?: number;
   size?: number;
+  search?: string;
   sort?: string;
 };
 
-export type CommentsResult = {
+export type CommentsResponse = {
   data: Comment[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-  };
+  meta: Meta;
 };
+
+export type CommentsResult = CommentsResponse;
 
 // ============================================================================
 // MUTATION PAYLOADS

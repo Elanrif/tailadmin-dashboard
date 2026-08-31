@@ -1,30 +1,21 @@
 "server-only";
 
-import { AxiosResponse } from "axios";
 import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
 import { getLogger } from "@config/logger.config";
-import {
-  Post,
-  PostCreate,
-  PostFilters,
-  PostUpdate,
-  PostsResult,
-} from "@/lib/posts/api/types";
-import {
-  parsePostApiCreate,
-  parsePostApiUpdate,
-} from "@/lib/posts/schemas/post";
-import { ApiErrorResponse } from "@/lib/_/errors/api-error.server";
-import { Result } from "@/lib/_/errors/response.model";
-import { ApiError, badRequestApiError } from "@/lib/_/errors/api-error";
-import { validateId } from "@/utils";
 
-/**
- * ⚠️ Never trust the client input
- * ❌ Someone can bypass the form
- * ✅ Protection against malicious bugs
- */
+import { Post, PostFilters, PostsResponse } from "@/lib/posts/api/types";
+
+import {
+  PostCreatePayload,
+  PostUpdatePayload,
+  postCreateSchema,
+  postUpdateSchema,
+} from "@/lib/posts/schemas/post";
+import { validateId } from "@/utils";
+import { Result } from "@/lib/shared/types";
+import { ApiError } from "@/lib/shared/api-error";
+
 const {
   api: {
     rest: {
@@ -35,140 +26,196 @@ const {
 
 const logger = getLogger("server");
 
-/**
- * Fetch all posts
- */
+const postUrl = (id: number) => `${postsUrl}/${id}`;
+
 export async function getPosts(
-  filters?: PostFilters,
-): Promise<Result<PostsResult, ApiError>> {
+  filters: PostFilters = {},
+): Promise<Result<PostsResponse, ApiError>> {
   try {
-    const res = await apiClient().get<unknown, AxiosResponse<PostsResult>>(
-      postsUrl,
+    const params = new URLSearchParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value != null && value !== "") {
+        params.append(key, String(value));
+      }
+    });
+
+    const url = params.toString()
+      ? `${postsUrl}?${params.toString()}`
+      : postsUrl;
+
+    const response = await apiClient().get<PostsResponse>(url);
+
+    logger.info(
       {
-        params: filters,
+        filters,
+        count: response.data.meta.total,
       },
+      "Posts fetched",
     );
-    logger.debug({ count: res.data?.data?.length || 0 }, "Posts fetched");
-    return { ok: true, data: res.data };
+
+    return {
+      ok: true,
+      data: response.data,
+    };
   } catch (error) {
-    logger.error({}, "Failed to fetch posts");
+    // Backend/Axios error: ApiError normalizes the Spring Boot error response.
     return {
       ok: false,
-      error: ApiErrorResponse(error, "getPosts"),
+      error: ApiError(error, "getPosts"),
     };
   }
 }
 
-/**
- * Fetch a single post by ID
- */
-export async function getPostById(id: number): Promise<Result<Post, ApiError>> {
-  const idError = validateId(id);
-  if (idError) return idError;
-
-  try {
-    const res = await apiClient().get<unknown, AxiosResponse<Post>>(
-      `${postsUrl}/${id}`,
-    );
-    return { ok: true, data: res.data };
-  } catch (error) {
-    logger.error({ id }, "Failed to fetch post");
-    return {
-      ok: false,
-      error: ApiErrorResponse(error, "getPostById"),
-    };
-  }
-}
-
-/**
- * Create a new post
- */
 export async function createPost(
-  post: PostCreate,
+  post: PostCreatePayload,
 ): Promise<Result<Post, ApiError>> {
-  const parse = parsePostApiCreate(post);
+  const parse = postCreateSchema.safeParse(post);
+
+  // Zod validation is performed before calling the backend.
+  // The error is already known locally, so it is returned directly
+  // as an ApiError with HTTP 400.
   if (!parse.success) {
     logger.warn(
-      { context: "createPost" },
-      "Validation failed for post creation",
+      {
+        errors: parse.error.format(),
+      },
+      "Post creation validation failed",
     );
+
+    const error: ApiError = {
+      status: 400,
+      error: "Bad Request",
+      message: parse.error.message,
+    };
+
     return {
       ok: false,
-      error: badRequestApiError(parse.error.message),
+      error,
     };
   }
+
   try {
-    const res = await apiClient().post<unknown, AxiosResponse<Post>>(
-      postsUrl,
-      parse.data,
-    );
+    const response = await apiClient().post<Post>(postsUrl, parse.data);
+
     logger.info(
-      { id: res.data.id, title: res.data.title },
-      "Post created successfully",
+      {
+        id: response.data.id,
+      },
+      "Post created",
     );
-    return { ok: true, data: res.data };
+
+    return {
+      ok: true,
+      data: response.data,
+    };
   } catch (error) {
-    logger.error({ title: post.title }, "Failed to create post");
+    // Backend/Axios error: ApiError normalizes the Spring Boot error response.
     return {
       ok: false,
-      error: ApiErrorResponse(error, "createPost"),
+      error: ApiError(error, "createPost"),
     };
   }
 }
 
-/**
- * Update an existing post
- */
+export async function getPostById(id: number): Promise<Result<Post, ApiError>> {
+  const idError = validateId(id);
+
+  if (idError) return idError;
+
+  try {
+    const response = await apiClient().get<Post>(postUrl(id));
+
+    logger.info({ id }, "Post fetched");
+
+    return {
+      ok: true,
+      data: response.data,
+    };
+  } catch (error) {
+    // Backend/Axios error: ApiError normalizes the Spring Boot error response.
+    return {
+      ok: false,
+      error: ApiError(error, "getPostById"),
+    };
+  }
+}
+
 export async function updatePost(
   id: number,
-  post: PostUpdate,
+  post: PostUpdatePayload,
 ): Promise<Result<Post, ApiError>> {
   const idError = validateId(id);
+
   if (idError) return idError;
 
-  const parse = parsePostApiUpdate(post);
+  const parse = postUpdateSchema.safeParse(post);
+
+  // Zod validation is performed before calling the backend.
+  // The error is already known locally, so it is returned directly
+  // as an ApiError with HTTP 400.
   if (!parse.success) {
-    logger.warn({ context: "updatePost" }, "Validation failed for post update");
+    logger.warn(
+      {
+        errors: parse.error.format(),
+      },
+      "Post update validation failed",
+    );
+
+    const error: ApiError = {
+      status: 400,
+      error: "Bad Request",
+      message: parse.error.message,
+    };
+
     return {
       ok: false,
-      error: badRequestApiError(parse.error.message),
+      error,
     };
   }
 
   try {
-    const res = await apiClient().patch<unknown, AxiosResponse<Post>>(
-      `${postsUrl}/${id}`,
+    const response = await apiClient().patch<Post>(
+      postUrl(id),
       parse.data,
     );
-    logger.info({ id, title: res.data.title }, "Post updated successfully");
-    return { ok: true, data: res.data };
+
+    logger.info({ id }, "Post updated");
+
+    return {
+      ok: true,
+      data: response.data,
+    };
   } catch (error) {
-    logger.error({ id }, "Failed to update post");
+    // Backend/Axios error: ApiError normalizes the Spring Boot error response.
     return {
       ok: false,
-      error: ApiErrorResponse(error, "updatePost"),
+      error: ApiError(error, "updatePost"),
     };
   }
 }
 
-/**
- * Delete a post
- */
 export async function deletePost(
   id: number,
-): Promise<Result<{ success: boolean }, ApiError>> {
+): Promise<Result<void, ApiError>> {
   const idError = validateId(id);
+
   if (idError) return idError;
 
   try {
-    await apiClient().delete(`${postsUrl}/${id}`);
-    logger.info({ id }, "Post deleted successfully");
-    return { ok: true, data: { success: true } };
+    await apiClient().delete(postUrl(id));
+
+    logger.info({ id }, "Post deleted");
+
+    return {
+      ok: true,
+      data: undefined,
+    };
   } catch (error) {
-    logger.error({ id }, "Failed to delete post");
+    // Backend/Axios error: ApiError normalizes the Spring Boot error response.
     return {
       ok: false,
-      error: ApiErrorResponse(error, "deletePost"),
+      error: ApiError(error, "deletePost"),
     };
   }
 }

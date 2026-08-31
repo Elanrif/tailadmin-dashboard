@@ -4,12 +4,12 @@ import axios from "axios";
 import environment from "@config/environment.config";
 import { baseRequestConfig } from "@config/axios/base-request.config";
 
-const { apiProxyBase } = environment;
+const { apiBaseUrl, apiProxyBase } = environment;
 
 export function frontendHttp() {
   const instance = axios.create({
     ...baseRequestConfig,
-    baseURL: apiProxyBase,
+    baseURL: typeof window === "undefined" ? apiBaseUrl : apiProxyBase,
   });
   instance.interceptors.response.use(
     (response) => response,

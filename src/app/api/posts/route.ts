@@ -9,15 +9,16 @@ export const dynamic = "force-dynamic";
  * Fetch all posts with optional filters
  */
 export async function GET(request: NextRequest) {
-  const { searchParams } = request.nextUrl;
+  const sp = request.nextUrl?.searchParams ?? new URL(request.url).searchParams;
   const filters: PostFilters = {
-    page: searchParams.get("page")
-      ? Number(searchParams.get("page"))
-      : undefined,
-    size: searchParams.get("size")
-      ? Number(searchParams.get("size"))
-      : undefined,
-    sort: searchParams.get("sort") ?? undefined,
+    page: sp.has("page") ? Number(sp.get("page")) : undefined,
+    size: sp.has("size")
+      ? Number(sp.get("size"))
+      : sp.has("perPage")
+        ? Number(sp.get("perPage"))
+        : undefined,
+    search: sp.get("search") ?? undefined,
+    sort: sp.get("sort") ?? undefined,
   };
 
   const response = await getPosts(filters);

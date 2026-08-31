@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { signIn } from "@/lib/auth/api/services/auth.server";
-import { Login } from "@/lib/auth/api/types";
+import { LoginPayload } from "@/lib/auth/schemas/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  * Sign in a user
  */
 export async function POST(req: NextRequest) {
-  const body = (await req.json()) as Login;
+  const body = (await req.json()) as LoginPayload;
   const response = await signIn(body);
   /**
    * Always return 200 OK (even on business logic errors).

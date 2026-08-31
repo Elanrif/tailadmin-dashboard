@@ -7,15 +7,15 @@ import {
   deleteComment,
 } from "./services/comment.server";
 import { Comment, CommentCreate, CommentUpdate } from "./types";
-import { Result } from "@/lib/_/errors/response.model";
-import { ApiError } from "@/lib/_/errors/api-error";
+import { ApiError } from "@/lib/shared/api-error";
+import { Result } from "@/lib/shared/types";
 
 export async function createCommentAction(
   data: CommentCreate,
 ): Promise<Result<Comment, ApiError>> {
   const result = await createComment(data);
   if (result.ok) {
-    revalidatePath("/comments");
+    revalidatePath("/dashboard/comments");
   }
   return result;
 }
@@ -26,7 +26,7 @@ export async function updateCommentAction(
 ): Promise<Result<Comment, ApiError>> {
   const result = await updateComment(id, data);
   if (result.ok) {
-    revalidatePath("/comments");
+    revalidatePath("/dashboard/comments");
   }
   return result;
 }
@@ -36,7 +36,7 @@ export async function deleteCommentAction(
 ): Promise<Result<{ success: boolean }, ApiError>> {
   const result = await deleteComment(id);
   if (result.ok) {
-    revalidatePath("/comments");
+    revalidatePath("/dashboard/comments");
   }
   return result;
 }

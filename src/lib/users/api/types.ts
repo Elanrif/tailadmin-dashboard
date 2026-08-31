@@ -1,15 +1,17 @@
-/**
- * User types — API response models (no validation)
- * See: src/lib/users/schemas/user.schema.ts for form validation
- */
-
-// ============================================================================
-// ENUMS
-// ============================================================================
+import { Address } from "@/lib/addresses/api/types";
+import { Meta } from "@/lib/shared/types";
 
 export enum UserRole {
   USER = "USER",
   ADMIN = "ADMIN",
+}
+
+export enum UserStatus {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  BLOCKED = "BLOCKED",
+  BANNED = "BANNED",
+  DELETED = "DELETED",
 }
 
 // ============================================================================
@@ -24,7 +26,9 @@ export interface User {
   phoneNumber: string;
   avatarUrl?: string;
   role: UserRole;
-  isActive: boolean;
+  status: UserStatus;
+  addrSize?: number;
+  addresses?: Address[];
   createdAt: string;
   updatedAt: string;
 }
@@ -44,62 +48,20 @@ export interface UserSummary {
 
 export type UserFilters = {
   page?: number;
-  limit?: number;
-  roles?: string;
+  size?: number;
+  role?: UserRole | string;
+  status?: UserStatus | string;
   search?: string;
   sort?: string;
 };
 
-export type UsersResult = {
+export type UsersResponse = {
   data: User[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-  };
+  meta: Meta;
 };
 
 export interface UserLogin {
   token: string;
   refreshToken: string;
   user: User;
-}
-
-// ============================================================================
-// MUTATION PAYLOADS
-// ============================================================================
-
-export interface UserCreate {
-  email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  role: UserRole;
-  password: string;
-  confirmPassword: string;
-  avatarUrl?: string;
-}
-
-export interface UserUpdate {
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  phoneNumber?: string;
-  role?: UserRole;
-  password?: string;
-  confirmPassword?: string;
-  avatarUrl?: string;
-}
-
-export type UserMutationPayload = UserCreate;
-
-// ============================================================================
-// PASSWORD RESET
-// ============================================================================
-
-export interface ResetPassword {
-  code: string;
-  resetToken: string;
-  email: string;
-  newPassword: string;
 }

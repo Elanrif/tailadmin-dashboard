@@ -1,7 +1,6 @@
 import environment from "@config/environment.config";
-import { InternalAxiosRequestConfig } from "axios";
+import { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { getLogger } from "@config/logger.config";
-import { ApiError_ } from "@/lib/_/errors/api-error";
 
 const {
   api: {
@@ -33,11 +32,29 @@ export const ownTokenInterceptor = async (
   config: InternalAxiosRequestConfig,
   access_token?: string,
 ) => {
-  const { headers } = config;
-  if (access_token) {
-    headers["Authorization"] = `Bearer ${access_token}`;
-  } else {
-    throw new ApiError_("Not Authenticated", 401);
+  if (!access_token) {
+    const error = new AxiosError(
+      "Not Authenticated",
+      "ERR_UNAUTHORIZED",
+      config,
+    );
+
+    error.response = {
+      data: {
+        status: 401,
+        error: "Unauthorized",
+        message: "Not Authenticated",
+      },
+      status: 401,
+      statusText: "Unauthorized",
+      headers: {},
+      config,
+    };
+
+    throw error;
   }
+
+  config.headers.Authorization = `Bearer ${access_token}`;
+
   return config;
 };

@@ -1,0 +1,90 @@
+export default function LogoLightMode({className}: {className?: string}) {
+  return (
+    <>
+      <svg
+        className={className}
+        width="420"
+        height="160"
+        viewBox="0 0 420 160"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <linearGradient id="eGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#2563EB" />
+            <stop offset="100%" stop-color="#0F172A" />
+          </linearGradient>
+
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <text
+          x="30"
+          y="120"
+          font-size="110"
+          font-family="Arial, sans-serif"
+          font-weight="800"
+          fill="url(#eGradient)"
+          filter="url(#glow)"
+        >
+          E
+        </text>
+
+        <line
+          x1="105"
+          y1="40"
+          x2="150"
+          y2="40"
+          stroke="#2563EB"
+          stroke-width="4"
+        />
+        <line
+          x1="105"
+          y1="75"
+          x2="140"
+          y2="75"
+          stroke="#2563EB"
+          stroke-width="3"
+        />
+        <line
+          x1="105"
+          y1="110"
+          x2="150"
+          y2="110"
+          stroke="#2563EB"
+          stroke-width="4"
+        />
+
+        <text
+          x="170"
+          y="85"
+          font-size="34"
+          font-family="Arial, sans-serif"
+          fill="#0F172A"
+          letter-spacing="1"
+        >
+          El-
+          <tspan fill="#2563EB" font-weight="700">
+            Anrif
+          </tspan>
+        </text>
+
+        <text
+          x="172"
+          y="115"
+          font-size="14"
+          font-family="Arial, sans-serif"
+          fill="#64748B"
+          letter-spacing="2"
+        >
+          TECH • INNOVATION
+        </text>
+      </svg>
+    </>
+  );
+}

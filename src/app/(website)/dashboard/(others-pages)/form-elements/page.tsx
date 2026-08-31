@@ -1,5 +1,6 @@
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import CheckboxComponents from "@/components/form/form-elements/CheckboxComponents";
+import { CloudinaryImgPattern } from "@/components/form/form-elements/CloudinaryImgPattern";
 import DefaultInputs from "@/components/form/form-elements/DefaultInputs";
 import DropzoneComponent from "@/components/form/form-elements/DropZone";
 import FileInputExample from "@/components/form/form-elements/FileInputExample";
@@ -36,6 +37,7 @@ export default function FormElements() {
           <RadioButtons />
           <ToggleSwitch />
           <DropzoneComponent />
+          <CloudinaryImgPattern />
         </div>
       </div>
     </div>

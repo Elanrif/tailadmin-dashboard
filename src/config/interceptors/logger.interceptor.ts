@@ -11,8 +11,6 @@ export const requestLoggerInterceptor =
       },
       "Request",
     );
-    // logger.debug({ headers: config.headers }, "Request headers");
-    // logger.debug({ data: config.data }, "Request data");
     return config;
   };
 
@@ -27,7 +25,5 @@ export const responseLoggerInterceptor =
       },
       "Response received",
     );
-    // logger.debug({ headers: response.headers }, "Response headers");
-    // logger.debug({ data: response.data }, "Response data");
     return response;
   };

@@ -18,6 +18,7 @@ import {
   UserCircleIcon,
 } from "../icons/index";
 import SidebarWidget from "./SidebarWidget";
+import { ShoppingBasket } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -31,6 +32,15 @@ const navItems: NavItem[] = [
     icon: <GridIcon />,
     name: "Dashboard",
     subItems: [{ name: "Ecommerce", path: "/dashboard", pro: false }],
+  },
+  {
+    icon: <ShoppingBasket />,
+    name: "Store",
+    subItems: [
+      { name: "Users", path: "/dashboard/users", pro: false },
+      { name: "Posts", path: "/dashboard/posts", pro: false },
+      { name: "Comments", path: "/dashboard/comments", pro: false },
+      ],
   },
   {
     icon: <CalenderIcon />,
@@ -48,6 +58,7 @@ const navItems: NavItem[] = [
     icon: <ListIcon />,
     subItems: [
       { name: "Form Elements", path: "/dashboard/form-elements", pro: false },
+      { name: "Form Layout", path: "/dashboard/form-layout", pro: false },
     ],
   },
   {
@@ -84,6 +95,7 @@ const othersItems: NavItem[] = [
       { name: "Avatar", path: "/dashboard/avatars", pro: false },
       { name: "Badge", path: "/dashboard/badge", pro: false },
       { name: "Buttons", path: "/dashboard/buttons", pro: false },
+      { name: "Pagination", path: "/dashboard/paginations", pro: false },
       { name: "Images", path: "/dashboard/images", pro: false },
       { name: "Videos", path: "/dashboard/videos", pro: false },
     ],
@@ -94,6 +106,12 @@ const othersItems: NavItem[] = [
     subItems: [
       { name: "Sign In", path: "/dashboard/signin", pro: false },
       { name: "Sign Up", path: "/dashboard/signup", pro: false },
+      { name: "Reset Password", path: "/dashboard/reset-password", pro: false },
+      {
+        name: "Two-Step Verification",
+        path: "/dashboard/two-step-verification",
+        pro: false,
+      },
     ],
   },
 ];
@@ -223,7 +241,12 @@ const AppSidebar: React.FC = () => {
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  const isActive = useCallback((path: string) => path === pathname, [pathname]);
+  const isActive = useCallback(
+    (path: string) => {
+      return pathname === path || pathname.startsWith(`${path}/`);
+    },
+    [pathname],
+  );
 
   useEffect(() => {
     let submenuMatched = false;
@@ -292,7 +315,7 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`py-8 flex ${
+        className={`py-4 flex ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
@@ -300,25 +323,26 @@ const AppSidebar: React.FC = () => {
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <Image
-                className="dark:hidden"
+                className="dark:hidden w-32 h-auto"
                 src="/images/logo/logo.svg"
                 alt="Logo"
                 width={150}
-                height={40}
+                height={70}
                 style={{ height: "auto" }}
                 priority
               />
               <Image
-                className="hidden dark:block"
+                className="hidden dark:block w-32 h-auto"
                 src="/images/logo/logo-dark.svg"
                 alt="Logo"
                 width={150}
-                height={40}
+                height={70}
                 style={{ height: "auto" }}
               />
             </>
           ) : (
             <Image
+              className="w-32 h-auto"
               src="/images/logo/logo-icon.svg"
               alt="Logo"
               width={32}

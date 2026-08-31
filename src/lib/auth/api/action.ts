@@ -1,86 +1,94 @@
 "use server";
 
 import {
-  changePasswordProfile,
-  editProfile,
+  deleteMyAccount,
   resetPassword,
   signIn as serverSignIn,
   signUp as serverSignUp,
+  updateMyAccount,
+  updateMyPassword,
 } from "@/lib/auth/api/services/auth.server";
 import {
-  ChangePasswordProfileFormData,
-  ProfileUserFormData,
-} from "@/lib/auth/schemas/auth.schema";
+  ChangePwdPayload,
+  DeletePayload,
+  LoginPayload,
+  RegisterPayload,
+  ResetPwdPayload,
+  UserPayload,
+} from "@/lib/auth/schemas/auth";
 import { generateResetToken, sendPasswordResetEmail } from "@/lib/mail";
 import environment from "@/config/environment.config";
-import { Login, Registrer } from "./types";
-import { ResetPassword } from "@/lib/users/api/types";
-import { ApiError } from "@/lib/_/errors/api-error";
-import { ApiErrorResponse } from "@/lib/_/errors/api-error.server";
+import { ApiError } from "@/lib/shared/api-error";
 
-export async function signInAction(credentials: Login) {
+export async function signInAction(credentials: LoginPayload) {
   return serverSignIn(credentials);
 }
 
-export async function signUpAction(userData: Registrer) {
+export async function signUpAction(userData: RegisterPayload) {
   return serverSignUp(userData);
-}
-
-export async function editProfileAction(data: ProfileUserFormData) {
-  return editProfile(data);
 }
 
 export async function sendPasswordResetAction(
   email: string,
 ): Promise<{ success: boolean; message: string } | ApiError> {
   try {
-    // Check if email is valid
+    // Validate the email address before generating the reset token.
     if (!email || !email.includes("@")) {
       return {
-        title: "Invalid email",
         status: 400,
-        detail: "Please provide a valid email address",
-        instance: undefined,
-        errorCode: "INVALID_EMAIL",
-      } as ApiError;
+        error: "Bad Request",
+        message: "Please provide a valid email address",
+      };
     }
 
-    // Generate reset token
+    // Generate the reset token and verification code.
     const { resetToken, code } = generateResetToken();
-    const baseUrl = environment.app.url;
-    const resetUrl = `${baseUrl}/reset-password?token=${resetToken}&code=${code}&email=${encodeURIComponent(email)}`;
 
-    // Send email
+    const baseUrl = environment.app.url;
+
+    const resetUrl =
+      `${baseUrl}/reset-password` +
+      `?token=${resetToken}` +
+      `&code=${code}` +
+      `&email=${encodeURIComponent(email)}`;
+
+    // Send the password reset email.
     const emailSent = await sendPasswordResetEmail(email, resetToken, resetUrl);
 
+    // Return a service-unavailable error if the email could not be sent.
     if (!emailSent) {
       return {
-        title: "Email service unavailable",
         status: 503,
-        detail: "Failed to send reset email. Please try again later.",
-        instance: undefined,
-        errorCode: "EMAIL_SERVICE_UNAVAILABLE",
-      } as ApiError;
+        error: "Service Unavailable",
+        message: "Failed to send reset email. Please try again later.",
+      };
     }
 
-    // Always return success message for security (don't reveal if email exists)
+    // Always return the same message to avoid revealing
+    // whether an account exists for the provided email.
     return {
       success: true,
       message:
         "If an account exists with this email, you will receive password reset instructions.",
     };
   } catch (error: unknown) {
-    const errMsg = ApiErrorResponse(error, "sendPasswordReset action");
-    return errMsg;
+    // Backend/Axios error: normalize it through ApiError.
+    return ApiError(error, "sendPasswordResetAction");
   }
 }
 
-export async function resetPasswordTokenAction(data: ResetPassword) {
+export async function resetPasswordTokenAction(data: ResetPwdPayload) {
   return resetPassword(data);
 }
 
-export async function changePasswordProfileAction(
-  data: ChangePasswordProfileFormData,
-) {
-  return await changePasswordProfile(data);
+export async function updateMyAccountAction(data: UserPayload) {
+  return updateMyAccount(data);
+}
+
+export async function updateMyPasswordAction(data: ChangePwdPayload) {
+  return updateMyPassword(data);
+}
+
+export async function deleteMyAccountAction(data: DeletePayload) {
+  return deleteMyAccount(data);
 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { signUp } from "@/lib/auth/api/services/auth.server";
-import { Registrer } from "@/lib/auth/api/types";
+import { RegisterPayload } from "@/lib/auth/schemas/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  * Register a new user
  */
 export async function POST(req: NextRequest) {
-  const body = (await req.json()) as Registrer;
+  const body = (await req.json()) as RegisterPayload;
   const res = await signUp(body);
   /**
    * Always return 200 OK (even on business logic errors).

@@ -1,9 +1,9 @@
 import { AxiosResponse } from "axios";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { proxyEnvironment } from "@config/proxy-api.config";
-import { Comment, CommentFilters, CommentsResult } from "../types";
-import { Result } from "@/lib/_/errors/response.model";
-import { ApiError } from "@/lib/_/errors/api-error";
+import { Comment, CommentFilters, CommentsResponse } from "../types";
+import { Result } from "@/lib/shared/types";
+import { ApiError } from "@/lib/shared/api-error";
 
 const {
   api: {
@@ -15,10 +15,10 @@ const {
 
 export async function fetchComments(
   filters?: CommentFilters,
-): Promise<Result<CommentsResult, ApiError>> {
+): Promise<Result<CommentsResponse, ApiError>> {
   const res = await frontendHttp().get<
     unknown,
-    AxiosResponse<Result<CommentsResult, ApiError>>
+    AxiosResponse<Result<CommentsResponse, ApiError>>
   >(commentsUrl, { params: filters });
   return res.data;
 }

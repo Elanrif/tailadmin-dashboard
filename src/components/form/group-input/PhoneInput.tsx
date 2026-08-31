@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface CountryCode {
   code: string;
@@ -11,6 +11,7 @@ interface PhoneInputProps {
   placeholder?: string;
   onChange?: (phoneNumber: string) => void;
   selectPosition?: "start" | "end"; // New prop for dropdown position
+  value?: string;
 }
 
 const PhoneInput: React.FC<PhoneInputProps> = ({
@@ -18,14 +19,23 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   placeholder = "+1 (555) 000-0000",
   onChange,
   selectPosition = "start", // Default position is 'start'
+  value,
 }) => {
-  const [selectedCountry, setSelectedCountry] = useState<string>("US");
-  const [phoneNumber, setPhoneNumber] = useState<string>("+1");
+  const [selectedCountry, setSelectedCountry] = useState<string>("MA");
+  const [phoneNumber, setPhoneNumber] = useState<string>(value || "+212");
 
   const countryCodes: Record<string, string> = countries.reduce(
     (acc, { code, label }) => ({ ...acc, [code]: label }),
-    {}
+    {},
   );
+
+  useEffect(() => {
+    if (value) {
+      setTimeout(() => {
+        setPhoneNumber(value);
+      }, 0);
+    }
+  }, [value]);
 
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newCountry = e.target.value;

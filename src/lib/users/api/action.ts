@@ -1,38 +1,39 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { User, UserCreate, UserUpdate } from "./types";
+import { User } from "./types";
 import { createUser, deleteUser, updateUser } from "./services/user.server";
-import { Result } from "@/lib/_/errors/response.model";
-import { ApiError } from "@/lib/_/errors/api-error";
+import { UserCreatePayload, UserUpdatePayload } from "../schemas/user";
+import { Result } from "@/lib/shared/types";
+import { ApiError } from "@/lib/shared/api-error";
 
 export async function createUserAction(
-  data: UserCreate,
+  data: UserCreatePayload,
 ): Promise<Result<User, ApiError>> {
   const result = await createUser(data);
   if (result.ok) {
-    revalidatePath("/users");
+    revalidatePath("/dashboard/users");
   }
   return result;
 }
 
 export async function updateUserAction(
   id: number,
-  data: UserUpdate,
+  data: UserUpdatePayload,
 ): Promise<Result<User, ApiError>> {
   const result = await updateUser(id, data);
   if (result.ok) {
-    revalidatePath("/users");
+    revalidatePath("/dashboard/users");
   }
   return result;
 }
 
 export async function deleteUserAction(
   id: number,
-): Promise<Result<{ success: boolean }, ApiError>> {
+): Promise<Result<void, ApiError>> {
   const result = await deleteUser(id);
   if (result.ok) {
-    revalidatePath("/users");
+    revalidatePath("/dashboard/users");
   }
   return result;
 }

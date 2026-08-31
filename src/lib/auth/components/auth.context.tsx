@@ -21,12 +21,12 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(AUTH_KEY);
-      setTimeout(() => setUserState(stored ? (JSON.parse(stored) as User) : null), 0);
-    } catch {
       setTimeout(
-        () => setUserState(null),
+        () => setUserState(stored ? (JSON.parse(stored) as User) : null),
         0,
       );
+    } catch {
+      setTimeout(() => setUserState(null), 0);
     } finally {
       setIsLoading(false);
     }

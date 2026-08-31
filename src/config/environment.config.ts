@@ -12,14 +12,16 @@ const environment = {
   api: {
     rest: {
       endpoints: {
+        addresses: `${API_URL}/addresses`,
         comments: `${API_URL}/comments`,
         posts: `${API_URL}/posts`,
         users: `${API_URL}/users`,
         auth: {
+          deleteMyAccount: `${API_URL}/auth/me/delete-account`,
           login: `${API_URL}/auth/login`,
           register: `${API_URL}/auth/register`,
-          editProfile: `${API_URL}/auth/edit-profile`,
-          updatePassword: `${API_URL}/auth/change-password-profile`,
+          editMyAccount: `${API_URL}/auth/me`,
+          changeMyPwd: `${API_URL}/auth/me/password`,
           resetPassword: `${API_URL}/auth/reset-password`,
         },
       },

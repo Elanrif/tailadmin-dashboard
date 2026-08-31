@@ -9,8 +9,13 @@ export async function GET(_request: NextRequest) {
     _request.nextUrl?.searchParams ?? new URL(_request.url).searchParams;
   const filters: UserFilters = {
     page: sp.has("page") ? Number(sp.get("page")) : undefined,
-    limit: sp.has("limit") ? Number(sp.get("limit")) : undefined,
-    roles: sp.get("roles") ?? undefined,
+    size: sp.has("size")
+      ? Number(sp.get("size"))
+      : sp.has("perPage")
+        ? Number(sp.get("perPage"))
+        : undefined,
+    role: sp.get("role") ?? undefined,
+    status: sp.get("status") ?? undefined,
     search: sp.get("search") ?? undefined,
     sort: sp.get("sort") ?? undefined,
   };

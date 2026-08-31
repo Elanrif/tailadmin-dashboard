@@ -15,10 +15,9 @@ import {
   parseCommentApiCreate,
   parseCommentApiUpdate,
 } from "@/lib/comments/schemas/comment";
-import { ApiErrorResponse } from "@/lib/_/errors/api-error.server";
-import { ApiError, badRequestApiError } from "@/lib/_/errors/api-error";
-import { Result } from "@/lib/_/errors/response.model";
 import { validateId } from "@/utils";
+import { Result } from "@/lib/shared/types";
+import { ApiError } from "@/lib/shared/api-error";
 
 /**
  * ⚠️ Never trust the client input
@@ -35,9 +34,6 @@ const {
 
 const logger = getLogger("server");
 
-/**
- * Fetch all comments
- */
 export async function getComments(
   filters?: CommentFilters,
 ): Promise<Result<CommentsResult, ApiError>> {
@@ -50,23 +46,25 @@ export async function getComments(
     );
 
     logger.debug({ count: res.data?.data?.length || 0 }, "Comments fetched");
-    return { ok: true, data: res.data };
+
+    return {
+      ok: true,
+      data: res.data,
+    };
   } catch (error) {
-    logger.error({}, "Failed to fetch comments");
+    // Backend/Axios error: ApiError normalizes the Spring Boot error response.
     return {
       ok: false,
-      error: ApiErrorResponse(error, "getComments"),
+      error: ApiError(error, "getComments"),
     };
   }
 }
 
-/**
- * Fetch a single comment by ID
- */
 export async function getCommentById(
   id: number,
 ): Promise<Result<Comment, ApiError>> {
   const idError = validateId(id);
+
   if (idError) return idError;
 
   try {
@@ -74,31 +72,44 @@ export async function getCommentById(
       `${commentsUrl}/${id}`,
     );
 
-    return { ok: true, data: res.data };
+    return {
+      ok: true,
+      data: res.data,
+    };
   } catch (error) {
-    logger.error({ id }, "Failed to fetch comment");
+    // Backend/Axios error: ApiError normalizes the Spring Boot error response.
     return {
       ok: false,
-      error: ApiErrorResponse(error, "getCommentById"),
+      error: ApiError(error, "getCommentById"),
     };
   }
 }
 
-/**
- * Create a new comment
- */
 export async function createComment(
   comment: CommentCreate,
 ): Promise<Result<Comment, ApiError>> {
   const parse = parseCommentApiCreate(comment);
+
+  // Zod validation is performed before calling the backend.
+  // The validation error is already known locally, so we return
+  // it directly as an ApiError with HTTP 400.
   if (!parse.success) {
     logger.warn(
-      { context: "createComment" },
-      "Validation failed for comment creation",
+      {
+        errors: parse.error.format(),
+      },
+      "Comment creation validation failed",
     );
+
+    const error: ApiError = {
+      status: 400,
+      error: "Bad Request",
+      message: parse.error.message,
+    };
+
     return {
       ok: false,
-      error: badRequestApiError(parse.error.message),
+      error,
     };
   }
 
@@ -107,39 +118,58 @@ export async function createComment(
       commentsUrl,
       parse.data,
     );
+
     logger.info(
-      { id: res.data.id, content: res.data.content },
+      {
+        id: res.data.id,
+        content: res.data.content,
+      },
       "Comment created successfully",
     );
-    return { ok: true, data: res.data };
+
+    return {
+      ok: true,
+      data: res.data,
+    };
   } catch (error) {
-    logger.error({ content: comment.content }, "Failed to create comment");
+    // Backend/Axios error: ApiError normalizes the Spring Boot error response.
     return {
       ok: false,
-      error: ApiErrorResponse(error, "createComment"),
+      error: ApiError(error, "createComment"),
     };
   }
 }
 
-/**
- * Update an existing comment
- */
 export async function updateComment(
   id: number,
   comment: CommentUpdate,
 ): Promise<Result<Comment, ApiError>> {
   const idError = validateId(id);
+
   if (idError) return idError;
 
   const parse = parseCommentApiUpdate(comment);
+
+  // Zod validation is performed before calling the backend.
+  // The validation error is already known locally, so we return
+  // it directly as an ApiError with HTTP 400.
   if (!parse.success) {
     logger.warn(
-      { context: "updateComment" },
-      "Validation failed for comment update",
+      {
+        errors: parse.error.format(),
+      },
+      "Comment update validation failed",
     );
+
+    const error: ApiError = {
+      status: 400,
+      error: "Bad Request",
+      message: parse.error.message,
+    };
+
     return {
       ok: false,
-      error: badRequestApiError(parse.error.message),
+      error,
     };
   }
 
@@ -148,38 +178,49 @@ export async function updateComment(
       `${commentsUrl}/${id}`,
       parse.data,
     );
+
     logger.info(
-      { id, content: res.data.content },
+      {
+        id,
+        content: res.data.content,
+      },
       "Comment updated successfully",
     );
-    return { ok: true, data: res.data };
+
+    return {
+      ok: true,
+      data: res.data,
+    };
   } catch (error) {
-    logger.error({ id }, "Failed to update comment");
+    // Backend/Axios error: ApiError normalizes the Spring Boot error response.
     return {
       ok: false,
-      error: ApiErrorResponse(error, "updateComment"),
+      error: ApiError(error, "updateComment"),
     };
   }
 }
 
-/**
- * Delete a comment
- */
 export async function deleteComment(
   id: number,
 ): Promise<Result<{ success: boolean }, ApiError>> {
   const idError = validateId(id);
+
   if (idError) return idError;
 
   try {
     await apiClient().delete(`${commentsUrl}/${id}`);
+
     logger.info({ id }, "Comment deleted successfully");
-    return { ok: true, data: { success: true } };
+
+    return {
+      ok: true,
+      data: { success: true },
+    };
   } catch (error) {
-    logger.error({ id }, "Failed to delete comment");
+    // Backend/Axios error: ApiError normalizes the Spring Boot error response.
     return {
       ok: false,
-      error: ApiErrorResponse(error, "deleteComment"),
+      error: ApiError(error, "deleteComment"),
     };
   }
 }

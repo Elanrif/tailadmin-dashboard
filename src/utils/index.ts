@@ -1,5 +1,5 @@
-import { ApiError } from "@/lib/_/errors/api-error";
-import { Result } from "@/lib/_/errors/response.model";
+import { ApiError } from "@/lib/shared/api-error";
+import { Result } from "@/lib/shared/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -34,10 +34,8 @@ export function validateId(id: number): Result<never, ApiError> | null {
       ok: false,
       error: {
         status: 400,
-        detail: "Invalid user ID",
-        title: "Bad Request",
-        instance: undefined,
-        errorCode: "INVALID_ID",
+        message: "Invalid user ID",
+        error: "INVALID_ID",
       },
     };
   }

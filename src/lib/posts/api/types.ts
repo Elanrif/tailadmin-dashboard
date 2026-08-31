@@ -3,6 +3,8 @@
  * See: src/lib/posts/schemas/post.schema.ts for form validation
  */
 
+import { Comment } from "@/lib/comments/api/types";
+import { Meta } from "@/lib/shared/types";
 import { UserSummary } from "@/lib/users/api/types";
 
 // ============================================================================
@@ -16,9 +18,16 @@ export interface Post {
   description: string;
   likes: number;
   author: UserSummary;
+  commentSize?: number;
+  comments?: Comment[];
   createdAt: string;
   updatedAt: string;
 }
+
+export type PostsResponse = {
+  data: Post[];
+  meta: Meta;
+};
 
 // ============================================================================
 // REQUEST & RESPONSE TYPES
@@ -27,28 +36,16 @@ export interface Post {
 export type PostFilters = {
   page?: number;
   size?: number;
+  search?: string;
   sort?: string;
 };
 
-export type PostsResult = {
-  data: Post[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-  };
-};
-
-// ============================================================================
-// MUTATION PAYLOADS
-// ============================================================================
-
-export interface PostCreate {
+export type PostCreate = {
   title: string;
-  imageUrl: string;
-  description: string;
-  likes?: number;
-  authorId: number;
-}
+  description?: string;
+  imageUrl?: string;
+  likes: number;
+  authorId?: number;
+};
 
 export type PostUpdate = Partial<PostCreate>;
