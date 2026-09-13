@@ -74,21 +74,14 @@ export const loginFormSchema = z.object({
 export const registerFormSchema = z
   .object({
     ...coreFields,
-    password: z.string(),
-    confirmPassword: z.string(),
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
   })
   .superRefine((data, ctx) => {
-    if (data.password.length < 8) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["password"],
-        message: "Password must be at least 8 characters",
-      });
-    }
     if (data.password !== data.confirmPassword) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ["confirmNewPassword"],
+        path: ["confirmPassword"],
         message: "Passwords do not match",
       });
     }

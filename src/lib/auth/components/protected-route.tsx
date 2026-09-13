@@ -4,28 +4,46 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { UserRole } from "@/lib/users/api/types";
 import { useSession } from "./auth.context";
+import { ROUTES } from "@/utils/routes";
+
+const {
+  DASHBOARD, ACCOUNT, SIGN_IN
+} = ROUTES
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  adminOnly?: boolean;
+  allowedRoles?: UserRole[];
   guestOnly?: boolean;
   redirectTo?: string;
 }
 
+function getHomeRouteForRole(role: UserRole): string {
+  switch (role) {
+    case UserRole.ADMIN:
+      return DASHBOARD;
+    case UserRole.USER:
+    default:
+      return ACCOUNT;
+  }
+}
+
 export function ProtectedRoute({
   children,
-  adminOnly = false,
+  allowedRoles,
   guestOnly = false,
-  redirectTo = "/sign-in",
+  redirectTo = SIGN_IN,
 }: ProtectedRouteProps) {
   const { user, isLoading } = useSession();
   const router = useRouter();
+
+  const isWrongRole =
+    !!user && !!allowedRoles && !allowedRoles.includes(user.role);
 
   useEffect(() => {
     if (isLoading) return;
 
     if (guestOnly && user) {
-      router.replace("/dashboard");
+      router.replace(getHomeRouteForRole(user.role));
       return;
     }
 
@@ -34,18 +52,15 @@ export function ProtectedRoute({
       return;
     }
 
-    if (adminOnly && user?.role !== UserRole.ADMIN) {
-      router.replace("/account");
+    if (isWrongRole) {
+      router.replace(getHomeRouteForRole(user!.role));
     }
-  }, [user, isLoading, router, adminOnly, guestOnly, redirectTo]);
+  }, [user, isLoading, router, guestOnly, redirectTo, isWrongRole]);
 
-  // Wait until the loading state is resolved before rendering children
   if (isLoading) return null;
-
-  // Render children only if the conditions are met
   if (guestOnly && user) return null;
   if (!guestOnly && !user) return null;
-  if (adminOnly && user?.role !== UserRole.ADMIN) return null;
+  if (isWrongRole) return null;
 
   return <>{children}</>;
 }

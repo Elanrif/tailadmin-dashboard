@@ -5,6 +5,7 @@ import AppHeader from "@/layout/AppHeader";
 import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
 import { ProtectedRoute } from "@/lib/auth/components/protected-route";
+import { UserRole } from "@/lib/users/api/types";
 import React from "react";
 
 export default function AdminLayout({
@@ -23,7 +24,7 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen xl:flex">
-      <ProtectedRoute adminOnly={true}>
+      <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
         {/* Sidebar and Backdrop */}
         <AppSidebar />
         <Backdrop />

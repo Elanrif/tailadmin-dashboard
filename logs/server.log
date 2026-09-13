@@ -4245,3 +4245,140 @@
 {"level":30,"time":1789229817132,"pid":34540,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
 {"level":30,"time":1789229821141,"pid":34540,"hostname":"ELTECH","count":16,"msg":"Users fetched"}
 {"level":30,"time":1789229821262,"pid":34540,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789302959471,"pid":12240,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1789302960497,"pid":12240,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"User signed in"}
+{"level":30,"time":1789302998989,"pid":12240,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
+{"level":30,"time":1789303013923,"pid":12240,"hostname":"ELTECH","id":15,"msg":"User deleted"}
+{"level":30,"time":1789303014383,"pid":12240,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
+{"level":30,"time":1789303014785,"pid":12240,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
+{"level":30,"time":1789303079794,"pid":12240,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":30,"time":1789303080138,"pid":12240,"hostname":"ELTECH","count":15,"msg":"Users fetched"}
+{"level":30,"time":1789303080266,"pid":12240,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789303093935,"pid":12240,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":50,"time":1789303094172,"pid":12240,"hostname":"ELTECH","error":"Unauthorized","timestamp":"2026-09-13T12:38:14.160Z","status":401,"message":"Invalid email or password","path":"/api/v1/auth/login","msg":"API error"}
+{"level":40,"time":1789303094192,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T12:38:14.160Z","status":401,"error":"Unauthorized","message":"Invalid email or password","path":"/api/v1/auth/login","msg":"[API Error] [signIn]"}
+{"level":30,"time":1789303098036,"pid":12240,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1789303098198,"pid":12240,"hostname":"ELTECH","id":2,"email":"visitor@gmail.com","msg":"User signed in"}
+{"level":30,"time":1789303151306,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":30,"time":1789303151447,"pid":12240,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":50,"time":1789303151472,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T12:39:11.457Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789303151475,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T12:39:11.457Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":30,"time":1789303172939,"pid":12240,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1789303173146,"pid":12240,"hostname":"ELTECH","id":2,"email":"visitor@gmail.com","msg":"User signed in"}
+{"level":50,"time":1789303179410,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T12:39:39.401Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789303179412,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T12:39:39.401Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789303180469,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T12:39:40.465Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789303180470,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T12:39:40.465Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789303488879,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T12:44:48.872Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789303488880,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T12:44:48.872Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789304492934,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:01:32.927Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789304492935,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:01:32.927Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":30,"time":1789305082794,"pid":12240,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1789305083087,"pid":12240,"hostname":"ELTECH","id":2,"email":"visitor@gmail.com","msg":"User signed in"}
+{"level":50,"time":1789305123176,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:12:02.939Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789305123177,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:12:02.939Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789305124235,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:12:04.230Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789305124236,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:12:04.230Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789305126293,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:12:06.285Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789305126294,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:12:06.285Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789305130343,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:12:10.335Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789305130344,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:12:10.335Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":30,"time":1789306324269,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":50,"time":1789306328754,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:32:08.479Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306328757,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:32:08.479Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306329831,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:32:09.826Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306329832,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:32:09.826Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306331914,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:32:11.907Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306331915,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:32:11.907Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306336007,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:32:15.998Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306336008,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:32:15.998Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":30,"time":1789306392549,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":50,"time":1789306392822,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:33:12.790Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306392823,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:33:12.790Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306413614,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:33:33.600Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306413615,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:33:33.600Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306416354,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:33:36.325Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306416355,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:33:36.325Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":30,"time":1789306417470,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":50,"time":1789306417735,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:33:37.708Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306417736,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:33:37.708Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306418817,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:33:38.812Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306418818,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:33:38.812Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306442430,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:34:02.423Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306442431,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:34:02.423Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306663336,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:37:43.320Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306663337,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:37:43.320Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":30,"time":1789306668132,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":50,"time":1789306668251,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:37:48.244Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306668252,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:37:48.244Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306669315,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:37:49.310Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306669315,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:37:49.310Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306671380,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:37:51.376Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306671381,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:37:51.376Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306675443,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:37:55.439Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306675444,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:37:55.439Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":30,"time":1789306687265,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":50,"time":1789306687416,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:38:07.403Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306687416,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:38:07.403Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306688467,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:38:08.461Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306688467,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:38:08.461Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306690549,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:38:10.541Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306690550,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:38:10.541Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306782638,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:39:42.590Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306782639,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:39:42.590Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":30,"time":1789306798513,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":50,"time":1789306798712,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:39:58.698Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306798713,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:39:58.698Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306901609,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:41:41.600Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306901611,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:41:41.600Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306903687,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:41:43.679Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306903688,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:41:43.679Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306907763,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:41:47.755Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306907763,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:41:47.755Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":30,"time":1789306912071,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":50,"time":1789306912240,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:41:52.228Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306912240,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:41:52.228Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306913311,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:41:53.306Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306913311,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:41:53.306Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306915361,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:41:55.356Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306915362,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:41:55.356Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306919417,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:41:59.409Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306919417,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:41:59.409Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":30,"time":1789306927013,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":50,"time":1789306927191,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:42:07.180Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306927192,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:42:07.180Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306928299,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:42:08.282Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306928299,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:42:08.282Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306930364,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:42:10.358Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306930365,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:42:10.358Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789306934414,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:42:14.409Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789306934414,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:42:14.409Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":30,"time":1789307017966,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":50,"time":1789307022197,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:43:42.190Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789307022198,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:43:42.190Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789307023921,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:43:43.905Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789307023923,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:43:43.905Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":30,"time":1789307025081,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":50,"time":1789307025250,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:43:45.239Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789307025251,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:43:45.239Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789307137350,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:45:37.340Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789307137351,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:45:37.340Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789307139424,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:45:39.414Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789307139424,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:45:39.414Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789307143485,"pid":12240,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-13T13:45:43.476Z","status":403,"message":"Forbidden","path":"/api/v1/users","msg":"API error"}
+{"level":40,"time":1789307143486,"pid":12240,"hostname":"ELTECH","timestamp":"2026-09-13T13:45:43.476Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/users","msg":"[API Error] [getUsers]"}
+{"level":30,"time":1789307296019,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":30,"time":1789307350080,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":30,"time":1789307350289,"pid":12240,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789307405747,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":30,"time":1789307405840,"pid":12240,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789307473235,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":30,"time":1789307473256,"pid":12240,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789307736571,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":30,"time":1789307736645,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":30,"time":1789307798608,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":30,"time":1789307798834,"pid":12240,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":30,"time":1789307846893,"pid":12240,"hostname":"ELTECH","addressId":3,"msg":"Address fetched"}
+{"level":30,"time":1789307855039,"pid":12240,"hostname":"ELTECH","addressId":3,"msg":"Address updated successfully"}
+{"level":30,"time":1789307855470,"pid":12240,"hostname":"ELTECH","addressId":3,"msg":"Address fetched"}
+{"level":30,"time":1789307855668,"pid":12240,"hostname":"ELTECH","addressId":3,"msg":"Address fetched"}

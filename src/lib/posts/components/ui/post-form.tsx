@@ -2,11 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { usersQueryOptions } from "@/lib/users/api/queries/queries.client";
@@ -54,6 +50,15 @@ export function PostForm({
   // Sur édition, l'auteur n'est jamais modifiable (absent de postUpdateSchema)
   const showAuthorSelect = !isEdit && selectedAuthorId == null;
 
+  // Ne fetch la liste des users QUE si le select doit réellement s'afficher
+  // (admin créant un post sans auteur prérempli).
+  // Un simple utilisateur avec authorId déjà fourni via hiddenFields
+  // ne déclenche jamais cette requête (évite le 403 + le crash).
+  const { data: usersResult } = useQuery({
+    ...usersQueryOptions({ size: environment.pagination.size }),
+    enabled: showAuthorSelect,
+  });
+  const users = usersResult?.ok ? usersResult.data.content : [];
   const formSchema = isEdit ? postUpdateSchema : postCreateSchema;
 
   const {
@@ -135,14 +140,7 @@ export function PostForm({
       return;
     }
     createMutation.mutate(values as PostCreateFormValues);
-    // Pas de handleImageRemove() ici : le nettoyage ne doit se faire
-    // qu'après confirmation du succès (voir image.clearDraft() dans onSuccess)
   };
-
-  const { data: usersResult } = useSuspenseQuery(
-    usersQueryOptions({ size: environment.pagination.size }),
-  );
-  const users = usersResult.ok ? usersResult.data.content : [];
 
   const image = useImageDraft({
     storageKey: `post:image:${initialData?.id ?? "new"}`,

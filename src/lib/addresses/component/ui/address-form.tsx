@@ -3,8 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useMutation,
+  useQuery,
   useQueryClient,
-  useSuspenseQuery,
 } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -31,7 +31,6 @@ import { AddressesQueryProps } from "../addresses";
 import Select from "@/components/form/Select";
 import { User } from "@/lib/users/api/types";
 import { usersQueryOptions } from "@/lib/users/api/queries/queries.client";
-import { ErrorState } from "@/lib/shared/ui/error-state";
 import environment from "@/config/environment.config";
 
 export default function AddressForm({
@@ -48,16 +47,23 @@ export default function AddressForm({
   const queryClient = useQueryClient();
 
   const isEdit = !!initialData;
+  
   const selectedAuthorId = initialData?.userId ?? userId;
   // Sur édition, l'utilisateur propriétaire n'est jamais modifiable
   // (absent de addressUpdateSchema)
   const showAuthorSelect = !isEdit && selectedAuthorId == null;
 
-  const formSchema = isEdit ? addressUpdateSchema : addressCreateSchema;
-  const { data: usersResult } = useSuspenseQuery(
-    usersQueryOptions({ size: environment.pagination.size }),
-  );
+  // Ne fetch la liste des users QUE si le select doit réellement s'afficher
+  // (admin créant une adresse sans destinataire prérempli).
+  // Un simple utilisateur avec userId déjà fourni via hiddenFields
+  // ne déclenche jamais cette requête (évite le 403 + le crash).
+  const { data: usersResult } = useQuery({
+    ...usersQueryOptions({ size: environment.pagination.size }),
+    enabled: showAuthorSelect,
+  });
+  const users = usersResult?.ok ? usersResult.data.content : [];
 
+  const formSchema = isEdit ? addressUpdateSchema : addressCreateSchema;
   const {
     register,
     handleSubmit,
@@ -161,11 +167,6 @@ export default function AddressForm({
       shouldValidate: true,
     });
   };
-
-  if (!usersResult.ok) {
-    return <ErrorState error={usersResult.error} />;
-  }
-  const users = usersResult.data.content;
 
   const isSaving =
     isSubmitting || createMutation.isPending || updateMutation.isPending;

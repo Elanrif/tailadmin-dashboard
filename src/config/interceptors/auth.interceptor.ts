@@ -38,7 +38,7 @@ export const sessionCookieInterceptor = async (
 export const expiredSessionInterceptor = async (error: AxiosError) => {
   const status = error.response?.status;
 
-  if (status === 401 || status === 403) {
+  if (status === 401) {
     const cookieStore = await cookies();
     for (const { name } of cookieStore.getAll()) {
       cookieStore.delete(name);

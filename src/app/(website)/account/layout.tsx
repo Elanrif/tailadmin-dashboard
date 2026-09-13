@@ -21,6 +21,7 @@ export default function AccountLayout({
       : "lg:ml-[90px]";
   return (
     <div className="min-h-screen xl:flex">
+      {/* Accessible Page for authenticated users only */}
       <ProtectedRoute>
         {/* Sidebar and Backdrop */}
         <AccountSidebar />

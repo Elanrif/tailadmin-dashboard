@@ -6,6 +6,7 @@ import {
   useMutation,
   useSuspenseQuery,
   useQueryClient,
+  useQuery,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Table, TableBody, TableHeader } from "@/components/ui/table";
@@ -45,6 +46,10 @@ export function Posts({ queryParams }: PostQueryProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+
+  // authorId déjà imposé par le parent (ex: page "Mes posts") → pas de
+  // sélecteur d'auteurs, pas de fetch users, export limité à cet auteur.
+  const isAuthorScoped = queryParams?.authorId != null;
 
   const { currentPage, itemsPerPage, handlePageChange, handleSizeChange } =
     usePageQuery({
@@ -100,11 +105,22 @@ export function Posts({ queryParams }: PostQueryProps) {
   };
 
   const { data } = useSuspenseQuery(postsQueryOptions(filters));
-  const { data: usersResult } = useSuspenseQuery(
-    usersQueryOptions({ size: MAX_EXPORT_SIZE }),
-  );
+
+  // Ne charge la liste des auteurs QUE si le filtre par auteur est pertinent
+  // (page non scopée sur un authorId précis). Sinon, un simple USER visitant
+  // "Mes posts" ne déclenche jamais /api/users (évite le 403).
+  const { data: usersResult } = useQuery({
+    ...usersQueryOptions({ size: MAX_EXPORT_SIZE }),
+    enabled: !isAuthorScoped,
+  });
+
+  // L'export respecte le même scope que la liste affichée : un utilisateur
+  // sur "Mes posts" n'exporte que ses propres posts, pas tout le monde.
   const allQuery = useSuspenseQuery(
-    postsQueryOptions({ size: MAX_EXPORT_SIZE }),
+    postsQueryOptions({
+      size: MAX_EXPORT_SIZE,
+      authorId: queryParams?.authorId,
+    }),
   );
 
   if (!data?.ok) {
@@ -113,7 +129,7 @@ export function Posts({ queryParams }: PostQueryProps) {
 
   const posts = data.data.content;
   const pagination = data.data;
-  const authors = usersResult.ok ? usersResult.data.content : [];
+  const authors = usersResult?.ok ? usersResult.data.content : [];
 
   return (
     <div className="space-y-4">
@@ -135,16 +151,18 @@ export function Posts({ queryParams }: PostQueryProps) {
         </div>
       </div>
 
-      {/* FILTERS */}
-      <Filters
-        searchQuery={searchQuery}
-        onSearchChange={handleSearch}
-        authorId={authorId}
-        onAuthorChange={handleAuthorChange}
-        authors={authors}
-        itemsPerPage={itemsPerPage}
-        onLimitChange={handleSizeChange}
-      />
+      {/* FILTERS : le sélecteur d'auteur ne s'affiche que si non déjà imposé */}
+      {!isAuthorScoped && (
+        <Filters
+          searchQuery={searchQuery}
+          onSearchChange={handleSearch}
+          authorId={authorId}
+          onAuthorChange={handleAuthorChange}
+          authors={isAuthorScoped ? [] : authors}
+          itemsPerPage={itemsPerPage}
+          onLimitChange={handleSizeChange}
+        />
+      )}
       <div className="text-sm text-gray-500 dark:text-gray-400" id="table-top">
         Showing{" "}
         {posts.length ? (pagination!.page - 1) * pagination!.size + 1 : 0} to{" "}
@@ -202,12 +220,6 @@ export function Posts({ queryParams }: PostQueryProps) {
       )}
 
       {/* MODALS */}
-      {/* 
-      Optional queryParams scope the create/edit forms and hide the
-      corresponding select fields.
-      When omitted, the related fields remain
-      available for selection.
-      */}
       <Modals
         selectedPost={selectedPost}
         hiddenFields={{ authorId }}
