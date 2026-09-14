@@ -15,9 +15,11 @@ import { useMutation } from "@tanstack/react-query";
 import { updateUserMutation } from "@/lib/users/api/mutations";
 import { toast } from "sonner";
 import { LoaderIcon } from "lucide-react";
-import { useState } from "react";
+import { handleApiError } from "@/lib/shared/handle-api-error";
+import { useRouter } from "next/navigation";
 
 export default function UserImageCard() {
+  const router = useRouter();
   const { user, setUser } = useSession();
   const {
     handleSubmit,
@@ -31,7 +33,6 @@ export default function UserImageCard() {
     },
   });
 
-  const [errorFromApi, setErrorFromApi] = useState<string | null>(null);
   const image = useImageDraft({
     storageKey: "post:image",
     initialUrl: undefined,
@@ -52,33 +53,27 @@ export default function UserImageCard() {
     setValue("avatarUrl", "");
   }
 
-  // Mutation modification
-  const updateMutation = useMutation({
-    ...updateUserMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        setErrorFromApi(result.error.message || "Une erreur est survenue.");
-        toast.error(result.error?.message || "Failed to update user");
-        return;
-      }
-      setUser(result.data);
-      toast.success("User updated successfully");
-    },
-    onError: () => {
-      setErrorFromApi("Une erreur est survenue.");
-      toast.error("Failed to update user");
-    },
-  });
-
+  const updateMutation = useMutation(updateUserMutation);
   const onSubmit = (values: UserUpdateFormValues) => {
     const updateValues = values as UserUpdateFormValues;
     const payload: UserUpdateFormValues = {
       avatarUrl: updateValues.avatarUrl,
     };
-    updateMutation.mutate({
-      id: user?.id as number,
-      values: payload,
-    });
+    updateMutation.mutate(
+      {
+        id: user?.id as number,
+        values: payload,
+      },
+      {
+        onSuccess: async (data) => {
+          setUser(data);
+          toast.success("User updated successfully");
+        },
+        onError: (error) => {
+          handleApiError(error, router);
+        },
+      },
+    );
     handleImageRemove();
   };
 
@@ -91,12 +86,6 @@ export default function UserImageCard() {
         title="Change Profile Picture"
         desc="Update your profile picture."
       >
-        {errorFromApi && (
-          <p className="p-3 text-sm text-center text-red-500 bg-red-100 rounded">
-            {errorFromApi}
-          </p>
-        )}
-
         {user?.avatarUrl && (
           <div className="mb-6 flex flex-col items-center rounded-xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-900">
             <div className="relative">

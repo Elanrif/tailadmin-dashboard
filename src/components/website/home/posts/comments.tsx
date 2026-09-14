@@ -15,6 +15,8 @@ import { Modals } from "@/lib/comments/components/ui/comments-table/modals";
 import { CommentsQueryProps } from "@/lib/comments/components/comments";
 import { ErrorState } from "@/lib/shared/ui/error-state";
 import environment from "@/config/environment.config";
+import { handleApiError } from "@/lib/shared/handle-api-error";
+import { useRouter } from "next/navigation";
 
 export default function Comments({
   queryParams,
@@ -26,6 +28,7 @@ export default function Comments({
     closeModal: () => void;
   };
 }) {
+  const router = useRouter();
   const { user } = useSession();
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
@@ -35,17 +38,18 @@ export default function Comments({
   const deleteModal = useModal();
 
   const deleteMutation = useMutation(deleteCommentMutation);
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!selectedComment) return;
-    const result = await deleteMutation.mutateAsync(selectedComment.id);
-
-    if (!result.ok) {
-      toast.error(result.error.message);
-      return;
-    }
-    toast.success("Comment deleted successfully");
-    deleteModal.closeModal();
-    setSelectedComment(null);
+    deleteMutation.mutate(selectedComment.id, {
+      onSuccess: () => {
+        toast.success("Comment deleted successfully");
+        deleteModal.closeModal();
+        setSelectedComment(null);
+      },
+      onError: (error) => {
+        handleApiError(error, router);
+      },
+    });
   };
 
   const isCommentOwner = (comment: Comment) => user?.id === comment.author?.id;

@@ -19,6 +19,8 @@ import { UserRole, UserStatus } from "@/lib/users/api/types";
 import ComponentCard from "../common/ComponentCard";
 import PhoneInput from "../form/group-input/PhoneInput";
 import Switch from "../form/switch/Switch";
+import { useRouter } from "next/navigation";
+import { handleApiError } from "@/lib/shared/handle-api-error";
 
 const countries = [
   { code: "KM", label: "+269" },
@@ -29,6 +31,7 @@ const countries = [
   { code: "AU", label: "+61" },
 ];
 export default function UserInfoCard() {
+  const router = useRouter();
   const { user, setUser } = useSession();
   const { isOpen, openModal, closeModal } = useModal();
   const {
@@ -47,21 +50,7 @@ export default function UserInfoCard() {
     },
   });
 
-  const updateMutation = useMutation({
-    ...updateUserMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error?.message || "Failed to update user");
-        return;
-      }
-      setUser(result.data);
-      toast.success("User updated successfully");
-      closeModal();
-    },
-    onError: () => {
-      toast.error("Failed to update user");
-    },
-  });
+  const updateMutation = useMutation(updateUserMutation);
 
   const onSubmit = (values: UserUpdateFormValues) => {
     const updateValues = values as UserUpdateFormValues;
@@ -79,10 +68,22 @@ export default function UserInfoCard() {
       payload.password = updateValues.password;
       payload.confirmPassword = updateValues.confirmPassword;
     }
-    updateMutation.mutate({
-      id: user?.id as number,
-      values: payload,
-    });
+    updateMutation.mutate(
+      {
+        id: user?.id as number,
+        values: payload,
+      },
+      {
+        onSuccess: async (data) => {
+          setUser(data);
+          toast.success("User updated successfully");
+          closeModal();
+        },
+        onError: (error) => {
+          handleApiError(error, router);
+        },
+      },
+    );
   };
 
   const handlePhoneNumberChange = (phoneNumber: string) => {

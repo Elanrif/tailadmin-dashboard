@@ -28,8 +28,11 @@ import Comments from "./comments";
 import { ErrorState } from "@/lib/shared/ui/error-state";
 import environment from "@/config/environment.config";
 import { EmptyState } from "@/lib/shared/ui/empty-state";
+import { handleApiError } from "@/lib/shared/handle-api-error";
+import { useRouter } from "next/navigation";
 
 export default function Posts() {
+  const router = useRouter();
   const { user, isLoading } = useSession();
   const [expandedPost, setExpandedPost] = useState<number | null>(null);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -42,17 +45,18 @@ export default function Posts() {
   const deleteModal = useModal();
 
   const deleteMutation = useMutation(deletePostMutation);
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!selectedPost) return;
-    const result = await deleteMutation.mutateAsync(selectedPost.id);
-    if (!result.ok) {
-      toast.error(result.error.message);
-      return;
-    }
-
-    toast.success("Post supprimé");
-    deleteModal.closeModal();
-    setSelectedPost(null);
+    deleteMutation.mutate(selectedPost.id, {
+      onSuccess: () => {
+        toast.success("Post supprimé");
+        deleteModal.closeModal();
+        setSelectedPost(null);
+      },
+      onError: (error) => {
+        handleApiError(error, router);
+      },
+    });
   };
 
   const isPostOwner = (post: Post) => user?.id === post.author?.id;

@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { UnifiedPagination } from "@/components/ui/paginations";
 import { useModal } from "@/hooks/useModal";
 import { exportToCSV } from "@/lib/utils";
-import { Download, Loader2 } from "lucide-react";
+import { Download } from "lucide-react";
 import { postsQueryOptions } from "../api/queries/queries.client";
 import { deletePostMutation } from "../api/mutations";
 import { Filters } from "./ui/posts-table/filters";
@@ -27,6 +27,8 @@ import { usersQueryOptions } from "@/lib/users/api/queries/queries.client";
 import { ErrorState } from "@/lib/shared/ui/error-state";
 import { EmptyState } from "@/lib/shared/ui/empty-state";
 import environment from "@/config/environment.config";
+import { handleApiError } from "@/lib/shared/handle-api-error";
+import { useRouter } from "next/navigation";
 
 export type PostQueryProps = {
   queryParams?: {
@@ -40,6 +42,7 @@ const {
 } = environment;
 
 export function Posts({ queryParams }: PostQueryProps) {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isExporting, setIsExporting] = useState(false);
@@ -60,21 +63,21 @@ export function Posts({ queryParams }: PostQueryProps) {
       authorId: queryParams?.authorId,
       onPageReset: () => handlePageChange(1),
     });
-  
+
   const deleteMutation = useMutation(deletePostMutation);
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!selectedPost) return;
 
-    const result = await deleteMutation.mutateAsync(selectedPost.id);
-
-    if (!result.ok) {
-      toast.error(result.error.message);
-      return;
-    }
-
-    toast.success("Post supprimé");
-    deleteModal.closeModal();
-    setSelectedPost(null);
+    deleteMutation.mutate(selectedPost.id, {
+      onSuccess: () => {
+        toast.success("Post supprimé");
+        deleteModal.closeModal();
+        setSelectedPost(null);
+      },
+      onError: (error) => {
+        handleApiError(error, router);
+      },
+    });
   };
 
   /* Modals */
@@ -144,21 +147,12 @@ export function Posts({ queryParams }: PostQueryProps) {
           <h2 className="text-xl font-semibold">Posts List</h2>
           <p className="text-sm text-gray-500">Manage your posts.</p>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={exportPosts}
-            disabled={isExporting}
-          >
-            {isExporting ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <Download size={16} />
-            )}
-            Export
+        <div className="flex items-center gap-3">
+          <Button onClick={exportPosts} disabled={isExporting}>
+            Export <Download size={16} />
           </Button>
           <Button
-            onClick={createModal.openModal}
+            onClick={() => createModal.openModal()}
             className="gap-2 bg-brand-500 hover:bg-brand-600 dark:text-white"
           >
             Add Post
@@ -188,7 +182,7 @@ export function Posts({ queryParams }: PostQueryProps) {
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/5 dark:bg-white/3">
         {posts.length > 0 ? (
           <Table>
-            <TableHeader className="text-start bg-green-600 text-white border-b border-gray-100 dark:border-white/5">
+            <TableHeader className="text-start bg-brand-500 text-white border-b border-gray-100 dark:border-white/5">
               <Columns />
             </TableHeader>
             <TableBody>

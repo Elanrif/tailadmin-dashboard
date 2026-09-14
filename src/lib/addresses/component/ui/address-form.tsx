@@ -27,6 +27,8 @@ import Select from "@/components/form/Select";
 import { User } from "@/lib/users/api/types";
 import { usersQueryOptions } from "@/lib/users/api/queries/queries.client";
 import environment from "@/config/environment.config";
+import { handleApiError } from "@/lib/shared/handle-api-error";
+import { useRouter } from "next/navigation";
 
 export default function AddressForm({
   initialData,
@@ -39,6 +41,7 @@ export default function AddressForm({
   hiddenFields?: AddressesQueryProps["queryParams"];
   onSaved?: () => void;
 }) {
+  const router = useRouter();
   const isEdit = !!initialData;
 
   const selectedAuthorId = initialData?.userId ?? userId;
@@ -114,17 +117,12 @@ export default function AddressForm({
           payload: values as AddressUpdateFormValues,
         },
         {
-          onSuccess: (result) => {
-            if (!result.ok) {
-              toast.error(result.error?.message || "Failed to update address");
-              return;
-            }
-
+          onSuccess: () => {
             toast.success("Address updated successfully");
             onSaved?.();
           },
-          onError: () => {
-            toast.error("Failed to update address");
+          onError: (error) => {
+            handleApiError(error, router);
           },
         },
       );
@@ -137,17 +135,12 @@ export default function AddressForm({
         payload: values as AddressCreateFormValues,
       },
       {
-        onSuccess: (result) => {
-          if (!result.ok) {
-            toast.error(result.error?.message || "Failed to create address");
-            return;
-          }
-
+        onSuccess: () => {
           toast.success("Address created successfully");
           onSaved?.();
         },
-        onError: () => {
-          toast.error("Failed to create address");
+        onError: (error) => {
+          handleApiError(error, router);
         },
       },
     );

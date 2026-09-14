@@ -8,10 +8,7 @@ import Label from "../form/Label";
 import Image from "next/image";
 import { useSession } from "@/lib/auth/components/auth.context";
 import ComponentCard from "../common/ComponentCard";
-import {
-  useMutation,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { updateUserMutation } from "@/lib/users/api/mutations";
 import {
   UserUpdateFormValues,
@@ -22,6 +19,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import PhoneInput from "../form/group-input/PhoneInput";
 import { userAddressesQueryOptions } from "@/lib/addresses/api/queries/queries.server";
+import { useRouter } from "next/navigation";
+import { handleApiError } from "@/lib/shared/handle-api-error";
 
 const countries = [
   { code: "KM", label: "+269" },
@@ -33,6 +32,7 @@ const countries = [
 ];
 
 export default function UserMetaCard() {
+  const router = useRouter();
   const { isOpen, openModal, closeModal } = useModal();
   const { user, setUser } = useSession();
   const { data } = useSuspenseQuery(
@@ -60,23 +60,7 @@ export default function UserMetaCard() {
     },
   });
 
-  // Mutation modification
-  const updateMutation = useMutation({
-    ...updateUserMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error?.message || "Failed to update user");
-        return;
-      }
-      setUser(result.data);
-      toast.success("User updated successfully");
-      closeModal();
-    },
-    onError: () => {
-      toast.error("Failed to update user");
-    },
-  });
-
+  const updateMutation = useMutation(updateUserMutation);
   const onSubmit = (values: UserUpdateFormValues) => {
     const updateValues = values as UserUpdateFormValues;
     const payload: UserUpdateFormValues = {
@@ -91,10 +75,22 @@ export default function UserMetaCard() {
       payload.password = updateValues.password;
       payload.confirmPassword = updateValues.confirmPassword;
     }
-    updateMutation.mutate({
-      id: user?.id as number,
-      values: payload,
-    });
+    updateMutation.mutate(
+      {
+        id: user?.id as number,
+        values: payload,
+      },
+      {
+        onSuccess: async (data) => {
+          setUser(data);
+          toast.success("User updated successfully");
+          closeModal();
+        },
+        onError: (error) => {
+          handleApiError(error, router);
+        },
+      },
+    );
   };
 
   const handlePhoneNumberChange = (phoneNumber: string) => {

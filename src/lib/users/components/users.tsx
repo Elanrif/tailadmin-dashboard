@@ -27,6 +27,8 @@ import { usePageQuery } from "@/lib/use-page-query";
 import { User } from "../api/types";
 import { useUserFilters } from "./ui/users-table/use-filters";
 import environment from "@/config/environment.config";
+import { handleApiError } from "@/lib/shared/handle-api-error";
+import { useRouter } from "next/navigation";
 
 const {
   pagination: { page, size },
@@ -34,6 +36,7 @@ const {
 } = environment;
 
 export function Users() {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
@@ -72,16 +75,18 @@ export function Users() {
   };
 
   const deleteMutation = useMutation(deleteUserMutation);
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!selectedUser) return;
-    const result = await deleteMutation.mutateAsync(selectedUser.id);
-    if (!result.ok) {
-      toast.error(result.error.message);
-      return;
-    }
-    toast.success("User deleted successfully");
-    deleteModal.closeModal();
-    setSelectedUser(null);
+    deleteMutation.mutate(selectedUser.id, {
+      onSuccess: () => {
+        toast.success("User deleted successfully");
+        deleteModal.closeModal();
+        setSelectedUser(null);
+      },
+      onError: (error) => {
+        handleApiError(error, router);
+      },
+    });
   };
 
   const exportUsers = async () => {

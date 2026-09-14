@@ -8,31 +8,54 @@ import {
 } from "./action";
 import { CommentFormValues, CommentUpdateFormValues } from "../schemas/comment";
 import { postKeys } from "@/lib/posts/api/queries";
+import type { ApiError } from "@/lib/shared/api-error";
+import type { Comment } from "./types";
 
-export const createCommentMutation = mutationOptions({
-  mutationFn: (data: CommentFormValues) => createCommentAction(data),
+export const createCommentMutation = mutationOptions<
+  Comment,
+  ApiError,
+  CommentFormValues,
+  unknown
+>({
+  mutationFn: async (data) => {
+    const result = await createCommentAction(data);
+    if (!result.ok) throw result.error;
+    return result.data;
+  },
   onSuccess: () => {
     getQueryClient().invalidateQueries({ queryKey: commentKeys.all });
     getQueryClient().invalidateQueries({ queryKey: postKeys.all });
   },
 });
 
-export const updateCommentMutation = mutationOptions({
-  mutationFn: ({
-    id,
-    values,
-  }: {
-    id: number;
-    values: CommentUpdateFormValues;
-  }) => updateCommentAction(id, values),
+export const updateCommentMutation = mutationOptions<
+  Comment,
+  ApiError,
+  { id: number; values: CommentUpdateFormValues },
+  unknown
+>({
+  mutationFn: async ({ id, values }) => {
+    const result = await updateCommentAction(id, values);
+    if (!result.ok) throw result.error;
+    return result.data;
+  },
   onSuccess: () => {
     getQueryClient().invalidateQueries({ queryKey: commentKeys.all });
     getQueryClient().invalidateQueries({ queryKey: postKeys.all });
   },
 });
 
-export const deleteCommentMutation = mutationOptions({
-  mutationFn: (id: number) => deleteCommentAction(id),
+export const deleteCommentMutation = mutationOptions<
+  { success: boolean },
+  ApiError,
+  number,
+  unknown
+>({
+  mutationFn: async (id) => {
+    const result = await deleteCommentAction(id);
+    if (!result.ok) throw result.error;
+    return result.data;
+  },
   onSuccess: () => {
     getQueryClient().invalidateQueries({ queryKey: commentKeys.all });
     getQueryClient().invalidateQueries({ queryKey: postKeys.all });

@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { LoaderIcon } from "lucide-react";
+import { LoaderIcon, PenIcon } from "lucide-react";
 
 import { postsQueryOptions } from "@/lib/posts/api/queries/queries.client";
 import { usersQueryOptions } from "@/lib/users/api/queries/queries.client";
@@ -13,7 +13,7 @@ import Label from "@/components/form/Label";
 import ComponentCard from "@/components/common/ComponentCard";
 import Select from "@/components/form/Select";
 import Button from "@/components/ui/button/Button";
-import { ChevronDownIcon, PlusIcon } from "@/icons";
+import { ChevronDownIcon } from "@/icons";
 import { User } from "@/lib/users/api/types";
 import {
   createCommentMutation,
@@ -28,6 +28,8 @@ import {
 import { Comment } from "../../api/types";
 import { CommentsQueryProps } from "../comments";
 import environment from "@/config/environment.config";
+import { handleApiError } from "@/lib/shared/handle-api-error";
+import { ApiError } from "@/lib/shared/api-error";
 
 interface CommentFormProps {
   initialData: Comment | null;
@@ -89,20 +91,12 @@ export function CommentForm({
           values: values as CommentUpdateFormValues,
         },
         {
-          onSuccess: async (result) => {
-            if (!result.ok) {
-              toast.error(result.error.message);
-              return;
-            }
+          onSuccess: async () => {
             toast.success("Comment updated successfully");
             onSaved?.();
           },
           onError: (error) => {
-            toast.error(
-              error instanceof Error
-                ? error.message
-                : "Failed to update comment",
-            );
+            handleApiError(error, router);
           },
         },
       );
@@ -110,20 +104,12 @@ export function CommentForm({
     }
 
     createMutation.mutate(values as CommentFormValues, {
-      onSuccess: async (result) => {
-        if (!result.ok) {
-          toast.error(result.error.message);
-          return;
-        }
+      onSuccess: async () => {
         toast.success("Comment created successfully");
         onSaved?.();
       },
       onError: (error) => {
-        toast.error(
-          error instanceof Error
-            ? error.message
-            : "Failed to create comment",
-        );
+        handleApiError(error as ApiError, router);
       },
     });
   };
@@ -239,10 +225,10 @@ export function CommentForm({
         type="submit"
         size="sm"
         variant="primary"
-        startIcon={<PlusIcon size={16} />}
+        startIcon={isEdit && <PenIcon size={16} />}
         disabled={isSaving}
       >
-        {isSaving ? "Saving..." : isEdit ? "Edit comment" : "Create comment"}
+        {isSaving ? "Saving..." : isEdit ? "Edit comment" : "Add comment"}
         {isSaving && <LoaderIcon className="ml-2 animate-spin" />}
       </Button>
     </form>

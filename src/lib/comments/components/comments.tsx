@@ -9,7 +9,7 @@ import {
 import { toast } from "sonner";
 import { Download, MessageSquare } from "lucide-react";
 
-import Button from "@/components/ui/button/Button";
+import { Button } from "@/components/ui/button";
 import { UnifiedPagination } from "@/components/ui/paginations";
 import { useModal } from "@/hooks/useModal";
 import { Table, TableBody, TableHeader } from "@/components/ui/table";
@@ -30,6 +30,8 @@ import { useCommentFilters } from "./ui/comments-table/use-filters";
 import { ErrorState } from "@/lib/shared/ui/error-state";
 import { EmptyState } from "@/lib/shared/ui/empty-state";
 import environment from "@/config/environment.config";
+import { handleApiError } from "@/lib/shared/handle-api-error";
+import { useRouter } from "next/navigation";
 
 export type CommentsQueryProps = {
   queryParams?: {
@@ -44,6 +46,7 @@ const {
 } = environment;
 
 export function Comments({ queryParams }: CommentsQueryProps) {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
   const { currentPage, itemsPerPage, handlePageChange, handleSizeChange } =
@@ -89,15 +92,16 @@ export function Comments({ queryParams }: CommentsQueryProps) {
   const deleteMutation = useMutation(deleteCommentMutation);
   const handleDelete = async () => {
     if (!selectedComment) return;
-    const result = await deleteMutation.mutateAsync(selectedComment.id);
-
-    if (!result.ok) {
-      toast.error(result.error.message);
-      return;
-    }
-    toast.success("Comment deleted successfully");
-    deleteModal.closeModal();
-    setSelectedComment(null);
+    deleteMutation.mutate(selectedComment.id, {
+      onSuccess: () => {
+        toast.success("Comment deleted successfully");
+        deleteModal.closeModal();
+        setSelectedComment(null);
+      },
+      onError: (error) => {
+        handleApiError(error, router);
+      },
+    });
   };
 
   const exportComments = async () => {
@@ -148,15 +152,13 @@ export function Comments({ queryParams }: CommentsQueryProps) {
           <h2 className="text-xl font-semibold">Comments List</h2>
           <p className="text-sm text-gray-500">Manage your comments.</p>
         </div>
-
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={exportComments}>
-            Export data
-            <Download size={16} />
+        
+        <div className="flex items-center gap-3">
+          <Button onClick={exportComments}>
+            Export <Download size={16} />
           </Button>
-
           <Button
-            onClick={createModal.openModal}
+            onClick={() => createModal.openModal()}
             className="gap-2 bg-brand-500 hover:bg-brand-600 dark:text-white"
           >
             Add Comment

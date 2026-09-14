@@ -13,7 +13,7 @@ import ComponentCard from "@/components/common/ComponentCard";
 import Select from "@/components/form/Select";
 import Input from "@/components/form/input/InputField";
 import Button from "@/components/ui/button/Button";
-import { LoaderIcon, PlusIcon } from "lucide-react";
+import { LoaderIcon, PenIcon } from "lucide-react";
 import { ChevronDownIcon } from "@/icons";
 import { User } from "@/lib/users/api/types";
 import Alert from "@/components/ui/alert/Alert";
@@ -27,6 +27,8 @@ import { createPostMutation, updatePostMutation } from "../../api/mutations";
 import { Post } from "../../api/types";
 import { PostQueryProps } from "../posts";
 import environment from "@/config/environment.config";
+import { handleApiError } from "@/lib/shared/handle-api-error";
+import { useRouter } from "next/navigation";
 
 interface PostFormProps {
   initialData: Post | null;
@@ -41,6 +43,7 @@ export function PostForm({
   hiddenFields: { authorId } = {},
   onSaved,
 }: PostFormProps) {
+  const router = useRouter();
   const isEdit = !!initialData;
   const selectedAuthorId = initialData?.author?.id ?? authorId;
   const showAuthorSelect = !isEdit && selectedAuthorId == null;
@@ -90,21 +93,14 @@ export function PostForm({
           values: values as PostUpdateFormValues,
         },
         {
-          onSuccess: (result) => {
-            if (!result.ok) {
-              toast.error(result.error?.message || "Failed to update post");
-              return;
-            }
-
+          onSuccess: () => {
             image.clearDraft();
             toast.success("Post updated successfully");
             onSaved?.();
           },
 
           onError: (error) => {
-            toast.error(
-              error instanceof Error ? error.message : "Failed to update post",
-            );
+            handleApiError(error, router);
           },
         },
       );
@@ -113,21 +109,14 @@ export function PostForm({
     }
 
     createMutation.mutate(values as PostCreateFormValues, {
-      onSuccess: (result) => {
-        if (!result.ok) {
-          toast.error(result.error?.message || "Failed to create post");
-          return;
-        }
-
+      onSuccess: () => {
         image.clearDraft();
         toast.success("Post created successfully");
         onSaved?.();
       },
 
       onError: (error) => {
-        toast.error(
-          error instanceof Error ? error.message : "Failed to create post",
-        );
+        handleApiError(error, router);
       },
     });
   };
@@ -253,19 +242,17 @@ export function PostForm({
               variant="light"
             />
 
-            <div className="mt-5 flex justify-end">
-              <Button
-                type="submit"
-                size="sm"
-                variant="primary"
-                startIcon={<PlusIcon size={16} />}
-                disabled={isSaving}
-              >
-                {isSaving ? "Saving..." : isEdit ? "Edit post" : "Create post"}
+            <Button
+              type="submit"
+              size="sm"
+              variant="primary"
+              startIcon={isEdit && <PenIcon size={16} />}
+              disabled={isSaving}
+            >
+              {isSaving ? "Saving..." : isEdit ? "Edit post" : "Add post"}
 
-                {isSaving && <LoaderIcon className="ml-2 animate-spin" />}
-              </Button>
-            </div>
+              {isSaving && <LoaderIcon className="ml-2 animate-spin" />}
+            </Button>
           </ComponentCard>
         </div>
       </div>

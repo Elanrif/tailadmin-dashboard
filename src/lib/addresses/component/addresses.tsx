@@ -9,7 +9,7 @@ import {
 import { toast } from "sonner";
 import { Download } from "lucide-react";
 
-import Button from "@/components/ui/button/Button";
+import { Button } from "@/components/ui/button";
 import { UnifiedPagination } from "@/components/ui/paginations";
 import { useModal } from "@/hooks/useModal";
 import { exportToCSV } from "@/lib/utils";
@@ -24,6 +24,8 @@ import { useAddressFilters } from "./ui/addresses-card/use-filters";
 import environment from "@/config/environment.config";
 import { ErrorState } from "@/lib/shared/ui/error-state";
 import { EmptyState } from "@/lib/shared/ui/empty-state";
+import { handleApiError } from "@/lib/shared/handle-api-error";
+import { useRouter } from "next/navigation";
 
 export type AddressesQueryProps = {
   queryParams?: {
@@ -36,6 +38,7 @@ const {
 } = environment;
 
 export function Addresses({ queryParams }: AddressesQueryProps) {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 
@@ -75,16 +78,18 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
   };
 
   const deleteMutation = useMutation(deleteUserAddressMutation);
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!selectedAddress) return;
-    const result = await deleteMutation.mutateAsync(selectedAddress.id);
-    if (!result.ok) {
-      toast.error(result.error.message);
-      return;
-    }
-    toast.success("Address deleted successfully");
-    deleteModal.closeModal();
-    setSelectedAddress(null);
+    deleteMutation.mutate(selectedAddress.id, {
+      onSuccess: () => {
+        toast.success("Address deleted successfully");
+        deleteModal.closeModal();
+        setSelectedAddress(null);
+      },
+      onError: (error) => {
+        handleApiError(error, router);
+      },
+    });
   };
 
   const handleExportCSV = async () => {
@@ -146,15 +151,10 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
           Addresses List
         </h2>
 
-        <div className="flex gap-2">
-          <Button
-            onClick={handleExportCSV}
-            className="gap-2 px-3 py-1 bg-green-600 hover:bg-green-700 dark:bg-green-900 dark:hover:bg-green-700 dark:text-white"
-          >
-            Export
-            <Download size={16} />
+        <div className="flex items-center gap-3">
+          <Button onClick={handleExportCSV}>
+            Export <Download size={16} />
           </Button>
-
           <Button
             onClick={() => createModal.openModal()}
             className="gap-2 bg-brand-500 hover:bg-brand-600 dark:text-white"

@@ -21,7 +21,6 @@ import {
   EnvelopeIcon,
   EyeCloseIcon,
   EyeIcon,
-  PlusIcon,
 } from "@/icons";
 import PhoneInput from "@/components/form/group-input/PhoneInput";
 import Switch from "@/components/form/switch/Switch";
@@ -29,11 +28,12 @@ import { useImageDraft } from "@/lib/shared/cloudinary/hooks/use-image-draft";
 import { ImageUpload } from "@/lib/shared/cloudinary/components/image-upload";
 import Input from "@/components/form/input/InputField";
 import Button from "@/components/ui/button/Button";
-import { LoaderIcon } from "lucide-react";
+import { LoaderIcon, PenIcon } from "lucide-react";
 import Image from "next/image";
 import Alert from "@/components/ui/alert/Alert";
 import { createUserMutation, updateUserMutation } from "../../api/mutations";
 import { User, UserRole, UserStatus } from "../../api/types";
+import { handleApiError } from "@/lib/shared/handle-api-error";
 
 interface UserFormProps {
   initialData: User | null;
@@ -127,23 +127,16 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
           values: values as UserUpdateFormValues,
         },
         {
-          onSuccess: (result) => {
-            if (!result.ok) {
-              toast.error(result.error?.message || "Failed to update user");
-              return;
-            }
-
+          onSuccess: () => {
             image.clearDraft();
-
             toast.success("User updated successfully");
             onSaved?.();
-
             router.push("/dashboard/users");
             router.refresh();
           },
 
-          onError: () => {
-            toast.error("Failed to update user");
+          onError: (error) => {
+            handleApiError(error, router);
           },
         },
       );
@@ -152,14 +145,8 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
     }
 
     createMutation.mutate(values as UserCreateFormValues, {
-      onSuccess: (result) => {
-        if (!result.ok) {
-          toast.error(result.error?.message || "Failed to create user");
-          return;
-        }
-
+      onSuccess: () => {
         image.clearDraft();
-
         toast.success("User created successfully");
         onSaved?.();
 
@@ -167,8 +154,8 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
         router.refresh();
       },
 
-      onError: () => {
-        toast.error("Failed to create user");
+      onError: (error) => {
+        handleApiError(error, router);
       },
     });
   };
@@ -438,10 +425,10 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
             type="submit"
             size="sm"
             variant="primary"
-            startIcon={<PlusIcon size={16} />}
+            startIcon={isEdit && <PenIcon size={16} />}
             disabled={isSaving}
           >
-            {isSaving ? "Saving..." : isEdit ? "Edit user" : "Create user"}
+            {isSaving ? "Saving..." : isEdit ? "Edit user" : "Add user"}
 
             {isSaving && <LoaderIcon className="ml-2 animate-spin" />}
           </Button>

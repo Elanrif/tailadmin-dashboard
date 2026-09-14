@@ -22,8 +22,11 @@ import Select from "../form/Select";
 import useCountryCity from "@/hooks/use-contry-city";
 import { userAddressesQueryOptions } from "@/lib/addresses/api/queries/queries.client";
 import { ErrorState } from "@/lib/shared/ui/error-state";
+import { handleApiError } from "@/lib/shared/handle-api-error";
+import { useRouter } from "next/navigation";
 
 export default function UserAddressCard() {
+  const router = useRouter();
   const { user } = useSession();
   const { isOpen, openModal, closeModal } = useModal();
   const { data } = useSuspenseQuery(
@@ -84,32 +87,27 @@ export default function UserAddressCard() {
     if (selectedCity) setValue("city", selectedCity);
   }, [selectedCity, setValue]);
 
-  const updateMutation = useMutation({
-    ...updateAddressMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error.message);
-        return;
-      }
-      toast.success("Address updated successfully");
-      closeModal();
-    },
-    onError: (error) => {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to update address",
-      );
-    },
-  });
+  const updateMutation = useMutation(updateAddressMutation);
 
   const onSubmit = (values: AddressUpdateFormValues) => {
     if (!defaultAddress) return;
-    updateMutation.mutate({
-      addressId: defaultAddress.id,
-      payload: values,
-    });
+    updateMutation.mutate(
+      {
+        addressId: defaultAddress.id,
+        payload: values,
+      },
+      {
+        onSuccess: async () => {
+          toast.success("Address updated successfully");
+          closeModal();
+        },
+        onError: (error) => {
+          handleApiError(error, router);
+        },
+      },
+    );
   };
 
-  // 3. Seulement maintenant — tous les hooks ont été appelés
   if (!data.ok) {
     return <ErrorState error={data.error} />;
   }
