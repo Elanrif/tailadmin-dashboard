@@ -10,7 +10,6 @@ import { useSession } from "@/lib/auth/components/auth.context";
 import ComponentCard from "../common/ComponentCard";
 import {
   useMutation,
-  useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { updateUserMutation } from "@/lib/users/api/mutations";
@@ -21,7 +20,6 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { userKeys } from "@/lib/users/api/queries";
 import PhoneInput from "../form/group-input/PhoneInput";
 import { userAddressesQueryOptions } from "@/lib/addresses/api/queries/queries.server";
 
@@ -44,9 +42,6 @@ export default function UserMetaCard() {
     }),
   );
   const defaultAddress = data.ok ? data.data.content[0] : undefined;
-
-  const queryClient = useQueryClient();
-  // react-hook-form avec validation Zod
   const {
     register,
     handleSubmit,
@@ -74,7 +69,6 @@ export default function UserMetaCard() {
         return;
       }
       setUser(result.data);
-      await queryClient.invalidateQueries({ queryKey: userKeys.all });
       toast.success("User updated successfully");
       closeModal();
     },

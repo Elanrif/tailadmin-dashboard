@@ -1,27 +1,22 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { CommentFilters } from "@/lib/comments/api/types";
 import { getComments } from "@/lib/comments/api/services/comment.server";
-import { resultResponse } from "@/lib/shared/api-response";
+import { parseIntParam } from "@/utils/query-params";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
+
   const filters: CommentFilters = {
-    postId: searchParams.get("postId")
-      ? Number(searchParams.get("postId"))
-      : undefined,
-    authorId: searchParams.get("authorId")
-      ? Number(searchParams.get("authorId"))
-      : undefined,
-    page: searchParams.get("page")
-      ? Number(searchParams.get("page"))
-      : undefined,
-    size: searchParams.get("size")
-      ? Number(searchParams.get("size"))
-      : undefined,
+    postId: parseIntParam(searchParams.get("postId")),
+    authorId: parseIntParam(searchParams.get("authorId")),
+    page: parseIntParam(searchParams.get("page")),
+    size: parseIntParam(searchParams.get("size")),
     sort: searchParams.get("sort") ?? undefined,
   };
+
   const response = await getComments(filters);
-  return resultResponse(response);
+  const status = !response.ok ? (response.error.status ?? 500) : 200;
+  return NextResponse.json(response, { status });
 }

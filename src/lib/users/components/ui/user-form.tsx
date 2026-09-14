@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import {
@@ -33,7 +33,6 @@ import { LoaderIcon } from "lucide-react";
 import Image from "next/image";
 import Alert from "@/components/ui/alert/Alert";
 import { createUserMutation, updateUserMutation } from "../../api/mutations";
-import { userKeys } from "@/lib/auth/api/queries";
 import { User, UserRole, UserStatus } from "../../api/types";
 
 interface UserFormProps {
@@ -58,9 +57,10 @@ const countries = [
 
 export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
   const router = useRouter();
-  const queryClient = useQueryClient();
+
   const isEdit = !!initialData;
   const formSchema = isEdit ? userUpdateSchema : userCreateSchema;
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -79,7 +79,7 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
           phoneNumber: initialData.phoneNumber,
           role: initialData.role,
           status: initialData.status,
-          avatarUrl: initialData?.avatarUrl ?? "",
+          avatarUrl: initialData.avatarUrl ?? "",
           password: "",
           confirmPassword: "",
         }
@@ -102,52 +102,75 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
     }
   }, [initialData, setValue]);
 
-  const createMutation = useMutation({
-    ...createUserMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error?.message || "Failed to create user");
-        return;
-      }
-      await queryClient.invalidateQueries({ queryKey: userKeys.all });
-      toast.success("User created successfully");
-      onSaved?.();
-      router.push("/dashboard/users");
-      router.refresh();
-    },
-    onError: () => {
-      toast.error("Failed to create user");
-    },
+  const createMutation = useMutation(createUserMutation);
+  const updateMutation = useMutation(updateUserMutation);
+
+  const image = useImageDraft({
+    storageKey: `user:image:${initialData?.id ?? "new"}`,
+    initialUrl: initialData?.avatarUrl,
   });
 
-  const updateMutation = useMutation({
-    ...updateUserMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error?.message || "Failed to update user");
-        return;
-      }
-      await queryClient.invalidateQueries({ queryKey: userKeys.all });
-      toast.success("User updated successfully");
-      onSaved?.();
-      router.push("/dashboard/users");
-      router.refresh();
-    },
-    onError: () => {
-      toast.error("Failed to update user");
-    },
-  });
+  const handleImageRemove = () => {
+    image.handleRemove();
+
+    setValue("avatarUrl", "", {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
 
   const onSubmit = (values: UserCreateFormValues | UserUpdateFormValues) => {
     if (isEdit) {
-      updateMutation.mutate({
-        id: initialData.id,
-        values: values as UserUpdateFormValues,
-      });
+      updateMutation.mutate(
+        {
+          id: initialData.id,
+          values: values as UserUpdateFormValues,
+        },
+        {
+          onSuccess: (result) => {
+            if (!result.ok) {
+              toast.error(result.error?.message || "Failed to update user");
+              return;
+            }
+
+            image.clearDraft();
+
+            toast.success("User updated successfully");
+            onSaved?.();
+
+            router.push("/dashboard/users");
+            router.refresh();
+          },
+
+          onError: () => {
+            toast.error("Failed to update user");
+          },
+        },
+      );
+
       return;
     }
-    createMutation.mutate(values as UserCreateFormValues);
-    handleImageRemove();
+
+    createMutation.mutate(values as UserCreateFormValues, {
+      onSuccess: (result) => {
+        if (!result.ok) {
+          toast.error(result.error?.message || "Failed to create user");
+          return;
+        }
+
+        image.clearDraft();
+
+        toast.success("User created successfully");
+        onSaved?.();
+
+        router.push("/dashboard/users");
+        router.refresh();
+      },
+
+      onError: () => {
+        toast.error("Failed to create user");
+      },
+    });
   };
 
   const handleRoleChange = (value: string) => {
@@ -171,15 +194,8 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
     });
   };
 
-  const image = useImageDraft({
-    storageKey: "post:image",
-    initialUrl: undefined,
-  });
-
-  function handleImageRemove() {
-    image.handleRemove();
-    setValue("avatarUrl", "", { shouldDirty: true, shouldValidate: true });
-  }
+  const isSaving =
+    isSubmitting || createMutation.isPending || updateMutation.isPending;
 
   return (
     <form
@@ -205,14 +221,16 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
         )}
 
         <ComponentCard title={isEdit ? "Edit User Details" : "Create New User"}>
-          <div className="grid grid-cols-1 md:grid-cols-2 space-y-6 gap-4">
+          <div className="grid grid-cols-1 gap-4 space-y-6 md:grid-cols-2">
             <div>
               <Label required>First Name</Label>
+
               <Input
                 type="text"
                 {...register("firstName")}
                 placeholder="Enter first name"
               />
+
               {errors.firstName && (
                 <p className="mt-1 text-sm text-error-500">
                   {errors.firstName.message}
@@ -222,11 +240,13 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
 
             <div>
               <Label required>Last Name</Label>
+
               <Input
                 type="text"
                 {...register("lastName")}
                 placeholder="Enter last name"
               />
+
               {errors.lastName && (
                 <p className="mt-1 text-sm text-error-500">
                   {errors.lastName.message}
@@ -236,6 +256,7 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
 
             <div>
               <Label required>Email</Label>
+
               <div className="relative">
                 <Input
                   type="email"
@@ -243,10 +264,12 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
                   placeholder="Enter email"
                   className="pl-15.5"
                 />
+
                 <span className="absolute left-0 top-1/2 -translate-y-1/2 border-r border-gray-200 px-3.5 py-3 text-gray-500 dark:border-gray-800 dark:text-gray-400">
                   <EnvelopeIcon />
                 </span>
               </div>
+
               {errors.email && (
                 <p className="mt-1 text-sm text-error-500">
                   {errors.email.message}
@@ -256,6 +279,7 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
 
             <div>
               <Label required>Role</Label>
+
               <div className="relative">
                 <Select
                   options={options}
@@ -264,10 +288,12 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
                   onChange={handleRoleChange}
                   className="dark:bg-dark-900"
                 />
-                <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
                   <ChevronDownIcon />
                 </span>
               </div>
+
               {errors.role && (
                 <p className="mt-1 text-sm text-error-500">
                   {errors.role.message}
@@ -277,6 +303,7 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
 
             <div>
               <Label required>Phone</Label>
+
               <PhoneInput
                 {...register("phoneNumber")}
                 selectPosition="start"
@@ -285,6 +312,7 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
                 onChange={handlePhoneNumberChange}
                 value={initialData?.phoneNumber}
               />
+
               {errors.phoneNumber && (
                 <p className="mt-1 text-sm text-error-500">
                   {errors.phoneNumber.message}
@@ -305,19 +333,21 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
         </ComponentCard>
 
         <ComponentCard title={isEdit ? "Change Password" : "Set Password"}>
-          <div className="grid grid-cols-1 md:grid-cols-2 space-y-6 gap-4">
+          <div className="grid grid-cols-1 gap-4 space-y-6 md:grid-cols-2">
             <div>
               <Label required={!isEdit}>Password</Label>
+
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
                   {...register("password")}
                   placeholder="Enter your password"
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                  className="absolute right-4 top-1/2 z-30 -translate-y-1/2 cursor-pointer"
                 >
                   {showPassword ? (
                     <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
@@ -326,6 +356,7 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
                   )}
                 </button>
               </div>
+
               {errors.password && (
                 <p className="mt-1 text-sm text-error-500">
                   {errors.password.message}
@@ -335,16 +366,18 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
 
             <div>
               <Label required={!isEdit}>Confirm Password</Label>
+
               <div className="relative">
                 <Input
                   type={showConfirmPassword ? "text" : "password"}
                   {...register("confirmPassword")}
                   placeholder="Confirm your password"
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                  className="absolute right-4 top-1/2 z-30 -translate-y-1/2 cursor-pointer"
                 >
                   {showConfirmPassword ? (
                     <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
@@ -353,6 +386,7 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
                   )}
                 </button>
               </div>
+
               {errors.confirmPassword && (
                 <p className="mt-1 text-sm text-error-500">
                   {errors.confirmPassword.message}
@@ -373,47 +407,43 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
                   height={120}
                   className="h-30 w-30 rounded-full border-4 border-white object-cover shadow-lg dark:border-gray-800"
                 />
+
                 <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-brand-500 px-3 py-1 text-xs font-medium text-white shadow">
                   Current
                 </span>
               </div>
+
               <p className="mt-5 text-sm text-gray-500 dark:text-gray-400">
                 This is your current profile picture.
               </p>
             </div>
           )}
+
           <ImageUpload
             value={image.url}
             publicId={image.publicId}
             onChange={(url, publicId) => {
               image.handleChange(url, publicId);
+
               setValue("avatarUrl", url, {
                 shouldDirty: true,
                 shouldValidate: true,
               });
             }}
-            onRemove={() => {
-              image.handleRemove();
-              setValue("avatarUrl", "", {
-                shouldDirty: true,
-                shouldValidate: true,
-              });
-            }}
+            onRemove={handleImageRemove}
             variant="light"
           />
+
           <Button
             type="submit"
             size="sm"
             variant="primary"
             startIcon={<PlusIcon size={16} />}
-            disabled={
-              isSubmitting ||
-              createMutation.isPending ||
-              updateMutation.isPending
-            }
+            disabled={isSaving}
           >
-            {isEdit ? "Edit user" : "Create user"}
-            {isSubmitting && <LoaderIcon className="animate-spin ml-2" />}
+            {isSaving ? "Saving..." : isEdit ? "Edit user" : "Create user"}
+
+            {isSaving && <LoaderIcon className="ml-2 animate-spin" />}
           </Button>
         </ComponentCard>
       </div>

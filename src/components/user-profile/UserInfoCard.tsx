@@ -12,10 +12,9 @@ import {
 } from "@/lib/users/schemas/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { updateUserMutation } from "@/lib/users/api/mutations";
 import { toast } from "sonner";
-import { userKeys } from "@/lib/users/api/queries";
 import { UserRole, UserStatus } from "@/lib/users/api/types";
 import ComponentCard from "../common/ComponentCard";
 import PhoneInput from "../form/group-input/PhoneInput";
@@ -29,12 +28,9 @@ const countries = [
   { code: "CA", label: "+1" },
   { code: "AU", label: "+61" },
 ];
-
 export default function UserInfoCard() {
   const { user, setUser } = useSession();
   const { isOpen, openModal, closeModal } = useModal();
-  const queryClient = useQueryClient();
-  // react-hook-form avec validation Zod
   const {
     register,
     handleSubmit,
@@ -51,7 +47,6 @@ export default function UserInfoCard() {
     },
   });
 
-  // Mutation modification
   const updateMutation = useMutation({
     ...updateUserMutation,
     onSuccess: async (result) => {
@@ -60,7 +55,6 @@ export default function UserInfoCard() {
         return;
       }
       setUser(result.data);
-      await queryClient.invalidateQueries({ queryKey: userKeys.all });
       toast.success("User updated successfully");
       closeModal();
     },

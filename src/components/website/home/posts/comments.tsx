@@ -2,11 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { MessageSquare, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
@@ -14,7 +10,6 @@ import { useModal } from "@/hooks/useModal";
 import { useSession } from "@/lib/auth/components/auth.context";
 import { commentsQueryOptions } from "@/lib/comments/api/queries/queries.client";
 import { deleteCommentMutation } from "@/lib/comments/api/mutations";
-import { commentKeys } from "@/lib/comments/api/queries";
 import { Comment } from "@/lib/comments/api/types";
 import { Modals } from "@/lib/comments/components/ui/comments-table/modals";
 import { CommentsQueryProps } from "@/lib/comments/components/comments";
@@ -32,8 +27,6 @@ export default function Comments({
   };
 }) {
   const { user } = useSession();
-  const queryClient = useQueryClient();
-
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
@@ -41,21 +34,19 @@ export default function Comments({
   const editModal = useModal();
   const deleteModal = useModal();
 
-  const deleteMutation = useMutation({
-    ...deleteCommentMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error.message);
-        return;
-      }
+  const deleteMutation = useMutation(deleteCommentMutation);
+  const handleDelete = async () => {
+    if (!selectedComment) return;
+    const result = await deleteMutation.mutateAsync(selectedComment.id);
 
-      await queryClient.invalidateQueries({ queryKey: commentKeys.all });
-      toast.success("Commentaire supprimé");
-
-      deleteModal.closeModal();
-      setSelectedComment(null);
-    },
-  });
+    if (!result.ok) {
+      toast.error(result.error.message);
+      return;
+    }
+    toast.success("Comment deleted successfully");
+    deleteModal.closeModal();
+    setSelectedComment(null);
+  };
 
   const isCommentOwner = (comment: Comment) => user?.id === comment.author?.id;
 
@@ -65,7 +56,7 @@ export default function Comments({
     editModal.openModal();
   };
 
-  const handleDelete = (comment: Comment) => {
+  const handleDeleteComment = (comment: Comment) => {
     setSelectedComment(comment);
     setOpenMenuId(null);
     deleteModal.openModal();
@@ -160,7 +151,7 @@ export default function Comments({
 
                           <button
                             type="button"
-                            onClick={() => handleDelete(comment)}
+                            onClick={() => handleDeleteComment(comment)}
                             className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
                           >
                             <Trash2 size={14} />
@@ -196,9 +187,7 @@ export default function Comments({
           create: { isOpen: action.isOpen, close: action.closeModal },
           delete: { isOpen: deleteModal.isOpen, close: deleteModal.closeModal },
         }}
-        onConfirmDelete={() =>
-          selectedComment && deleteMutation.mutate(selectedComment.id)
-        }
+        onConfirmDelete={handleDelete}
         isDeleting={deleteMutation.isPending}
       />
     </>

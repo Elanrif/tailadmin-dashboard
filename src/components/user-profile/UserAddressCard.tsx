@@ -8,7 +8,6 @@ import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { useSession } from "@/lib/auth/components/auth.context";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { getQueryClient } from "@/lib/query-client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -17,7 +16,6 @@ import {
 } from "@/lib/addresses/schemas/address";
 import { updateAddressMutation } from "@/lib/addresses/api/mutations";
 import { toast } from "sonner";
-import { addressKeys } from "@/lib/addresses/api/queries";
 import ComponentCard from "../common/ComponentCard";
 import { ChevronDownIcon } from "@/icons";
 import Select from "../form/Select";
@@ -27,7 +25,6 @@ import { ErrorState } from "@/lib/shared/ui/error-state";
 
 export default function UserAddressCard() {
   const { user } = useSession();
-  const queryClient = getQueryClient();
   const { isOpen, openModal, closeModal } = useModal();
   const { data } = useSuspenseQuery(
     userAddressesQueryOptions({
@@ -37,7 +34,6 @@ export default function UserAddressCard() {
   );
   const defaultAddress = data.ok ? data.data.content[0] : undefined;
 
-  // Hook pays/villes
   const {
     selectedCountry,
     selectedCity,
@@ -95,9 +91,7 @@ export default function UserAddressCard() {
         toast.error(result.error.message);
         return;
       }
-
       toast.success("Address updated successfully");
-      await queryClient.invalidateQueries({ queryKey: addressKeys.all });
       closeModal();
     },
     onError: (error) => {

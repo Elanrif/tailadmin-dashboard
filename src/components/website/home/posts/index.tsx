@@ -14,19 +14,14 @@ import {
 } from "lucide-react";
 import {
   useMutation,
-  useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
-
 import Button from "@/components/ui/button/Button";
 import { useModal } from "@/hooks/useModal";
 import { useSession } from "@/lib/auth/components/auth.context";
-
 import { postsQueryOptions } from "@/lib/posts/api/queries/queries.client";
-import { postKeys } from "@/lib/posts/api/queries";
 import { deletePostMutation } from "@/lib/posts/api/mutations";
-
 import type { Post } from "@/lib/posts/api/types";
 import { Modals } from "@/lib/posts/components/ui/posts-table/modals";
 import Comments from "./comments";
@@ -36,8 +31,6 @@ import { EmptyState } from "@/lib/shared/ui/empty-state";
 
 export default function Posts() {
   const { user, isLoading } = useSession();
-  const queryClient = useQueryClient();
-
   const [expandedPost, setExpandedPost] = useState<number | null>(null);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
@@ -48,24 +41,19 @@ export default function Posts() {
   const createModalComment = useModal();
   const deleteModal = useModal();
 
-  const deleteMutation = useMutation({
-    ...deletePostMutation,
+  const deleteMutation = useMutation(deletePostMutation);
+  const handleDelete = async () => {
+    if (!selectedPost) return;
+    const result = await deleteMutation.mutateAsync(selectedPost.id);
+    if (!result.ok) {
+      toast.error(result.error.message);
+      return;
+    }
 
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error.message);
-        return;
-      }
-
-      await queryClient.invalidateQueries({
-        queryKey: postKeys.all,
-      });
-      toast.success("Post supprimé");
-
-      deleteModal.closeModal();
-      setSelectedPost(null);
-    },
-  });
+    toast.success("Post supprimé");
+    deleteModal.closeModal();
+    setSelectedPost(null);
+  };
 
   const isPostOwner = (post: Post) => user?.id === post.author?.id;
 
@@ -275,9 +263,7 @@ export default function Posts() {
           create: { isOpen: createModal.isOpen, close: createModal.closeModal },
           delete: { isOpen: deleteModal.isOpen, close: deleteModal.closeModal },
         }}
-        onConfirmDelete={() =>
-          selectedPost && deleteMutation.mutate(selectedPost.id)
-        }
+        onConfirmDelete={handleDelete}
         isDeleting={deleteMutation.isPending}
       />
     </section>

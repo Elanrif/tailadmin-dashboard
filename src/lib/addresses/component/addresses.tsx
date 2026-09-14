@@ -16,10 +16,7 @@ import { exportToCSV } from "@/lib/utils";
 import { Address } from "@/lib/addresses/api/types";
 import { userAddressesQueryOptions } from "@/lib/addresses/api/queries/queries.client";
 import { deleteUserAddressMutation } from "@/lib/addresses/api/mutations";
-import { addressKeys } from "@/lib/addresses/api/queries";
 import { usePageQuery } from "@/lib/use-page-query";
-import { Result } from "@/lib/shared/types";
-import { ApiError } from "@/lib/shared/api-error";
 import { Filters } from "./ui/addresses-card/filters";
 import { Row } from "./ui/addresses-card/row";
 import { Modals } from "./ui/addresses-card/modals";
@@ -29,7 +26,6 @@ import { ErrorState } from "@/lib/shared/ui/error-state";
 import { EmptyState } from "@/lib/shared/ui/empty-state";
 
 export type AddressesQueryProps = {
-  // Optional parameters provided by the parent to scope the addresses.
   queryParams?: {
     userId?: number;
   };
@@ -73,39 +69,22 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
   const createModal = useModal();
   const deleteModal = useModal();
 
-  const deleteMutation = useMutation({
-    ...deleteUserAddressMutation,
-
-    onSuccess: async (result: Result<void, ApiError>) => {
-      if (!result.ok) {
-        toast.error(result.error?.message || "Failed to delete address");
-        return;
-      }
-
-      await queryClient.invalidateQueries({
-        queryKey: addressKeys.all,
-      });
-
-      toast.success("Address deleted successfully");
-
-      setSelectedAddress(null);
-      deleteModal.closeModal();
-    },
-  });
-
-  const handleView = (address: Address) => {
-    setSelectedAddress(address);
-    viewModal.openModal();
+  const openWith = (modal: ReturnType<typeof useModal>) => (item: Address) => {
+    setSelectedAddress(item);
+    modal.openModal();
   };
 
-  const handleEdit = (address: Address) => {
-    setSelectedAddress(address);
-    editModal.openModal();
-  };
-
-  const handleDelete = (address: Address) => {
-    setSelectedAddress(address);
-    deleteModal.openModal();
+  const deleteMutation = useMutation(deleteUserAddressMutation);
+  const handleDelete = async () => {
+    if (!selectedAddress) return;
+    const result = await deleteMutation.mutateAsync(selectedAddress.id);
+    if (!result.ok) {
+      toast.error(result.error.message);
+      return;
+    }
+    toast.success("Address deleted successfully");
+    deleteModal.closeModal();
+    setSelectedAddress(null);
   };
 
   const handleExportCSV = async () => {
@@ -133,22 +112,10 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
       }));
 
       const columnsConfig = [
-        {
-          key: "street",
-          label: "Rue",
-        },
-        {
-          key: "postalCode",
-          label: "Code Postal",
-        },
-        {
-          key: "city",
-          label: "Ville",
-        },
-        {
-          key: "country",
-          label: "Pays",
-        },
+        { key: "street", label: "Rue" },
+        { key: "postalCode", label: "Code Postal" },
+        { key: "city", label: "Ville" },
+        { key: "country", label: "Pays" },
       ] as const;
 
       exportToCSV(dataToExport, columnsConfig, "liste-adresses.csv");
@@ -174,7 +141,6 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
 
   return (
     <div className="space-y-4">
-      {/* HEADER */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
           Addresses List
@@ -197,7 +163,7 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
           </Button>
         </div>
       </div>
-      {/* FILTERS */}
+
       <Filters
         searchQuery={searchQuery}
         onSearchChange={handleSearch}
@@ -208,11 +174,11 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
         cityFilter={cityFilter}
         onCityChange={handleCityChange}
       />
-      {/* INFO */}
+
       <div id="address-table-top">
         Showing {startIndex} to {endIndex} of {pagination?.total ?? 0}
       </div>
-      {/* GRID CARDS */}
+
       <div className="overflow-hidden rounded-xl border">
         <div className="grid grid-cols-1 gap-5 xl:grid-cols-3 p-3">
           {addresses.length > 0 ? (
@@ -220,9 +186,9 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
               <Row
                 key={address.id}
                 address={address}
-                onView={handleView}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
+                onView={openWith(viewModal)}
+                onEdit={openWith(editModal)}
+                onDelete={openWith(deleteModal)}
               />
             ))
           ) : (
@@ -237,7 +203,7 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
           )}
         </div>
       </div>
-      {/* PAGINATION */}
+
       {pagination && (
         <UnifiedPagination
           mode="server"
@@ -250,39 +216,19 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
           updateUrl={false}
         />
       )}
-      {/* MODALS */}
+
       <Modals
         selectedAddress={selectedAddress}
         hiddenFields={{
           userId: queryParams?.userId,
         }}
         modals={{
-          view: {
-            isOpen: viewModal.isOpen,
-            close: viewModal.closeModal,
-          },
-
-          edit: {
-            isOpen: editModal.isOpen,
-            close: editModal.closeModal,
-          },
-
-          create: {
-            isOpen: createModal.isOpen,
-            close: createModal.closeModal,
-          },
-
-          delete: {
-            isOpen: deleteModal.isOpen,
-            close: deleteModal.closeModal,
-          },
+          view: { isOpen: viewModal.isOpen, close: viewModal.closeModal },
+          edit: { isOpen: editModal.isOpen, close: editModal.closeModal },
+          create: { isOpen: createModal.isOpen, close: createModal.closeModal },
+          delete: { isOpen: deleteModal.isOpen, close: deleteModal.closeModal },
         }}
-        onConfirmDelete={() =>
-          selectedAddress &&
-          deleteMutation.mutate({
-            addressId: selectedAddress.id,
-          })
-        }
+        onConfirmDelete={handleDelete}
         isDeleting={deleteMutation.isPending}
       />
     </div>

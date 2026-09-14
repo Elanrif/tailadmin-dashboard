@@ -6,7 +6,6 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Download, MessageSquare } from "lucide-react";
 
@@ -19,7 +18,6 @@ import { postsQueryOptions } from "@/lib/posts/api/queries/queries.client";
 import { usersQueryOptions } from "@/lib/users/api/queries/queries.client";
 import { exportToCSV } from "@/lib/utils";
 import { usePageQuery } from "@/lib/use-page-query";
-import { commentKeys } from "../api/queries";
 import { commentsQueryOptions } from "../api/queries/queries.client";
 import { deleteCommentMutation } from "../api/mutations";
 import { Comment } from "../api/types";
@@ -46,9 +44,7 @@ const {
 } = environment;
 
 export function Comments({ queryParams }: CommentsQueryProps) {
-  const router = useRouter();
   const queryClient = useQueryClient();
-
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
   const { currentPage, itemsPerPage, handlePageChange, handleSizeChange } =
     usePageQuery({
@@ -85,22 +81,24 @@ export function Comments({ queryParams }: CommentsQueryProps) {
   const createModal = useModal();
   const deleteModal = useModal();
 
-  const deleteMutation = useMutation({
-    ...deleteCommentMutation,
-    onSuccess: (result) => {
-      if (!result.ok) {
-        toast.error(result.error.message);
-        return;
-      }
+  const openWith = (modal: ReturnType<typeof useModal>) => (item: Comment) => {
+    setSelectedComment(item);
+    modal.openModal();
+  };
 
-      void queryClient.invalidateQueries({ queryKey: commentKeys.all });
-      toast.success("Comment deleted successfully");
+  const deleteMutation = useMutation(deleteCommentMutation);
+  const handleDelete = async () => {
+    if (!selectedComment) return;
+    const result = await deleteMutation.mutateAsync(selectedComment.id);
 
-      deleteModal.closeModal();
-      setSelectedComment(null);
-      router.refresh();
-    },
-  });
+    if (!result.ok) {
+      toast.error(result.error.message);
+      return;
+    }
+    toast.success("Comment deleted successfully");
+    deleteModal.closeModal();
+    setSelectedComment(null);
+  };
 
   const exportComments = async () => {
     const result = await queryClient.fetchQuery(
@@ -127,21 +125,6 @@ export function Comments({ queryParams }: CommentsQueryProps) {
     );
   };
 
-  const handleView = (comment: Comment) => {
-    setSelectedComment(comment);
-    viewModal.openModal();
-  };
-
-  const handleEdit = (comment: Comment) => {
-    setSelectedComment(comment);
-    editModal.openModal();
-  };
-
-  const handleDelete = (comment: Comment) => {
-    setSelectedComment(comment);
-    deleteModal.openModal();
-  };
-
   if (!data.ok) {
     return <ErrorState error={data.error} />;
   }
@@ -160,7 +143,6 @@ export function Comments({ queryParams }: CommentsQueryProps) {
 
   return (
     <div className="space-y-4">
-      {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold">Comments List</h2>
@@ -182,7 +164,6 @@ export function Comments({ queryParams }: CommentsQueryProps) {
         </div>
       </div>
 
-      {/* FILTERS */}
       <Filters
         searchQuery={searchQuery}
         onSearchChange={handleSearch}
@@ -205,13 +186,11 @@ export function Comments({ queryParams }: CommentsQueryProps) {
         </p>
       )}
 
-      {/* INFO */}
       <div className="text-sm text-gray-500">
         Showing {startIndex} to {endIndex} of {pagination.total} comments
       </div>
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/5 dark:bg-white/3">
-        {/* TABLE */}
         {comments.length > 0 ? (
           <Table>
             <TableHeader className="text-start bg-brand-500 text-white border-b border-gray-100 dark:border-white/5">
@@ -222,9 +201,9 @@ export function Comments({ queryParams }: CommentsQueryProps) {
                 <Row
                   key={comment.id}
                   comment={comment}
-                  onView={handleView}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
+                  onView={openWith(viewModal)}
+                  onEdit={openWith(editModal)}
+                  onDelete={openWith(deleteModal)}
                 />
               ))}
             </TableBody>
@@ -240,7 +219,6 @@ export function Comments({ queryParams }: CommentsQueryProps) {
         )}
       </div>
 
-      {/* PAGINATION */}
       <UnifiedPagination
         mode="server"
         currentPage={pagination.page}
@@ -251,13 +229,6 @@ export function Comments({ queryParams }: CommentsQueryProps) {
         variant="both"
       />
 
-      {/* MODALS */}
-      {/*
-      Optional queryParams scope the create/edit forms and hide the
-      corresponding select fields.
-      When omitted, the related fields remain
-      available for selection.
-      */}
       <Modals
         selectedComment={selectedComment}
         hiddenFields={{ authorId, postId }}
@@ -267,9 +238,7 @@ export function Comments({ queryParams }: CommentsQueryProps) {
           create: { isOpen: createModal.isOpen, close: createModal.closeModal },
           delete: { isOpen: deleteModal.isOpen, close: deleteModal.closeModal },
         }}
-        onConfirmDelete={() =>
-          selectedComment && deleteMutation.mutate(selectedComment.id)
-        }
+        onConfirmDelete={handleDelete}
         isDeleting={deleteMutation.isPending}
       />
     </div>

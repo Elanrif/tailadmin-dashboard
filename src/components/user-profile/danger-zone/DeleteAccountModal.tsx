@@ -5,14 +5,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-
 import { deleteFormSchema, DeleteFormValues } from "@/lib/auth/schemas/auth";
-import { addressKeys } from "@/lib/addresses/api/queries";
-import { getQueryClient } from "@/lib/query-client";
 import { deleteMyAccountMutation } from "@/lib/auth/api/mutation";
 import { useSession } from "@/lib/auth/components/auth.context";
 import { Modal } from "@/components/ui/modal";
-import ComponentCard from "@/components/common/ComponentCard";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
 
@@ -27,7 +23,6 @@ export default function DeleteAccountModal({
 }: DeleteAccountModalProps) {
   const MESSAGE_DELETE_ACCOUNT = '"I want to delete my account"';
   const { user, signOut } = useSession();
-  const queryClient = getQueryClient();
 
   const {
     register,
@@ -50,7 +45,6 @@ export default function DeleteAccountModal({
         return;
       }
       toast.success("Account deleted successfully");
-      await queryClient.invalidateQueries({ queryKey: addressKeys.all });
       signOut();
       onClose();
       reset();
@@ -65,7 +59,7 @@ export default function DeleteAccountModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-175 m-4">
       <form
         onSubmit={handleSubmit(onSubmitDelete)}
         className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl dark:bg-gray-900 lg:p-11"

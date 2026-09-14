@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   useMutation,
   useQueryClient,
@@ -20,7 +19,6 @@ import { EmptyState } from "@/lib/shared/ui/empty-state";
 import { exportToCSV } from "@/lib/utils";
 import { usersQueryOptions } from "../api/queries/queries.client";
 import { deleteUserMutation } from "../api/mutations";
-import { userKeys } from "@/lib/auth/api/queries";
 import { Filters } from "./ui/users-table/filters";
 import { Columns } from "./ui/users-table/columns";
 import { Row } from "./ui/users-table/row";
@@ -36,8 +34,8 @@ const {
 } = environment;
 
 export function Users() {
-  const router = useRouter();
   const queryClient = useQueryClient();
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const { currentPage, itemsPerPage, handlePageChange, handleSizeChange } =
     usePageQuery({
@@ -61,7 +59,6 @@ export function Users() {
     onPageReset: () => handlePageChange(1),
   });
 
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const { data } = useSuspenseQuery(usersQueryOptions(filters));
 
   const viewModal = useModal();
@@ -69,32 +66,22 @@ export function Users() {
   const createModal = useModal();
   const deleteModal = useModal();
 
-  const deleteMutation = useMutation({
-    ...deleteUserMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error.message);
-        return;
-      }
-      await queryClient.invalidateQueries({ queryKey: userKeys.all });
-      toast.success("User deleted successfully");
-      setSelectedUser(null);
-      deleteModal.closeModal();
-      router.refresh();
-    },
-  });
+  const openWith = (modal: ReturnType<typeof useModal>) => (item: User) => {
+    setSelectedUser(item);
+    modal.openModal();
+  };
 
-  const handleView = (user: User) => {
-    setSelectedUser(user);
-    viewModal.openModal();
-  };
-  const handleEdit = (user: User) => {
-    setSelectedUser(user);
-    editModal.openModal();
-  };
-  const handleDelete = (user: User) => {
-    setSelectedUser(user);
-    deleteModal.openModal();
+  const deleteMutation = useMutation(deleteUserMutation);
+  const handleDelete = async () => {
+    if (!selectedUser) return;
+    const result = await deleteMutation.mutateAsync(selectedUser.id);
+    if (!result.ok) {
+      toast.error(result.error.message);
+      return;
+    }
+    toast.success("User deleted successfully");
+    deleteModal.closeModal();
+    setSelectedUser(null);
   };
 
   const exportUsers = async () => {
@@ -135,7 +122,6 @@ export function Users() {
 
   return (
     <div className="space-y-4">
-      {/* Top Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -158,7 +144,6 @@ export function Users() {
         </div>
       </div>
 
-      {/* Filtres déportés */}
       <Filters
         searchQuery={searchQuery}
         onSearchChange={handleSearch}
@@ -170,12 +155,10 @@ export function Users() {
         onLimitChange={handleSizeChange}
       />
 
-      {/* Résumé textuel */}
       <div className="text-sm text-gray-500 dark:text-gray-400" id="table-top">
         Showing {startIndex} to {endIndex} of {pagination.total} users
       </div>
 
-      {/* Structure de la Table HTML */}
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/5 dark:bg-white/3">
         <div className="max-w-full overflow-x-auto">
           {users.length > 0 ? (
@@ -188,9 +171,9 @@ export function Users() {
                   <Row
                     key={user.id}
                     user={user}
-                    onView={handleView}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
+                    onView={openWith(viewModal)}
+                    onEdit={openWith(editModal)}
+                    onDelete={openWith(deleteModal)}
                   />
                 ))}
               </TableBody>
@@ -206,7 +189,6 @@ export function Users() {
         </div>
       </div>
 
-      {/* Pagination Unifiée connectée au Serveur */}
       <UnifiedPagination
         mode="server"
         currentPage={pagination.page}
@@ -217,7 +199,6 @@ export function Users() {
         variant="both"
       />
 
-      {/* Modals regroupées et isolées */}
       <Modals
         selectedUser={selectedUser}
         modals={{
@@ -226,9 +207,7 @@ export function Users() {
           create: { isOpen: createModal.isOpen, close: createModal.closeModal },
           delete: { isOpen: deleteModal.isOpen, close: deleteModal.closeModal },
         }}
-        onConfirmDelete={() =>
-          selectedUser && deleteMutation.mutate(selectedUser.id)
-        }
+        onConfirmDelete={handleDelete}
         isDeleting={deleteMutation.isPending}
       />
     </div>

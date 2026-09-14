@@ -3,11 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { LoaderIcon } from "lucide-react";
 
@@ -23,7 +19,6 @@ import {
   createCommentMutation,
   updateCommentMutation,
 } from "../../api/mutations";
-import { commentKeys } from "../../api/queries";
 import {
   commentCreateSchema,
   CommentFormValues,
@@ -48,28 +43,22 @@ export function CommentForm({
   hiddenFields: { postId, authorId } = {},
 }: CommentFormProps) {
   const router = useRouter();
-  const queryClient = useQueryClient();
-
   const isEdit = !!initialData;
-
   const selectedPostId = initialData?.postId ?? postId;
   const selectedAuthorId = initialData?.author?.id ?? authorId;
-  // Post et auteur ne sont jamais modifiables en édition
-  // (absents de commentUpdateSchema)
   const showPostSelect = !isEdit && selectedPostId == null;
   const showAuthorSelect = !isEdit && selectedAuthorId == null;
-
   const formSchema = isEdit ? commentUpdateSchema : commentCreateSchema;
-
-  const { data: postsResult } = useSuspenseQuery(
-    postsQueryOptions({ size: environment.pagination.size }),
-  );
-  const { data: usersResult } = useSuspenseQuery(
-    usersQueryOptions({ size: environment.pagination.size }),
-  );
-
-  const posts = postsResult.ok ? postsResult.data.content : [];
-  const users = usersResult.ok ? usersResult.data.content : [];
+  const { data: postsResult } = useQuery({
+    ...postsQueryOptions({ size: environment.pagination.size }),
+    enabled: showPostSelect,
+  });
+  const { data: usersResult } = useQuery({
+    ...usersQueryOptions({ size: environment.pagination.size }),
+    enabled: showAuthorSelect,
+  });
+  const posts = postsResult?.ok ? postsResult.data.content : [];
+  const users = usersResult?.ok ? usersResult.data.content : [];
 
   const {
     register,
@@ -89,56 +78,54 @@ export function CommentForm({
         },
   });
 
-  const createMutation = useMutation({
-    ...createCommentMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error.message);
-        return;
-      }
-
-      await queryClient.invalidateQueries({ queryKey: commentKeys.all });
-      toast.success("Comment created successfully");
-      onSaved?.();
-      router.refresh();
-    },
-    onError: (error) => {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to create comment",
-      );
-    },
-  });
-
-  const updateMutation = useMutation({
-    ...updateCommentMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error.message);
-        return;
-      }
-
-      await queryClient.invalidateQueries({ queryKey: commentKeys.all });
-      toast.success("Comment updated successfully");
-      onSaved?.();
-      router.refresh();
-    },
-    onError: (error) => {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to update comment",
-      );
-    },
-  });
+  const createMutation = useMutation(createCommentMutation);
+  const updateMutation = useMutation(updateCommentMutation);
 
   const onSubmit = (values: CommentFormValues | CommentUpdateFormValues) => {
     if (isEdit) {
-      updateMutation.mutate({
-        id: initialData.id,
-        values: values as CommentUpdateFormValues,
-      });
+      updateMutation.mutate(
+        {
+          id: initialData.id,
+          values: values as CommentUpdateFormValues,
+        },
+        {
+          onSuccess: async (result) => {
+            if (!result.ok) {
+              toast.error(result.error.message);
+              return;
+            }
+            toast.success("Comment updated successfully");
+            onSaved?.();
+          },
+          onError: (error) => {
+            toast.error(
+              error instanceof Error
+                ? error.message
+                : "Failed to update comment",
+            );
+          },
+        },
+      );
       return;
     }
 
-    createMutation.mutate(values as CommentFormValues);
+    createMutation.mutate(values as CommentFormValues, {
+      onSuccess: async (result) => {
+        if (!result.ok) {
+          toast.error(result.error.message);
+          return;
+        }
+        toast.success("Comment created successfully");
+        onSaved?.();
+      },
+      onError: (error) => {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to create comment",
+        );
+      },
+    });
   };
 
   const isSaving =

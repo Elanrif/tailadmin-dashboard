@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUserById } from "@/lib/users/api/services/user.server";
+import { getUserAddress } from "@/lib/addresses/api/services/address.server";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +14,7 @@ export async function GET(_: NextRequest, { params }: { params: Params }) {
       { status: 400 },
     );
   }
-  const response = await getUserById(_id);
+  const response = await getUserAddress(_id);
   const status = !response.ok ? (response.error.status ?? 500) : 200;
   return NextResponse.json(response, { status });
 }

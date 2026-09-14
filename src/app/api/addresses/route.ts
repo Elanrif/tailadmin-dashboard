@@ -1,13 +1,12 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getUserAddresses } from "@/lib/addresses/api/services/address.server";
 import { AddressFilters } from "@/lib/addresses/api/types";
-import { resultResponse } from "@/lib/shared/api-response";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   const sp =
-    _request.nextUrl?.searchParams ?? new URL(_request.url).searchParams;
+    request.nextUrl?.searchParams ?? new URL(request.url).searchParams;
   const filters: AddressFilters = {
     current: sp.has("current") ? Number(sp.get("current")) : undefined,
     limit: sp.has("limit")
@@ -23,6 +22,6 @@ export async function GET(_request: NextRequest) {
   };
 
   const response = await getUserAddresses(filters);
-
-  return resultResponse(response);
+  const status = !response.ok ? (response.error.status ?? 500) : 200;
+  return NextResponse.json(response, { status });
 }

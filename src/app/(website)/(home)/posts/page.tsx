@@ -1,6 +1,6 @@
 import ComponentCard from "@/components/common/ComponentCard";
+import Posts from "@/components/website/home/posts";
 import { Metadata } from "next";
-import Posts from "./_components/posts";
 
 // By default, Next.js tries to statically render this page at build time
 // (Static Site Generation), since nothing here signals otherwise. To do

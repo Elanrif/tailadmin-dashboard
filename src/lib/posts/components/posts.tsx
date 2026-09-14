@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   useMutation,
   useSuspenseQuery,
@@ -14,8 +13,7 @@ import { Button } from "@/components/ui/button";
 import { UnifiedPagination } from "@/components/ui/paginations";
 import { useModal } from "@/hooks/useModal";
 import { exportToCSV } from "@/lib/utils";
-import { Download } from "lucide-react";
-import { postKeys } from "../api/queries";
+import { Download, Loader2 } from "lucide-react";
 import { postsQueryOptions } from "../api/queries/queries.client";
 import { deletePostMutation } from "../api/mutations";
 import { Filters } from "./ui/posts-table/filters";
@@ -31,7 +29,6 @@ import { EmptyState } from "@/lib/shared/ui/empty-state";
 import environment from "@/config/environment.config";
 
 export type PostQueryProps = {
-  // Optional parameters provided by the parent to scope the comments.
   queryParams?: {
     authorId?: number;
   };
@@ -43,12 +40,9 @@ const {
 } = environment;
 
 export function Posts({ queryParams }: PostQueryProps) {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-
-  // authorId déjà imposé par le parent (ex: page "Mes posts") → pas de
-  // sélecteur d'auteurs, pas de fetch users, export limité à cet auteur.
+  const [isExporting, setIsExporting] = useState(false);
   const isAuthorScoped = queryParams?.authorId != null;
 
   const { currentPage, itemsPerPage, handlePageChange, handleSizeChange } =
@@ -66,18 +60,22 @@ export function Posts({ queryParams }: PostQueryProps) {
       authorId: queryParams?.authorId,
       onPageReset: () => handlePageChange(1),
     });
+  
+  const deleteMutation = useMutation(deletePostMutation);
+  const handleDelete = async () => {
+    if (!selectedPost) return;
 
-  const deleteMutation = useMutation({
-    ...deletePostMutation,
-    onSuccess: (result) => {
-      if (!result.ok) return toast.error(result.error.message);
-      void queryClient.invalidateQueries({ queryKey: postKeys.all });
-      toast.success("Post deleted successfully");
-      deleteModal.closeModal();
-      setSelectedPost(null);
-      router.refresh();
-    },
-  });
+    const result = await deleteMutation.mutateAsync(selectedPost.id);
+
+    if (!result.ok) {
+      toast.error(result.error.message);
+      return;
+    }
+
+    toast.success("Post supprimé");
+    deleteModal.closeModal();
+    setSelectedPost(null);
+  };
 
   /* Modals */
   const viewModal = useModal();
@@ -85,43 +83,51 @@ export function Posts({ queryParams }: PostQueryProps) {
   const createModal = useModal();
   const deleteModal = useModal();
 
-  const exportPosts = () => {
-    const rows = allQuery.data.ok ? allQuery.data.data.content : [];
-    exportToCSV(
-      rows.map((post) => ({
-        title: post.title,
-        author: `${post.author?.firstName ?? ""} ${post.author?.lastName ?? ""}`,
-        likes: post.likes,
-        createdAt: post.createdAt,
-      })),
-      [
-        { key: "title", label: "Title" },
-        { key: "author", label: "Author" },
-        { key: "likes", label: "Likes" },
-        { key: "createdAt", label: "Created at" },
-      ] as const,
-      "posts.csv",
-    );
+  const openWith = (modal: ReturnType<typeof useModal>) => (item: Post) => {
+    setSelectedPost(item);
+    modal.openModal();
+  };
+
+  const exportPosts = async () => {
+    setIsExporting(true);
+    try {
+      const result = await queryClient.fetchQuery(
+        postsQueryOptions({ ...filters, page: 1, size: MAX_EXPORT_SIZE }),
+      );
+
+      if (!result.ok) {
+        toast.error("Impossible d'exporter les posts");
+        return;
+      }
+
+      exportToCSV(
+        result.data.content.map((post) => ({
+          title: post.title,
+          author: `${post.author?.firstName ?? ""} ${post.author?.lastName ?? ""}`,
+          likes: post.likes,
+          createdAt: post.createdAt,
+        })),
+        [
+          { key: "title", label: "Title" },
+          { key: "author", label: "Author" },
+          { key: "likes", label: "Likes" },
+          { key: "createdAt", label: "Created at" },
+        ] as const,
+        "posts.csv",
+      );
+    } catch {
+      toast.error("Impossible d'exporter les posts");
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const { data } = useSuspenseQuery(postsQueryOptions(filters));
 
-  // Ne charge la liste des auteurs QUE si le filtre par auteur est pertinent
-  // (page non scopée sur un authorId précis). Sinon, un simple USER visitant
-  // "Mes posts" ne déclenche jamais /api/users (évite le 403).
   const { data: usersResult } = useQuery({
     ...usersQueryOptions({ size: MAX_EXPORT_SIZE }),
     enabled: !isAuthorScoped,
   });
-
-  // L'export respecte le même scope que la liste affichée : un utilisateur
-  // sur "Mes posts" n'exporte que ses propres posts, pas tout le monde.
-  const allQuery = useSuspenseQuery(
-    postsQueryOptions({
-      size: MAX_EXPORT_SIZE,
-      authorId: queryParams?.authorId,
-    }),
-  );
 
   if (!data?.ok) {
     return <ErrorState error={data.error} />;
@@ -139,8 +145,17 @@ export function Posts({ queryParams }: PostQueryProps) {
           <p className="text-sm text-gray-500">Manage your posts.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={exportPosts}>
-            Export <Download size={16} />
+          <Button
+            variant="outline"
+            onClick={exportPosts}
+            disabled={isExporting}
+          >
+            {isExporting ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Download size={16} />
+            )}
+            Export
           </Button>
           <Button
             onClick={createModal.openModal}
@@ -151,25 +166,24 @@ export function Posts({ queryParams }: PostQueryProps) {
         </div>
       </div>
 
-      {/* FILTERS : le sélecteur d'auteur ne s'affiche que si non déjà imposé */}
       {!isAuthorScoped && (
         <Filters
           searchQuery={searchQuery}
           onSearchChange={handleSearch}
           authorId={authorId}
           onAuthorChange={handleAuthorChange}
-          authors={isAuthorScoped ? [] : authors}
+          authors={authors}
           itemsPerPage={itemsPerPage}
           onLimitChange={handleSizeChange}
         />
       )}
       <div className="text-sm text-gray-500 dark:text-gray-400" id="table-top">
-        Showing{" "}
-        {posts.length ? (pagination!.page - 1) * pagination!.size + 1 : 0} to{" "}
+        Showing {posts.length ? (pagination.page - 1) * pagination.size + 1 : 0}{" "}
+        to{" "}
         {posts.length
-          ? (pagination!.page - 1) * pagination!.size + posts.length
+          ? (pagination.page - 1) * pagination.size + posts.length
           : 0}{" "}
-        of {pagination?.total ?? 0} posts
+        of {pagination.total} posts
       </div>
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/5 dark:bg-white/3">
         {posts.length > 0 ? (
@@ -182,18 +196,9 @@ export function Posts({ queryParams }: PostQueryProps) {
                 <Row
                   key={post.id}
                   post={post}
-                  onView={(item) => {
-                    setSelectedPost(item);
-                    viewModal.openModal();
-                  }}
-                  onEdit={(item) => {
-                    setSelectedPost(item);
-                    editModal.openModal();
-                  }}
-                  onDelete={(item) => {
-                    setSelectedPost(item);
-                    deleteModal.openModal();
-                  }}
+                  onView={openWith(viewModal)}
+                  onEdit={openWith(editModal)}
+                  onDelete={openWith(deleteModal)}
                 />
               ))}
             </TableBody>
@@ -219,7 +224,6 @@ export function Posts({ queryParams }: PostQueryProps) {
         />
       )}
 
-      {/* MODALS */}
       <Modals
         selectedPost={selectedPost}
         hiddenFields={{ authorId }}
@@ -229,9 +233,7 @@ export function Posts({ queryParams }: PostQueryProps) {
           create: { isOpen: createModal.isOpen, close: createModal.closeModal },
           delete: { isOpen: deleteModal.isOpen, close: deleteModal.closeModal },
         }}
-        onConfirmDelete={() =>
-          selectedPost && deleteMutation.mutate(selectedPost.id)
-        }
+        onConfirmDelete={handleDelete}
         isDeleting={deleteMutation.isPending}
       />
     </div>

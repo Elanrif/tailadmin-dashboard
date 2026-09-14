@@ -1,11 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -18,7 +14,6 @@ import {
   createUserAddressMutation,
   updateAddressMutation,
 } from "@/lib/addresses/api/mutations";
-import { addressKeys } from "@/lib/addresses/api/queries";
 import {
   addressCreateSchema,
   AddressCreateFormValues,
@@ -44,26 +39,21 @@ export default function AddressForm({
   hiddenFields?: AddressesQueryProps["queryParams"];
   onSaved?: () => void;
 }) {
-  const queryClient = useQueryClient();
-
   const isEdit = !!initialData;
-  
+
   const selectedAuthorId = initialData?.userId ?? userId;
-  // Sur édition, l'utilisateur propriétaire n'est jamais modifiable
-  // (absent de addressUpdateSchema)
+
   const showAuthorSelect = !isEdit && selectedAuthorId == null;
 
-  // Ne fetch la liste des users QUE si le select doit réellement s'afficher
-  // (admin créant une adresse sans destinataire prérempli).
-  // Un simple utilisateur avec userId déjà fourni via hiddenFields
-  // ne déclenche jamais cette requête (évite le 403 + le crash).
   const { data: usersResult } = useQuery({
     ...usersQueryOptions({ size: environment.pagination.size }),
     enabled: showAuthorSelect,
   });
+
   const users = usersResult?.ok ? usersResult.data.content : [];
 
   const formSchema = isEdit ? addressUpdateSchema : addressCreateSchema;
+
   const {
     register,
     handleSubmit,
@@ -111,54 +101,56 @@ export default function AddressForm({
     }
   }, [initialData, userId, isEdit, reset]);
 
-  const createMutation = useMutation({
-    ...createUserAddressMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error?.message || "Failed to create address");
-        return;
-      }
-
-      await queryClient.invalidateQueries({ queryKey: addressKeys.all });
-      toast.success("Address created successfully");
-      onSaved?.();
-    },
-    onError: () => {
-      toast.error("Failed to create address");
-    },
-  });
-
-  const updateMutation = useMutation({
-    ...updateAddressMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error?.message || "Failed to update address");
-        return;
-      }
-
-      await queryClient.invalidateQueries({ queryKey: addressKeys.all });
-      toast.success("Address updated successfully");
-      onSaved?.();
-    },
-    onError: () => {
-      toast.error("Failed to update address");
-    },
-  });
+  const createMutation = useMutation(createUserAddressMutation);
+  const updateMutation = useMutation(updateAddressMutation);
 
   const onSubmit = (
     values: AddressCreateFormValues | AddressUpdateFormValues,
   ) => {
     if (isEdit && initialData) {
-      updateMutation.mutate({
-        addressId: initialData.id,
-        payload: values as AddressUpdateFormValues,
-      });
+      updateMutation.mutate(
+        {
+          addressId: initialData.id,
+          payload: values as AddressUpdateFormValues,
+        },
+        {
+          onSuccess: (result) => {
+            if (!result.ok) {
+              toast.error(result.error?.message || "Failed to update address");
+              return;
+            }
+
+            toast.success("Address updated successfully");
+            onSaved?.();
+          },
+          onError: () => {
+            toast.error("Failed to update address");
+          },
+        },
+      );
+
       return;
     }
 
-    createMutation.mutate({
-      payload: values as AddressCreateFormValues,
-    });
+    createMutation.mutate(
+      {
+        payload: values as AddressCreateFormValues,
+      },
+      {
+        onSuccess: (result) => {
+          if (!result.ok) {
+            toast.error(result.error?.message || "Failed to create address");
+            return;
+          }
+
+          toast.success("Address created successfully");
+          onSaved?.();
+        },
+        onError: () => {
+          toast.error("Failed to create address");
+        },
+      },
+    );
   };
 
   const handleDefaultAddressChange = (checked: boolean) => {
@@ -177,22 +169,26 @@ export default function AddressForm({
         <h1 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:text-xl">
           {pageTitle}
         </h1>
+
         <p className="text-sm text-gray-500 dark:text-gray-400">
           {isEdit
             ? "Update the address details below."
             : "Create a new address for this user."}
         </p>
       </div>
+
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <Label htmlFor="street" required>
             Street
           </Label>
+
           <Input
             id="street"
             {...register("street")}
             placeholder="Enter street"
           />
+
           {errors.street && (
             <p className="mt-1 text-sm text-red-500">{errors.street.message}</p>
           )}
@@ -202,11 +198,13 @@ export default function AddressForm({
           <Label htmlFor="postalCode" required>
             Postal Code
           </Label>
+
           <Input
             id="postalCode"
             {...register("postalCode")}
             placeholder="Enter postal code"
           />
+
           {errors.postalCode && (
             <p className="mt-1 text-sm text-red-500">
               {errors.postalCode.message}
@@ -218,7 +216,9 @@ export default function AddressForm({
           <Label htmlFor="city" required>
             City
           </Label>
+
           <Input id="city" {...register("city")} placeholder="Enter city" />
+
           {errors.city && (
             <p className="mt-1 text-sm text-red-500">{errors.city.message}</p>
           )}
@@ -228,11 +228,13 @@ export default function AddressForm({
           <Label htmlFor="country" required>
             Country
           </Label>
+
           <Input
             id="country"
             {...register("country")}
             placeholder="Enter country"
           />
+
           {errors.country && (
             <p className="mt-1 text-sm text-red-500">
               {errors.country.message}
@@ -277,6 +279,7 @@ export default function AddressForm({
             <input type="hidden" {...register("userId")} />
           ))}
       </div>
+
       <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
         <Switch
           label="Set as default address"
@@ -285,9 +288,6 @@ export default function AddressForm({
         />
       </div>
 
-      {/* =================================================
-                SUBMIT
-                ================================================= */}
       <div className="mt-5 flex justify-start">
         <Button
           type="submit"

@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { usersQueryOptions } from "@/lib/users/api/queries/queries.client";
@@ -24,7 +24,6 @@ import {
   postUpdateSchema,
 } from "../../schemas/post";
 import { createPostMutation, updatePostMutation } from "../../api/mutations";
-import { postKeys } from "../../api/queries";
 import { Post } from "../../api/types";
 import { PostQueryProps } from "../posts";
 import environment from "@/config/environment.config";
@@ -42,22 +41,15 @@ export function PostForm({
   hiddenFields: { authorId } = {},
   onSaved,
 }: PostFormProps) {
-  const queryClient = useQueryClient();
-
   const isEdit = !!initialData;
-
   const selectedAuthorId = initialData?.author?.id ?? authorId;
-  // Sur édition, l'auteur n'est jamais modifiable (absent de postUpdateSchema)
   const showAuthorSelect = !isEdit && selectedAuthorId == null;
 
-  // Ne fetch la liste des users QUE si le select doit réellement s'afficher
-  // (admin créant un post sans auteur prérempli).
-  // Un simple utilisateur avec authorId déjà fourni via hiddenFields
-  // ne déclenche jamais cette requête (évite le 403 + le crash).
   const { data: usersResult } = useQuery({
     ...usersQueryOptions({ size: environment.pagination.size }),
     enabled: showAuthorSelect,
   });
+
   const users = usersResult?.ok ? usersResult.data.content : [];
   const formSchema = isEdit ? postUpdateSchema : postCreateSchema;
 
@@ -82,70 +74,63 @@ export function PostForm({
         },
   });
 
-  const createMutation = useMutation({
-    ...createPostMutation,
-
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error?.message || "Failed to create post");
-        return;
-      }
-
-      image.clearDraft();
-
-      await queryClient.invalidateQueries({
-        queryKey: postKeys.all,
-      });
-
-      toast.success("Post created successfully");
-      onSaved?.();
-    },
-
-    onError: () => {
-      toast.error("Failed to create post");
-    },
-  });
-
-  const updateMutation = useMutation({
-    ...updatePostMutation,
-
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error?.message || "Failed to update post");
-        return;
-      }
-
-      image.clearDraft();
-
-      await queryClient.invalidateQueries({
-        queryKey: postKeys.all,
-      });
-
-      toast.success("Post updated successfully");
-
-      onSaved?.();
-    },
-
-    onError: () => {
-      toast.error("Failed to update post");
-    },
-  });
-
-  const onSubmit = (values: PostCreateFormValues | PostUpdateFormValues) => {
-    if (isEdit) {
-      updateMutation.mutate({
-        id: initialData.id,
-        values: values as PostUpdateFormValues,
-      });
-      return;
-    }
-    createMutation.mutate(values as PostCreateFormValues);
-  };
-
   const image = useImageDraft({
     storageKey: `post:image:${initialData?.id ?? "new"}`,
     initialUrl: initialData?.imageUrl,
   });
+
+  const createMutation = useMutation(createPostMutation);
+  const updateMutation = useMutation(updatePostMutation);
+
+  const onSubmit = (values: PostCreateFormValues | PostUpdateFormValues) => {
+    if (isEdit) {
+      updateMutation.mutate(
+        {
+          id: initialData.id,
+          values: values as PostUpdateFormValues,
+        },
+        {
+          onSuccess: (result) => {
+            if (!result.ok) {
+              toast.error(result.error?.message || "Failed to update post");
+              return;
+            }
+
+            image.clearDraft();
+            toast.success("Post updated successfully");
+            onSaved?.();
+          },
+
+          onError: (error) => {
+            toast.error(
+              error instanceof Error ? error.message : "Failed to update post",
+            );
+          },
+        },
+      );
+
+      return;
+    }
+
+    createMutation.mutate(values as PostCreateFormValues, {
+      onSuccess: (result) => {
+        if (!result.ok) {
+          toast.error(result.error?.message || "Failed to create post");
+          return;
+        }
+
+        image.clearDraft();
+        toast.success("Post created successfully");
+        onSaved?.();
+      },
+
+      onError: (error) => {
+        toast.error(
+          error instanceof Error ? error.message : "Failed to create post",
+        );
+      },
+    });
+  };
 
   const isSaving =
     isSubmitting || createMutation.isPending || updateMutation.isPending;
@@ -175,6 +160,7 @@ export function PostForm({
               />
             </ComponentCard>
           )}
+
           <ComponentCard>
             <div className="space-y-5">
               <div>
@@ -243,12 +229,14 @@ export function PostForm({
                   <input type="hidden" {...register("authorId")} />
                 ))}
             </div>
+
             <ImageUpload
               folder="posts"
               value={image.url}
               publicId={image.publicId}
               onChange={(url, publicId) => {
                 image.handleChange(url, publicId);
+
                 setValue("imageUrl", url, {
                   shouldDirty: true,
                   shouldValidate: true,
@@ -256,6 +244,7 @@ export function PostForm({
               }}
               onRemove={() => {
                 image.handleRemove();
+
                 setValue("imageUrl", "", {
                   shouldDirty: true,
                   shouldValidate: true,
@@ -263,6 +252,7 @@ export function PostForm({
               }}
               variant="light"
             />
+
             <div className="mt-5 flex justify-end">
               <Button
                 type="submit"

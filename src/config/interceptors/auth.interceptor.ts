@@ -2,6 +2,7 @@ import environment from "@config/environment.config";
 import { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { getLogger } from "@config/logger.config";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const {
   api: {
@@ -38,7 +39,7 @@ export const sessionCookieInterceptor = async (
 export const expiredSessionInterceptor = async (error: AxiosError) => {
   const status = error.response?.status;
 
-  if (status === 401 || status === 403) {
+  if (status === 401) {
     const cookieStore = await cookies();
     for (const { name } of cookieStore.getAll()) {
       cookieStore.delete(name);

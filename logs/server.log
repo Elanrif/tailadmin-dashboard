@@ -4382,3 +4382,63 @@
 {"level":30,"time":1789307855039,"pid":12240,"hostname":"ELTECH","addressId":3,"msg":"Address updated successfully"}
 {"level":30,"time":1789307855470,"pid":12240,"hostname":"ELTECH","addressId":3,"msg":"Address fetched"}
 {"level":30,"time":1789307855668,"pid":12240,"hostname":"ELTECH","addressId":3,"msg":"Address fetched"}
+{"level":30,"time":1789393803701,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789393803736,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789393807102,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789393874186,"pid":28612,"hostname":"ELTECH","id":25,"content":"bon","msg":"Comment created successfully"}
+{"level":30,"time":1789393887614,"pid":28612,"hostname":"ELTECH","id":26,"content":"validé","msg":"Comment created successfully"}
+{"level":30,"time":1789393899868,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789393901293,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789393952245,"pid":28612,"hostname":"ELTECH","id":25,"msg":"Comment deleted successfully"}
+{"level":30,"time":1789393952379,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789393960052,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789393961252,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789394099719,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789394099730,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789394101220,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789394111565,"pid":28612,"hostname":"ELTECH","id":27,"content":"oui","msg":"Comment created successfully"}
+{"level":30,"time":1789394120064,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789394121571,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789394129410,"pid":28612,"hostname":"ELTECH","id":28,"content":"ok validé","msg":"Comment created successfully"}
+{"level":30,"time":1789394193707,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789394895976,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789394896122,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789394898370,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789394981229,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789394984536,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789395248488,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789395499739,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789395499746,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789395499859,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789395499864,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789395500297,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789395502678,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789395949693,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789396437511,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789396440094,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789397048239,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789397050171,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789397051604,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":50,"time":1789397064812,"pid":28612,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-14T14:44:24.789Z","status":403,"message":"Forbidden","path":"/api/v1/comments/26","msg":"API error"}
+{"level":40,"time":1789397064818,"pid":28612,"hostname":"ELTECH","timestamp":"2026-09-14T14:44:24.789Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/comments/26","msg":"[API Error] [deleteComment]"}
+{"level":50,"time":1789397072469,"pid":28612,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-14T14:44:32.460Z","status":403,"message":"Forbidden","path":"/api/v1/comments/26","msg":"API error"}
+{"level":40,"time":1789397072469,"pid":28612,"hostname":"ELTECH","timestamp":"2026-09-14T14:44:32.460Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/comments/26","msg":"[API Error] [deleteComment]"}
+{"level":50,"time":1789397075406,"pid":28612,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-14T14:44:35.403Z","status":403,"message":"Forbidden","path":"/api/v1/comments/26","msg":"API error"}
+{"level":40,"time":1789397075407,"pid":28612,"hostname":"ELTECH","timestamp":"2026-09-14T14:44:35.403Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/comments/26","msg":"[API Error] [deleteComment]"}
+{"level":50,"time":1789397076210,"pid":28612,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-14T14:44:36.208Z","status":403,"message":"Forbidden","path":"/api/v1/comments/26","msg":"API error"}
+{"level":40,"time":1789397076210,"pid":28612,"hostname":"ELTECH","timestamp":"2026-09-14T14:44:36.208Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/comments/26","msg":"[API Error] [deleteComment]"}
+{"level":50,"time":1789397076877,"pid":28612,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-14T14:44:36.875Z","status":403,"message":"Forbidden","path":"/api/v1/comments/26","msg":"API error"}
+{"level":40,"time":1789397076878,"pid":28612,"hostname":"ELTECH","timestamp":"2026-09-14T14:44:36.875Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/comments/26","msg":"[API Error] [deleteComment]"}
+{"level":50,"time":1789397077541,"pid":28612,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-14T14:44:37.539Z","status":403,"message":"Forbidden","path":"/api/v1/comments/26","msg":"API error"}
+{"level":40,"time":1789397077542,"pid":28612,"hostname":"ELTECH","timestamp":"2026-09-14T14:44:37.539Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/comments/26","msg":"[API Error] [deleteComment]"}
+{"level":30,"time":1789397113813,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789397212412,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789397212949,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789397214481,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789397221251,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789397223068,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789397430308,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789397432784,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":30,"time":1789397434303,"pid":28612,"hostname":"ELTECH","count":7,"msg":"Posts fetched"}
+{"level":50,"time":1789397448940,"pid":28612,"hostname":"ELTECH","error":"Forbidden","timestamp":"2026-09-14T14:50:48.934Z","status":403,"message":"Forbidden","path":"/api/v1/comments/26","msg":"API error"}
+{"level":40,"time":1789397448941,"pid":28612,"hostname":"ELTECH","timestamp":"2026-09-14T14:50:48.934Z","status":403,"error":"Forbidden","message":"Forbidden","path":"/api/v1/comments/26","msg":"[API Error] [deleteComment]"}

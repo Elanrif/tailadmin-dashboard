@@ -25,12 +25,11 @@ export function frontendHttp() {
       const status = error.response?.status;
 
       if (
-        (status === 401 || status === 403) &&
+        (status === 401) &&
         !isPublicAuthRequest(error.config?.url)
       ) {
         clearAuthSession();
       }
-
       return Promise.reject(error);
     },
   );

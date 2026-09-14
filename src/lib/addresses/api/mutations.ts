@@ -60,8 +60,7 @@ export const resetDefaultAddressMutation = mutationOptions({
 });
 
 export const deleteUserAddressMutation = mutationOptions({
-  mutationFn: ({ addressId }: { addressId: number }) =>
-    deleteUserAddressAction(addressId),
+  mutationFn: (id: number) => deleteUserAddressAction(id),
 
   onSettled: () => {
     void getQueryClient().invalidateQueries({

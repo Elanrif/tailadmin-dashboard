@@ -11,16 +11,14 @@ import {
 } from "@/lib/users/schemas/user";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { updateUserMutation } from "@/lib/users/api/mutations";
 import { toast } from "sonner";
-import { userKeys } from "@/lib/users/api/queries";
 import { LoaderIcon } from "lucide-react";
 import { useState } from "react";
 
 export default function UserImageCard() {
   const { user, setUser } = useSession();
-  const queryClient = useQueryClient();
   const {
     handleSubmit,
     setValue,
@@ -64,7 +62,6 @@ export default function UserImageCard() {
         return;
       }
       setUser(result.data);
-      await queryClient.invalidateQueries({ queryKey: userKeys.all });
       toast.success("User updated successfully");
     },
     onError: () => {

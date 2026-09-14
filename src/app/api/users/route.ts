@@ -1,20 +1,16 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getUsers } from "@/lib/users/api/services/user.server";
 import type { UserFilters } from "@/lib/users/api/types";
-import { resultResponse } from "@/lib/shared/api-response";
+import { parseIntParam } from "@/utils/query-params";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(_request: NextRequest) {
-  const sp =
-    _request.nextUrl?.searchParams ?? new URL(_request.url).searchParams;
+export async function GET(request: NextRequest) {
+  const sp = request.nextUrl.searchParams;
+
   const filters: UserFilters = {
-    page: sp.has("page") ? Number(sp.get("page")) : undefined,
-    size: sp.has("size")
-      ? Number(sp.get("size"))
-      : sp.has("perPage")
-        ? Number(sp.get("perPage"))
-        : undefined,
+    page: parseIntParam(sp.get("page")),
+    size: parseIntParam(sp.get("size") ?? sp.get("perPage")),
     role: sp.get("role") ?? undefined,
     status: sp.get("status") ?? undefined,
     search: sp.get("search") ?? undefined,
@@ -22,13 +18,6 @@ export async function GET(_request: NextRequest) {
   };
 
   const response = await getUsers(filters);
-  /**
-   * Always return 200 OK (even on business logic errors).
-   * The HTTP status only indicates network/server transport success.
-   * Actual business logic errors (validation, FK violation, etc) are in response.ok:
-   *   - response.ok = true: operation succeeded
-   *   - response.ok = false: operation failed, see response.error for details
-   * This prevents Axios from throwing exceptions for business errors.
-   */
-  return resultResponse(response);
+  const status = !response.ok ? (response.error.status ?? 500) : 200;
+  return NextResponse.json(response, { status });
 }
