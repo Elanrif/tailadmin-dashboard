@@ -5,6 +5,7 @@ import { createPostAction, deletePostAction, updatePostAction } from "./action";
 import { PostCreateFormValues, PostUpdateFormValues } from "../schemas/post";
 import { ApiError } from "@/lib/shared/api-error";
 import { Post } from "./types";
+import { commentKeys } from "@/lib/comments/api/queries";
 
 export const createPostMutation = mutationOptions<
   Post,
@@ -51,5 +52,6 @@ export const deletePostMutation = mutationOptions<
   },
   onSuccess: () => {
     getQueryClient().invalidateQueries({ queryKey: postKeys.all });
+    getQueryClient().invalidateQueries({ queryKey: commentKeys.all });
   },
 });

@@ -5,6 +5,9 @@ import { createUserAction, deleteUserAction, updateUserAction } from "./action";
 import { UserCreateFormValues, UserUpdateFormValues } from "../schemas/user";
 import type { ApiError } from "@/lib/shared/api-error";
 import type { User } from "./types";
+import { postKeys } from "@/lib/posts/api/queries";
+import { commentKeys } from "@/lib/comments/api/queries";
+import { addressKeys } from "@/lib/addresses/api/queries";
 
 export const createUserMutation = mutationOptions<
   User,
@@ -51,5 +54,8 @@ export const deleteUserMutation = mutationOptions<
   },
   onSettled: () => {
     void getQueryClient().invalidateQueries({ queryKey: userKeys.all });
+    void getQueryClient().invalidateQueries({ queryKey: postKeys.all });
+    void getQueryClient().invalidateQueries({ queryKey: commentKeys.all });
+    void getQueryClient().invalidateQueries({ queryKey: addressKeys.all });
   },
 });
