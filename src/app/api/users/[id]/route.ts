@@ -68,6 +68,6 @@ export async function DELETE(_req: Request, { params }: { params: Params }) {
   const response = await deleteUser(_id);
 
   return NextResponse.json(response, {
-    status: response.ok ? 204 : (response.error.status ?? 500),
+    status: response.ok ? 200 : (response.error.status ?? 500),
   });
 }

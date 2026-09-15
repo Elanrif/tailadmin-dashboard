@@ -67,7 +67,7 @@ export async function DELETE(_req: Request, { params }: { params: Params }) {
 
   const response = await deletePost(_id);
 
-  return NextResponse.json(null, {
-    status: response.ok ? 204 : (response.error.status ?? 500),
+  return NextResponse.json(response, {
+    status: response.ok ? 200 : (response.error.status ?? 500),
   });
 }
