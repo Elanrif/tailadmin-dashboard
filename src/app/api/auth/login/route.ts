@@ -8,5 +8,7 @@ export async function POST(req: NextRequest) {
   const body = (await req.json()) as LoginFormValues;
   const response = await signIn(body);
 
-  return NextResponse.json(response, { status: 200 });
+  return NextResponse.json(response, {
+    status: response.ok ? 200 : (response.error.status ?? 500),
+  });
 }

@@ -6,7 +6,9 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const body = (await req.json()) as RegisterFormValues;
-  const res = await signUp(body);
+  const response = await signUp(body);
 
-  return NextResponse.json(res, { status: 200 });
+  return NextResponse.json(response, {
+    status: response.ok ? 200 : (response.error.status ?? 500),
+  });
 }

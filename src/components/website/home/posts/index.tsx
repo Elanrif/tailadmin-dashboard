@@ -12,10 +12,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import {
-  useMutation,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Button from "@/components/ui/button/Button";
 import { useModal } from "@/hooks/useModal";
@@ -25,14 +22,10 @@ import { deletePostMutation } from "@/lib/posts/api/mutations";
 import type { Post } from "@/lib/posts/api/types";
 import { Modals } from "@/lib/posts/components/ui/posts-table/modals";
 import Comments from "./comments";
-import { ErrorState } from "@/lib/shared/ui/error-state";
 import environment from "@/config/environment.config";
 import { EmptyState } from "@/lib/shared/ui/empty-state";
-import { handleApiError } from "@/lib/shared/handle-api-error";
-import { useRouter } from "next/navigation";
 
 export default function Posts() {
-  const router = useRouter();
   const { user, isLoading } = useSession();
   const [expandedPost, setExpandedPost] = useState<number | null>(null);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -54,7 +47,11 @@ export default function Posts() {
         setSelectedPost(null);
       },
       onError: (error) => {
-        handleApiError(error, router);
+        if (error.status === 401) {
+          toast.error("Votre session a expiré, veuillez vous reconnecter.");
+          return;
+        }
+        toast.error(error.message);
       },
     });
   };
@@ -69,11 +66,7 @@ export default function Posts() {
   const { data } = useSuspenseQuery(
     postsQueryOptions({ size: environment.pagination.size }),
   );
-
-  if (!data.ok) {
-    return <ErrorState error={data.error} />;
-  }
-  const posts = data.data.content;
+  const posts = data.content;
 
   return (
     <section className="mx-auto w-full max-w-3xl">

@@ -2,7 +2,6 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { LoaderIcon, PenIcon } from "lucide-react";
@@ -28,8 +27,6 @@ import {
 import { Comment } from "../../api/types";
 import { CommentsQueryProps } from "../comments";
 import environment from "@/config/environment.config";
-import { handleApiError } from "@/lib/shared/handle-api-error";
-import { ApiError } from "@/lib/shared/api-error";
 
 interface CommentFormProps {
   initialData: Comment | null;
@@ -44,7 +41,6 @@ export function CommentForm({
   onSaved,
   hiddenFields: { postId, authorId } = {},
 }: CommentFormProps) {
-  const router = useRouter();
   const isEdit = !!initialData;
   const selectedPostId = initialData?.postId ?? postId;
   const selectedAuthorId = initialData?.author?.id ?? authorId;
@@ -59,8 +55,8 @@ export function CommentForm({
     ...usersQueryOptions({ size: environment.pagination.size }),
     enabled: showAuthorSelect,
   });
-  const posts = postsResult?.ok ? postsResult.data.content : [];
-  const users = usersResult?.ok ? usersResult.data.content : [];
+  const posts = postsResult?.content ?? [];
+  const users = usersResult?.content ?? [];
 
   const {
     register,
@@ -96,7 +92,11 @@ export function CommentForm({
             onSaved?.();
           },
           onError: (error) => {
-            handleApiError(error, router);
+            if (error.status === 401) {
+              toast.error("Votre session a expiré, veuillez vous reconnecter.");
+              return;
+            }
+            toast.error(error.message);
           },
         },
       );
@@ -109,7 +109,11 @@ export function CommentForm({
         onSaved?.();
       },
       onError: (error) => {
-        handleApiError(error as ApiError, router);
+        if (error.status === 401) {
+          toast.error("Votre session a expiré, veuillez vous reconnecter.");
+          return;
+        }
+        toast.error(error.message);
       },
     });
   };

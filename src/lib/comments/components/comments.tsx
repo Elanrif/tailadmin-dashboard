@@ -27,11 +27,8 @@ import { Columns } from "./ui/comments-table/columns";
 import { Row } from "./ui/comments-table/row";
 import { Modals } from "./ui/comments-table/modals";
 import { useCommentFilters } from "./ui/comments-table/use-filters";
-import { ErrorState } from "@/lib/shared/ui/error-state";
 import { EmptyState } from "@/lib/shared/ui/empty-state";
 import environment from "@/config/environment.config";
-import { handleApiError } from "@/lib/shared/handle-api-error";
-import { useRouter } from "next/navigation";
 
 export type CommentsQueryProps = {
   queryParams?: {
@@ -46,7 +43,6 @@ const {
 } = environment;
 
 export function Comments({ queryParams }: CommentsQueryProps) {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
   const { currentPage, itemsPerPage, handlePageChange, handleSizeChange } =
@@ -72,24 +68,20 @@ export function Comments({ queryParams }: CommentsQueryProps) {
   });
 
   const { data } = useSuspenseQuery(commentsQueryOptions(filters));
-  const { data: usersResult } = useSuspenseQuery(
-    usersQueryOptions({ size: size }),
-  );
-  const { data: postsResult } = useSuspenseQuery(
-    postsQueryOptions({ size: size }),
-  );
+  const { data: usersResult } = useSuspenseQuery(usersQueryOptions({ size }));
+  const { data: postsResult } = useSuspenseQuery(postsQueryOptions({ size }));
 
   const viewModal = useModal();
   const editModal = useModal();
   const createModal = useModal();
   const deleteModal = useModal();
+  const deleteMutation = useMutation(deleteCommentMutation);
 
   const openWith = (modal: ReturnType<typeof useModal>) => (item: Comment) => {
     setSelectedComment(item);
     modal.openModal();
   };
 
-  const deleteMutation = useMutation(deleteCommentMutation);
   const handleDelete = async () => {
     if (!selectedComment) return;
     deleteMutation.mutate(selectedComment.id, {
@@ -99,7 +91,11 @@ export function Comments({ queryParams }: CommentsQueryProps) {
         setSelectedComment(null);
       },
       onError: (error) => {
-        handleApiError(error, router);
+        if (error.status === 401) {
+          toast.error("Votre session a expiré, veuillez vous reconnecter.");
+          return;
+        }
+        toast.error(error.message);
       },
     });
   };
@@ -108,7 +104,7 @@ export function Comments({ queryParams }: CommentsQueryProps) {
     const result = await queryClient.fetchQuery(
       commentsQueryOptions({ size: MAX_EXPORT_SIZE }),
     );
-    const rows = result.ok ? result.data.content : [];
+    const rows = result.content;
 
     exportToCSV(
       rows.map((comment) => ({
@@ -129,17 +125,11 @@ export function Comments({ queryParams }: CommentsQueryProps) {
     );
   };
 
-  if (!data.ok) {
-    return <ErrorState error={data.error} />;
-  }
+  const comments = data.content;
+  const pagination = data;
 
-  const comments = data.data.content;
-  const pagination = data.data;
-
-  const authors = usersResult.ok ? usersResult.data.content : [];
-  const posts = postsResult.ok ? postsResult.data.content : [];
-  const authorsFailed = !usersResult.ok;
-  const postsFailed = !postsResult.ok;
+  const authors = usersResult.content;
+  const posts = postsResult.content;
 
   const startIndex =
     comments.length > 0 ? (pagination.page - 1) * pagination.size + 1 : 0;
@@ -152,7 +142,7 @@ export function Comments({ queryParams }: CommentsQueryProps) {
           <h2 className="text-xl font-semibold">Comments List</h2>
           <p className="text-sm text-gray-500">Manage your comments.</p>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <Button onClick={exportComments}>
             Export <Download size={16} />
@@ -178,16 +168,6 @@ export function Comments({ queryParams }: CommentsQueryProps) {
         itemsPerPage={itemsPerPage}
         onLimitChange={handleSizeChange}
       />
-      {(authorsFailed || postsFailed) && (
-        <p className="text-sm text-amber-600">
-          {authorsFailed && postsFailed
-            ? "Unable to load authors and posts filters."
-            : authorsFailed
-              ? "Unable to load authors filter."
-              : "Unable to load posts filter."}
-        </p>
-      )}
-
       <div className="text-sm text-gray-500">
         Showing {startIndex} to {endIndex} of {pagination.total} comments
       </div>

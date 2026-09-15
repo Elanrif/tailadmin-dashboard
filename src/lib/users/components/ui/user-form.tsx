@@ -16,12 +16,7 @@ import {
 import Label from "@/components/form/Label";
 import ComponentCard from "@/components/common/ComponentCard";
 import Select from "@/components/form/Select";
-import {
-  ChevronDownIcon,
-  EnvelopeIcon,
-  EyeCloseIcon,
-  EyeIcon,
-} from "@/icons";
+import { ChevronDownIcon, EnvelopeIcon, EyeCloseIcon, EyeIcon } from "@/icons";
 import PhoneInput from "@/components/form/group-input/PhoneInput";
 import Switch from "@/components/form/switch/Switch";
 import { useImageDraft } from "@/lib/shared/cloudinary/hooks/use-image-draft";
@@ -33,7 +28,6 @@ import Image from "next/image";
 import Alert from "@/components/ui/alert/Alert";
 import { createUserMutation, updateUserMutation } from "../../api/mutations";
 import { User, UserRole, UserStatus } from "../../api/types";
-import { handleApiError } from "@/lib/shared/handle-api-error";
 
 interface UserFormProps {
   initialData: User | null;
@@ -136,7 +130,11 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
           },
 
           onError: (error) => {
-            handleApiError(error, router);
+            if (error.status === 401) {
+              toast.error("Votre session a expiré, veuillez vous reconnecter.");
+              return;
+            }
+            toast.error(error.message);
           },
         },
       );
@@ -155,7 +153,11 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
       },
 
       onError: (error) => {
-        handleApiError(error, router);
+        if (error.status === 401) {
+          toast.error("Votre session a expiré, veuillez vous reconnecter.");
+          return;
+        }
+        toast.error(error.message);
       },
     });
   };

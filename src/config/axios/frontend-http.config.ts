@@ -4,6 +4,7 @@ import axios from "axios";
 import environment from "@config/environment.config";
 import { baseRequestConfig } from "@config/axios/base-request.config";
 import { clearAuthSession } from "@/lib/auth/auth-session";
+import { ROUTES } from "@/utils/routes";
 
 const { apiBaseUrl, apiProxyBase } = environment;
 const PUBLIC_AUTH_URLS = ["/auth/login", "/auth/register"];
@@ -29,6 +30,9 @@ export function frontendHttp() {
         !isPublicAuthRequest(error.config?.url)
       ) {
         clearAuthSession();
+        if (typeof window !== "undefined") {
+          window.location.href = ROUTES.SIGN_IN;
+        }
       }
       return Promise.reject(error);
     },

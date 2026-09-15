@@ -13,10 +13,7 @@ import { deleteCommentMutation } from "@/lib/comments/api/mutations";
 import { Comment } from "@/lib/comments/api/types";
 import { Modals } from "@/lib/comments/components/ui/comments-table/modals";
 import { CommentsQueryProps } from "@/lib/comments/components/comments";
-import { ErrorState } from "@/lib/shared/ui/error-state";
 import environment from "@/config/environment.config";
-import { handleApiError } from "@/lib/shared/handle-api-error";
-import { useRouter } from "next/navigation";
 
 export default function Comments({
   queryParams,
@@ -28,7 +25,6 @@ export default function Comments({
     closeModal: () => void;
   };
 }) {
-  const router = useRouter();
   const { user } = useSession();
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
@@ -47,7 +43,11 @@ export default function Comments({
         setSelectedComment(null);
       },
       onError: (error) => {
-        handleApiError(error, router);
+        if (error.status === 401) {
+          toast.error("Votre session a expiré, veuillez vous reconnecter.");
+          return;
+        }
+        toast.error(error.message);
       },
     });
   };
@@ -73,10 +73,7 @@ export default function Comments({
     }),
   );
 
-  if (!data.ok) {
-    return <ErrorState error={data.error} />;
-  }
-  const comments = data.data.content;
+  const comments = data.content;
 
   return (
     <>

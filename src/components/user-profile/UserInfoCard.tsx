@@ -19,8 +19,6 @@ import { UserRole, UserStatus } from "@/lib/users/api/types";
 import ComponentCard from "../common/ComponentCard";
 import PhoneInput from "../form/group-input/PhoneInput";
 import Switch from "../form/switch/Switch";
-import { useRouter } from "next/navigation";
-import { handleApiError } from "@/lib/shared/handle-api-error";
 
 const countries = [
   { code: "KM", label: "+269" },
@@ -31,7 +29,6 @@ const countries = [
   { code: "AU", label: "+61" },
 ];
 export default function UserInfoCard() {
-  const router = useRouter();
   const { user, setUser } = useSession();
   const { isOpen, openModal, closeModal } = useModal();
   const {
@@ -80,7 +77,11 @@ export default function UserInfoCard() {
           closeModal();
         },
         onError: (error) => {
-          handleApiError(error, router);
+          if (error.status === 401) {
+            toast.error("Votre session a expiré, veuillez vous reconnecter.");
+            return;
+          }
+          toast.error(error.message);
         },
       },
     );

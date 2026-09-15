@@ -1,19 +1,10 @@
 import { Building2, Globe, Hash, MapPin, MapPinned } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import notFound from "@/app/not-found";
 import { userAddressesByIdQueryOptions } from "../api/queries/queries.client";
-import { ErrorState } from "@/lib/shared/ui/error-state";
 
 export default function AddressDetails({ addressId }: { addressId: number }) {
   const { data } = useSuspenseQuery(userAddressesByIdQueryOptions(addressId));
-  if (!data.ok) {
-    if (data.error.status === 404) {
-      notFound();
-      return null;
-    }
-    return <ErrorState error={data.error} />;
-  }
-  const address = data.data;
+  const address = data;
 
   return (
     <div className="flex flex-col gap-6">

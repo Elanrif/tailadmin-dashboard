@@ -10,22 +10,13 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { Addresses } from "@/lib/addresses/component/addresses";
-import notFound from "@/app/not-found";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { userByIdQueryOptions } from "../api/queries/queries.client";
-import { ErrorState } from "@/lib/shared/ui/error-state";
 
 export default function UserDetails({ userId }: { userId: number }) {
   const [activeTab, setActiveTab] = useState<"info" | "addresses">("info");
   const { data } = useSuspenseQuery(userByIdQueryOptions(userId));
-  if (!data.ok) {
-    if (data.error.status === 404) {
-      notFound();
-      return null;
-    }
-    return <ErrorState error={data.error} />;
-  }
-  const user = data.data;
+  const user = data;
 
   const tabs = [
     {

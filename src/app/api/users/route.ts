@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUsers } from "@/lib/users/api/services/user.server";
+import { createUser, getUsers } from "@/lib/users/api/services/user.server";
 import type { UserFilters } from "@/lib/users/api/types";
 import { parseIntParam } from "@/utils/query-params";
 
@@ -18,6 +18,17 @@ export async function GET(request: NextRequest) {
   };
 
   const response = await getUsers(filters);
-  const status = !response.ok ? (response.error.status ?? 500) : 200;
-  return NextResponse.json(response, { status });
+
+  return NextResponse.json(response, {
+    status: response.ok ? 200 : (response.error.status ?? 500),
+  });
+}
+
+export async function POST(req: Request) {
+  const payload = await req.json();
+  const response = await createUser(payload);
+
+  return NextResponse.json(response, {
+    status: response.ok ? 201 : (response.error.status ?? 500),
+  });
 }

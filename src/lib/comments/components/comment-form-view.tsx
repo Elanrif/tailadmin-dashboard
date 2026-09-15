@@ -6,7 +6,6 @@ import { notFound } from "next/navigation";
 import { commentByIdQueryOptions } from "../api/queries/queries.client";
 import { CommentForm } from "./ui/comment-form";
 import { CommentsQueryProps } from "./comments";
-import { ErrorState } from "@/lib/shared/ui/error-state";
 
 type CommentFormViewProps = {
   commentId: string;
@@ -58,17 +57,9 @@ function EditCommentView({
 }: EditCommentViewProps) {
   const { data } = useSuspenseQuery(commentByIdQueryOptions(commentId));
 
-  if (!data.ok) {
-    if (data.error.status === 404) {
-      notFound();
-      return null;
-    }
-    return <ErrorState error={data.error} />;
-  }
-
   return (
     <CommentForm
-      initialData={data.data}
+      initialData={data}
       pageTitle="Edit Comment"
       onSaved={onSaved}
       hiddenFields={{ postId, authorId }}

@@ -24,11 +24,8 @@ import { Modals } from "./ui/posts-table/modals";
 import { usePageQuery } from "@/lib/use-page-query";
 import { usePostFilters } from "./ui/posts-table/use-filters";
 import { usersQueryOptions } from "@/lib/users/api/queries/queries.client";
-import { ErrorState } from "@/lib/shared/ui/error-state";
 import { EmptyState } from "@/lib/shared/ui/empty-state";
 import environment from "@/config/environment.config";
-import { handleApiError } from "@/lib/shared/handle-api-error";
-import { useRouter } from "next/navigation";
 
 export type PostQueryProps = {
   queryParams?: {
@@ -42,7 +39,6 @@ const {
 } = environment;
 
 export function Posts({ queryParams }: PostQueryProps) {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isExporting, setIsExporting] = useState(false);
@@ -75,7 +71,11 @@ export function Posts({ queryParams }: PostQueryProps) {
         setSelectedPost(null);
       },
       onError: (error) => {
-        handleApiError(error, router);
+        if (error.status === 401) {
+          toast.error("Votre session a expiré, veuillez vous reconnecter.");
+          return;
+        }
+        toast.error(error.message);
       },
     });
   };
@@ -98,13 +98,8 @@ export function Posts({ queryParams }: PostQueryProps) {
         postsQueryOptions({ ...filters, page: 1, size: MAX_EXPORT_SIZE }),
       );
 
-      if (!result.ok) {
-        toast.error("Impossible d'exporter les posts");
-        return;
-      }
-
       exportToCSV(
-        result.data.content.map((post) => ({
+        result.content.map((post) => ({
           title: post.title,
           author: `${post.author?.firstName ?? ""} ${post.author?.lastName ?? ""}`,
           likes: post.likes,
@@ -132,13 +127,9 @@ export function Posts({ queryParams }: PostQueryProps) {
     enabled: !isAuthorScoped,
   });
 
-  if (!data?.ok) {
-    return <ErrorState error={data.error} />;
-  }
-
-  const posts = data.data.content;
-  const pagination = data.data;
-  const authors = usersResult?.ok ? usersResult.data.content : [];
+  const posts = data.content;
+  const pagination = data;
+  const authors = usersResult?.content ?? [];
 
   return (
     <div className="space-y-4">

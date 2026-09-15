@@ -15,11 +15,8 @@ import { useMutation } from "@tanstack/react-query";
 import { updateUserMutation } from "@/lib/users/api/mutations";
 import { toast } from "sonner";
 import { LoaderIcon } from "lucide-react";
-import { handleApiError } from "@/lib/shared/handle-api-error";
-import { useRouter } from "next/navigation";
 
 export default function UserImageCard() {
-  const router = useRouter();
   const { user, setUser } = useSession();
   const {
     handleSubmit,
@@ -70,7 +67,11 @@ export default function UserImageCard() {
           toast.success("User updated successfully");
         },
         onError: (error) => {
-          handleApiError(error, router);
+          if (error.status === 401) {
+            toast.error("Votre session a expiré, veuillez vous reconnecter.");
+            return;
+          }
+          toast.error(error.message);
         },
       },
     );

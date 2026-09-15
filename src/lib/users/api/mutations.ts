@@ -1,13 +1,13 @@
 import { mutationOptions } from "@tanstack/react-query";
 import { userKeys } from "./queries";
 import { getQueryClient } from "@/lib/query-client";
-import { createUserAction, deleteUserAction, updateUserAction } from "./action";
 import { UserCreateFormValues, UserUpdateFormValues } from "../schemas/user";
 import type { ApiError } from "@/lib/shared/api-error";
 import type { User } from "./types";
 import { postKeys } from "@/lib/posts/api/queries";
 import { commentKeys } from "@/lib/comments/api/queries";
 import { addressKeys } from "@/lib/addresses/api/queries";
+import { createUser, updateUser, deleteUser } from "./services/user.client";
 
 export const createUserMutation = mutationOptions<
   User,
@@ -15,8 +15,8 @@ export const createUserMutation = mutationOptions<
   UserCreateFormValues,
   unknown
 >({
-  mutationFn: async (data) => {
-    const result = await createUserAction(data);
+  mutationFn: async (payload) => {
+    const result = await createUser(payload);
     if (!result.ok) throw result.error;
     return result.data;
   },
@@ -32,7 +32,7 @@ export const updateUserMutation = mutationOptions<
   unknown
 >({
   mutationFn: async ({ id, values }) => {
-    const result = await updateUserAction(id, values);
+    const result = await updateUser(id, values);
     if (!result.ok) throw result.error;
     return result.data;
   },
@@ -48,7 +48,7 @@ export const deleteUserMutation = mutationOptions<
   unknown
 >({
   mutationFn: async (id) => {
-    const result = await deleteUserAction(id);
+    const result = await deleteUser(id);
     if (!result.ok) throw result.error;
     return result.data;
   },

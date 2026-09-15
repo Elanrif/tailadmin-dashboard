@@ -1,11 +1,11 @@
 import { mutationOptions } from "@tanstack/react-query";
 import { postKeys } from "./queries";
 import { getQueryClient } from "@/lib/query-client";
-import { createPostAction, deletePostAction, updatePostAction } from "./action";
 import { PostCreateFormValues, PostUpdateFormValues } from "../schemas/post";
 import { ApiError } from "@/lib/shared/api-error";
 import { Post } from "./types";
 import { commentKeys } from "@/lib/comments/api/queries";
+import { createPost, updatePost, deletePost } from "./services/post.client";
 
 export const createPostMutation = mutationOptions<
   Post,
@@ -13,8 +13,8 @@ export const createPostMutation = mutationOptions<
   PostCreateFormValues,
   unknown
 >({
-  mutationFn: async (data) => {
-    const result = await createPostAction(data);
+  mutationFn: async (payload) => {
+    const result = await createPost(payload);
     if (!result.ok) throw result.error;
     return result.data;
   },
@@ -30,7 +30,7 @@ export const updatePostMutation = mutationOptions<
   unknown
 >({
   mutationFn: async ({ id, values }) => {
-    const result = await updatePostAction(id, values);
+    const result = await updatePost(id, values);
     if (!result.ok) throw result.error;
     return result.data;
   },
@@ -46,7 +46,7 @@ export const deletePostMutation = mutationOptions<
   unknown
 >({
   mutationFn: async (id) => {
-    const result = await deletePostAction(id);
+    const result = await deletePost(id);
     if (!result.ok) throw result.error;
     return result.data;
   },

@@ -1,15 +1,15 @@
 import { mutationOptions } from "@tanstack/react-query";
 import { commentKeys } from "./queries";
 import { getQueryClient } from "@/lib/query-client";
-import {
-  createCommentAction,
-  deleteCommentAction,
-  updateCommentAction,
-} from "./action";
 import { CommentFormValues, CommentUpdateFormValues } from "../schemas/comment";
 import { postKeys } from "@/lib/posts/api/queries";
 import type { ApiError } from "@/lib/shared/api-error";
 import type { Comment } from "./types";
+import {
+  createComment,
+  updateComment,
+  deleteComment,
+} from "./services/comment.client";
 
 export const createCommentMutation = mutationOptions<
   Comment,
@@ -17,8 +17,8 @@ export const createCommentMutation = mutationOptions<
   CommentFormValues,
   unknown
 >({
-  mutationFn: async (data) => {
-    const result = await createCommentAction(data);
+  mutationFn: async (payload) => {
+    const result = await createComment(payload);
     if (!result.ok) throw result.error;
     return result.data;
   },
@@ -35,7 +35,7 @@ export const updateCommentMutation = mutationOptions<
   unknown
 >({
   mutationFn: async ({ id, values }) => {
-    const result = await updateCommentAction(id, values);
+    const result = await updateComment(id, values);
     if (!result.ok) throw result.error;
     return result.data;
   },
@@ -46,13 +46,13 @@ export const updateCommentMutation = mutationOptions<
 });
 
 export const deleteCommentMutation = mutationOptions<
-  { success: boolean },
+  void,
   ApiError,
   number,
   unknown
 >({
   mutationFn: async (id) => {
-    const result = await deleteCommentAction(id);
+    const result = await deleteComment(id);
     if (!result.ok) throw result.error;
     return result.data;
   },

@@ -27,8 +27,6 @@ import { createPostMutation, updatePostMutation } from "../../api/mutations";
 import { Post } from "../../api/types";
 import { PostQueryProps } from "../posts";
 import environment from "@/config/environment.config";
-import { handleApiError } from "@/lib/shared/handle-api-error";
-import { useRouter } from "next/navigation";
 
 interface PostFormProps {
   initialData: Post | null;
@@ -43,7 +41,6 @@ export function PostForm({
   hiddenFields: { authorId } = {},
   onSaved,
 }: PostFormProps) {
-  const router = useRouter();
   const isEdit = !!initialData;
   const selectedAuthorId = initialData?.author?.id ?? authorId;
   const showAuthorSelect = !isEdit && selectedAuthorId == null;
@@ -53,7 +50,7 @@ export function PostForm({
     enabled: showAuthorSelect,
   });
 
-  const users = usersResult?.ok ? usersResult.data.content : [];
+  const users = usersResult?.content ?? [];
   const formSchema = isEdit ? postUpdateSchema : postCreateSchema;
 
   const {
@@ -100,7 +97,11 @@ export function PostForm({
           },
 
           onError: (error) => {
-            handleApiError(error, router);
+            if (error.status === 401) {
+              toast.error("Votre session a expiré, veuillez vous reconnecter.");
+              return;
+            }
+            toast.error(error.message);
           },
         },
       );
@@ -116,7 +117,11 @@ export function PostForm({
       },
 
       onError: (error) => {
-        handleApiError(error, router);
+        if (error.status === 401) {
+          toast.error("Votre session a expiré, veuillez vous reconnecter.");
+          return;
+        }
+        toast.error(error.message);
       },
     });
   };

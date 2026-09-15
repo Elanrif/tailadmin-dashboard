@@ -22,20 +22,17 @@ import Select from "../form/Select";
 import useCountryCity from "@/hooks/use-contry-city";
 import { userAddressesQueryOptions } from "@/lib/addresses/api/queries/queries.client";
 import { ErrorState } from "@/lib/shared/ui/error-state";
-import { handleApiError } from "@/lib/shared/handle-api-error";
-import { useRouter } from "next/navigation";
 
 export default function UserAddressCard() {
-  const router = useRouter();
   const { user } = useSession();
   const { isOpen, openModal, closeModal } = useModal();
-  const { data } = useSuspenseQuery(
+  const { data, error } = useSuspenseQuery(
     userAddressesQueryOptions({
       userId: user?.id,
       isDefault: true,
     }),
   );
-  const defaultAddress = data.ok ? data.data.content[0] : undefined;
+  const defaultAddress = data.content[0];
 
   const {
     selectedCountry,
@@ -102,14 +99,18 @@ export default function UserAddressCard() {
           closeModal();
         },
         onError: (error) => {
-          handleApiError(error, router);
+          if (error.status === 401) {
+            toast.error("Votre session a expiré, veuillez vous reconnecter.");
+            return;
+          }
+          toast.error(error.message);
         },
       },
     );
   };
 
-  if (!data.ok) {
-    return <ErrorState error={data.error} />;
+  if (error) {
+    return <ErrorState error={error} />;
   }
 
   return (

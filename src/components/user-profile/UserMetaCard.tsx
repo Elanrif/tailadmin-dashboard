@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
@@ -18,9 +18,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import PhoneInput from "../form/group-input/PhoneInput";
-import { userAddressesQueryOptions } from "@/lib/addresses/api/queries/queries.server";
-import { useRouter } from "next/navigation";
-import { handleApiError } from "@/lib/shared/handle-api-error";
+import { userAddressesQueryOptions } from "@/lib/addresses/api/queries/queries.client";
 
 const countries = [
   { code: "KM", label: "+269" },
@@ -32,16 +30,15 @@ const countries = [
 ];
 
 export default function UserMetaCard() {
-  const router = useRouter();
   const { isOpen, openModal, closeModal } = useModal();
   const { user, setUser } = useSession();
-  const { data } = useSuspenseQuery(
+  const { data, error } = useSuspenseQuery(
     userAddressesQueryOptions({
       userId: user?.id,
       isDefault: true,
     }),
   );
-  const defaultAddress = data.ok ? data.data.content[0] : undefined;
+  const defaultAddress = data.content[0];
   const {
     register,
     handleSubmit,
@@ -87,7 +84,11 @@ export default function UserMetaCard() {
           closeModal();
         },
         onError: (error) => {
-          handleApiError(error, router);
+          if (error.status === 401) {
+            toast.error("Votre session a expiré, veuillez vous reconnecter.");
+            return;
+          }
+          toast.error(error.message);
         },
       },
     );

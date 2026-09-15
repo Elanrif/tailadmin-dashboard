@@ -13,7 +13,6 @@ import { Table, TableBody, TableHeader } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { UnifiedPagination } from "@/components/ui/paginations";
 import { useModal } from "@/hooks/useModal";
-import { ErrorState } from "@/lib/shared/ui/error-state";
 import { EmptyState } from "@/lib/shared/ui/empty-state";
 
 import { exportToCSV } from "@/lib/utils";
@@ -27,8 +26,6 @@ import { usePageQuery } from "@/lib/use-page-query";
 import { User } from "../api/types";
 import { useUserFilters } from "./ui/users-table/use-filters";
 import environment from "@/config/environment.config";
-import { handleApiError } from "@/lib/shared/handle-api-error";
-import { useRouter } from "next/navigation";
 
 const {
   pagination: { page, size },
@@ -36,7 +33,6 @@ const {
 } = environment;
 
 export function Users() {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
@@ -84,7 +80,11 @@ export function Users() {
         setSelectedUser(null);
       },
       onError: (error) => {
-        handleApiError(error, router);
+        if (error.status === 401) {
+          toast.error("Votre session a expiré, veuillez vous reconnecter.");
+          return;
+        }
+        toast.error(error.message);
       },
     });
   };
@@ -93,7 +93,7 @@ export function Users() {
     const result = await queryClient.fetchQuery(
       usersQueryOptions({ size: MAX_EXPORT_SIZE }),
     );
-    const rows = result.ok ? result.data.content : [];
+    const rows = result.content;
 
     const dataToExport = rows.map((user) => ({
       fullName: `${user.firstName} ${user.lastName}`,
@@ -114,12 +114,8 @@ export function Users() {
     exportToCSV(dataToExport, columnsConfig, "users.csv");
   };
 
-  if (!data.ok) {
-    return <ErrorState error={data.error} />;
-  }
-
-  const users = data.data.content;
-  const pagination = data.data;
+  const users = data.content;
+  const pagination = data;
 
   const startIndex =
     users.length > 0 ? (pagination.page - 1) * pagination.size + 1 : 0;

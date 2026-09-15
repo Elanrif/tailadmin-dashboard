@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CommentFilters } from "@/lib/comments/api/types";
-import { getComments } from "@/lib/comments/api/services/comment.server";
+import { createComment, getComments } from "@/lib/comments/api/services/comment.server";
 import { parseIntParam } from "@/utils/query-params";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +17,17 @@ export async function GET(request: NextRequest) {
   };
 
   const response = await getComments(filters);
-  const status = !response.ok ? (response.error.status ?? 500) : 200;
-  return NextResponse.json(response, { status });
+
+  return NextResponse.json(response, {
+    status: response.ok ? 200 : (response.error.status ?? 500),
+  });
+}
+
+export async function POST(req: Request) {
+  const payload = await req.json();
+  const response = await createComment(payload);
+
+  return NextResponse.json(response, {
+    status: response.ok ? 201 : (response.error.status ?? 500),
+  });
 }

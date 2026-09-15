@@ -22,10 +22,7 @@ import { Row } from "./ui/addresses-card/row";
 import { Modals } from "./ui/addresses-card/modals";
 import { useAddressFilters } from "./ui/addresses-card/use-filters";
 import environment from "@/config/environment.config";
-import { ErrorState } from "@/lib/shared/ui/error-state";
 import { EmptyState } from "@/lib/shared/ui/empty-state";
-import { handleApiError } from "@/lib/shared/handle-api-error";
-import { useRouter } from "next/navigation";
 
 export type AddressesQueryProps = {
   queryParams?: {
@@ -38,7 +35,6 @@ const {
 } = environment;
 
 export function Addresses({ queryParams }: AddressesQueryProps) {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 
@@ -78,16 +74,24 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
   };
 
   const deleteMutation = useMutation(deleteUserAddressMutation);
+
   const handleDelete = () => {
     if (!selectedAddress) return;
+
     deleteMutation.mutate(selectedAddress.id, {
       onSuccess: () => {
         toast.success("Address deleted successfully");
         deleteModal.closeModal();
         setSelectedAddress(null);
       },
+
       onError: (error) => {
-        handleApiError(error, router);
+        if (error.status === 401) {
+          toast.error("Votre session a expiré, veuillez vous reconnecter.");
+          return;
+        }
+
+        toast.error(error.message);
       },
     });
   };
@@ -102,12 +106,7 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
         }),
       );
 
-      if (!result.ok) {
-        toast.error("Failed to export addresses");
-        return;
-      }
-
-      const list = result.data.content || [];
+      const list = result.content ?? [];
 
       const dataToExport = list.map((address: Address) => ({
         street: address.street,
@@ -129,20 +128,13 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
     }
   };
 
-  if (!data.ok) {
-    return <ErrorState error={data.error} />;
-  }
-
-  const addresses = data.data.content;
-  const pagination = data.data;
+  const addresses = data.content ?? [];
+  const pagination = data;
 
   const startIndex =
-    pagination && addresses.length > 0
-      ? (pagination.page - 1) * pagination.size + 1
-      : 0;
+    addresses.length > 0 ? (pagination.page - 1) * pagination.size + 1 : 0;
 
-  const endIndex =
-    pagination && addresses.length > 0 ? startIndex + addresses.length - 1 : 0;
+  const endIndex = addresses.length > 0 ? startIndex + addresses.length - 1 : 0;
 
   return (
     <div className="space-y-4">
@@ -155,6 +147,7 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
           <Button onClick={handleExportCSV}>
             Export <Download size={16} />
           </Button>
+
           <Button
             onClick={() => createModal.openModal()}
             className="gap-2 bg-brand-500 hover:bg-brand-600 dark:text-white"
@@ -176,11 +169,11 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
       />
 
       <div id="address-table-top">
-        Showing {startIndex} to {endIndex} of {pagination?.total ?? 0}
+        Showing {startIndex} to {endIndex} of {pagination.total ?? 0}
       </div>
 
       <div className="overflow-hidden rounded-xl border">
-        <div className="grid grid-cols-1 gap-5 xl:grid-cols-3 p-3">
+        <div className="grid grid-cols-1 gap-5 p-3 xl:grid-cols-3">
           {addresses.length > 0 ? (
             addresses.map((address) => (
               <Row
@@ -204,18 +197,16 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
         </div>
       </div>
 
-      {pagination && (
-        <UnifiedPagination
-          mode="server"
-          currentPage={pagination.page}
-          totalPages={pagination.totalPages}
-          totalItems={pagination.total}
-          itemsPerPage={pagination.size}
-          onPageChange={handlePageChange}
-          variant="both"
-          updateUrl={false}
-        />
-      )}
+      <UnifiedPagination
+        mode="server"
+        currentPage={pagination.page}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.total}
+        itemsPerPage={pagination.size}
+        onPageChange={handlePageChange}
+        variant="both"
+        updateUrl={false}
+      />
 
       <Modals
         selectedAddress={selectedAddress}
@@ -223,10 +214,22 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
           userId: queryParams?.userId,
         }}
         modals={{
-          view: { isOpen: viewModal.isOpen, close: viewModal.closeModal },
-          edit: { isOpen: editModal.isOpen, close: editModal.closeModal },
-          create: { isOpen: createModal.isOpen, close: createModal.closeModal },
-          delete: { isOpen: deleteModal.isOpen, close: deleteModal.closeModal },
+          view: {
+            isOpen: viewModal.isOpen,
+            close: viewModal.closeModal,
+          },
+          edit: {
+            isOpen: editModal.isOpen,
+            close: editModal.closeModal,
+          },
+          create: {
+            isOpen: createModal.isOpen,
+            close: createModal.closeModal,
+          },
+          delete: {
+            isOpen: deleteModal.isOpen,
+            close: deleteModal.closeModal,
+          },
         }}
         onConfirmDelete={handleDelete}
         isDeleting={deleteMutation.isPending}

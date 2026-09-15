@@ -6,8 +6,6 @@ import { FileText, MessageSquare } from "lucide-react";
 import { Comments } from "@/lib/comments/components/comments";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { postByIdQueryOptions } from "../api/queries/queries.client";
-import notFound from "@/app/not-found";
-import { ErrorState } from "@/lib/shared/ui/error-state";
 
 export default function PostDetails({ postId }: { postId: number }) {
   const [activeTab, setActiveTab] = useState<"description" | "comments">(
@@ -15,14 +13,7 @@ export default function PostDetails({ postId }: { postId: number }) {
   );
 
   const { data } = useSuspenseQuery(postByIdQueryOptions(postId));
-  if (!data.ok) {
-    if (data.error.status === 404) {
-      notFound();
-      return null;
-    }
-    return <ErrorState error={data.error} />;
-  }
-  const post = data.data;
+  const post = data;
 
   const tabs = [
     { id: "description", label: "Description", icon: FileText },

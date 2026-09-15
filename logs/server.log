@@ -4582,3 +4582,31 @@
 {"level":30,"time":1789429051353,"pid":21988,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
 {"level":30,"time":1789429116881,"pid":21988,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
 {"level":30,"time":1789429121574,"pid":21988,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":50,"time":1789487125106,"pid":27524,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789487125108,"pid":27524,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [getUserAddresses]"}
+{"level":50,"time":1789487236980,"pid":27524,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789487236988,"pid":27524,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [getUserAddresses]"}
+{"level":50,"time":1789487391236,"pid":27524,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789487391240,"pid":27524,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [getUserAddresses]"}
+{"level":50,"time":1789487393261,"pid":27524,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789487393263,"pid":27524,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [getUserAddresses]"}
+{"level":30,"time":1789487582532,"pid":27524,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1789487583465,"pid":27524,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"User signed in"}
+{"level":50,"time":1789487628608,"pid":27524,"hostname":"ELTECH","error":"Internal Server Error","timestamp":"2026-09-15T15:53:48.526Z","status":500,"message":"This is a test exception","path":"/api/v1/addresses","msg":"API error"}
+{"level":50,"time":1789487628610,"pid":27524,"hostname":"ELTECH","timestamp":"2026-09-15T15:53:48.526Z","status":500,"error":"Internal Server Error","message":"This is a test exception","path":"/api/v1/addresses","msg":"[API Error] [createUserAddress]"}
+{"level":50,"time":1789489377622,"pid":27524,"hostname":"ELTECH","error":"Internal Server Error","timestamp":"2026-09-15T16:22:57.597Z","status":500,"message":"This is a test exception","path":"/api/v1/addresses","msg":"API error"}
+{"level":50,"time":1789489377626,"pid":27524,"hostname":"ELTECH","timestamp":"2026-09-15T16:22:57.597Z","status":500,"error":"Internal Server Error","message":"This is a test exception","path":"/api/v1/addresses","msg":"[API Error] [createUserAddress]"}
+{"level":30,"time":1789489417026,"pid":27524,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":50,"time":1789489452309,"pid":27524,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789489452311,"pid":27524,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [createPost]"}
+{"level":50,"time":1789489461834,"pid":27524,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789489461837,"pid":27524,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [createPost]"}
+{"level":50,"time":1789489470458,"pid":27524,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789489470459,"pid":27524,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [createPost]"}
+{"level":30,"time":1789489512255,"pid":27524,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":50,"time":1789489513927,"pid":27524,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789489513928,"pid":27524,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [createPost]"}
+{"level":30,"time":1789491279510,"pid":27524,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789491526699,"pid":27524,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789491526708,"pid":27524,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789491528948,"pid":27524,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}

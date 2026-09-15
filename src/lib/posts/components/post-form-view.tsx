@@ -2,11 +2,9 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
-import { Post } from "../api/types";
 import { postByIdQueryOptions } from "../api/queries/queries.client";
 import { PostForm } from "./ui/post-form";
 import { PostQueryProps } from "./posts";
-import { ErrorState } from "@/lib/shared/ui/error-state";
 
 type TPostViewPageProps = {
   postId: string;
@@ -48,19 +46,7 @@ function EditPostView({
 }) {
   const { data } = useSuspenseQuery(postByIdQueryOptions(postId));
 
-  if (!data.ok) {
-    if (data.error.status === 404) {
-      notFound();
-      return null;
-    }
-    return <ErrorState error={data.error} />;
-  }
-
   return (
-    <PostForm
-      initialData={data.data as Post}
-      pageTitle="Edit Post"
-      onSaved={onSaved}
-    />
+    <PostForm initialData={data} pageTitle="Edit Post" onSaved={onSaved} />
   );
 }
