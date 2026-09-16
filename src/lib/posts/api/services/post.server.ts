@@ -36,7 +36,7 @@ export async function getPosts(
   filters: PostFilters = {},
 ): Promise<Result<PostsResponse, ApiError>> {
   try {
-    const res = await apiClient().get<PostsResponse>(postsUrl, {
+    const res = await apiClient(true).get<PostsResponse>(postsUrl, {
       params: filters,
     });
     logger.info({ count: res.data?.content?.length || 0 }, "Posts fetched");
@@ -58,7 +58,7 @@ export async function getPostById(id: number): Promise<Result<Post, ApiError>> {
   if (idCheck) return idCheck;
 
   try {
-    const response = await apiClient().get<Post>(postUrl(id));
+    const response = await apiClient(true).get<Post>(postUrl(id));
 
     logger.info({ id }, "Post fetched");
 

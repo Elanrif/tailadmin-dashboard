@@ -8,6 +8,7 @@ export interface Post {
   imageUrl: string;
   description: string;
   likes: number;
+  liked: boolean;
   author: UserSummary;
   numberOfComments?: number;
   comments?: Comment[];

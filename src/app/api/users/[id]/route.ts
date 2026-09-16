@@ -79,7 +79,5 @@ export async function DELETE(_req: Request, { params }: { params: Params }) {
       status: response.error.status ?? 500,
     });
   }
-  // A successful delete has no payload. Passing `undefined` to
-  // `NextResponse.json` throws because it is not JSON serializable.
   return new NextResponse(null, { status: 204 });
 }

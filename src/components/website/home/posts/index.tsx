@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import Button from "@/components/ui/button/Button";
 import { useModal } from "@/hooks/useModal";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMounted } from "@/hooks/use-is-mounted";
 import { useSession } from "@/lib/auth/components/auth.context";
 import { postsQueryOptions } from "@/lib/posts/api/queries/queries.client";
 import {
@@ -36,6 +37,13 @@ import { ImageZoomModal } from "@/lib/shared/cloudinary/components/image-zoom-mo
 const POST_PREVIEW_LENGTH_DESKTOP = 220;
 const POST_PREVIEW_LENGTH_MOBILE = 120;
 
+const formatPostDate = (date: string) =>
+  new Intl.DateTimeFormat("fr-FR", {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  }).format(new Date(date));
+
 const formatPostDescription = (description: string) =>
   description
     .split(/\r?\n\s*\r?\n/)
@@ -44,6 +52,7 @@ const formatPostDescription = (description: string) =>
 
 export default function Posts() {
   const { user, isLoading } = useSession();
+  const isMounted = useIsMounted();
   const isMobile = useIsMobile();
   const postPreviewLength = isMobile
     ? POST_PREVIEW_LENGTH_MOBILE
@@ -54,6 +63,9 @@ export default function Posts() {
   );
   const [likedPosts, setLikedPosts] = useState<Record<number, boolean>>({});
   const [likeCounts, setLikeCounts] = useState<Record<number, number>>({});
+  const [pendingLikePostId, setPendingLikePostId] = useState<number | null>(
+    null,
+  );
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const { previewImage, openZoom, closeZoom } = useImageZoom();
 
@@ -71,10 +83,14 @@ export default function Posts() {
       setLikedPosts((current) => ({ ...current, [postId]: result.liked }));
       setLikeCounts((current) => ({ ...current, [postId]: result.likes }));
     },
+    onSettled: (_result, _error, postId) => {
+      setPendingLikePostId((current) => (current === postId ? null : current));
+    },
   });
 
   const handleLike = (postId: number) => {
-    if (!user || likeMutation.isPending) return;
+    if (!user || pendingLikePostId !== null) return;
+    setPendingLikePostId(postId);
     likeMutation.mutate(postId);
   };
 
@@ -149,7 +165,10 @@ export default function Posts() {
                 isContentExpanded || !hasLongDescription
                   ? formattedDescription
                   : `${formattedDescription.slice(0, postPreviewLength).trimEnd()}…`;
-              const isLiked = likedPosts[post.id] ?? false;
+              const isLiked = isMounted
+                ? (likedPosts[post.id] ?? post.liked)
+                : false;
+              const canLike = isMounted && !!user;
               const likes = likeCounts[post.id] ?? post.likes;
               const owner = isPostOwner(post);
 
@@ -184,13 +203,7 @@ export default function Posts() {
                             <p className="truncate text-xs text-stone-500 sm:text-sm">
                               {post.author?.firstName} {post.author?.lastName}
                               <span className="mx-2">·</span>
-                              {new Date(post.createdAt).toLocaleDateString(
-                                "fr-FR",
-                                {
-                                  day: "numeric",
-                                  month: "short",
-                                },
-                              )}
+                              {formatPostDate(post.createdAt)}
                             </p>
 
                             <h2
@@ -301,24 +314,37 @@ export default function Posts() {
                     )}
 
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-stone-200 pt-4 text-xs text-stone-500 dark:border-stone-800 sm:gap-x-4 sm:gap-6 sm:text-sm">
-                      {user ? (
+                      {canLike ? (
                         <button
                           type="button"
                           onClick={() => handleLike(post.id)}
-                          disabled={likeMutation.isPending}
+                          disabled={pendingLikePostId === post.id}
                           aria-pressed={isLiked}
                           aria-label={isLiked ? "Retirer le j'aime" : "J'aime"}
-                          className="inline-flex items-center gap-1.5 transition-colors hover:text-red-600 disabled:cursor-wait disabled:opacity-60 sm:gap-2"
+                          className={`inline-flex items-center gap-1.5 transition-colors disabled:cursor-wait disabled:opacity-60 sm:gap-2 ${
+                            isLiked
+                              ? "text-red-600 hover:text-red-700"
+                              : "hover:text-red-600"
+                          }`}
                         >
                           <Heart
-                            className="h-4 w-4 sm:h-4.25 sm:w-4.25"
-                            fill={isLiked ? "currentColor" : "none"}
+                            className={`h-4 w-4 sm:h-4.25 sm:w-4.25 ${
+                              isLiked
+                                ? "fill-red-600 text-red-600"
+                                : "text-stone-500"
+                            }`}
                           />
                           {likes}
                         </button>
                       ) : (
                         <span className="inline-flex items-center gap-1.5 sm:gap-2">
-                          <Heart className="h-4 w-4 sm:h-4.25 sm:w-4.25" />
+                          <Heart
+                            className={`h-4 w-4 sm:h-4.25 sm:w-4.25 ${
+                              isLiked
+                                ? "fill-red-600 text-red-600"
+                                : "text-stone-500"
+                            }`}
+                          />
                           {likes}
                         </span>
                       )}

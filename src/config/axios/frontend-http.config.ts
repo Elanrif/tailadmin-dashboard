@@ -8,10 +8,23 @@ import { ROUTES } from "@/utils/routes";
 
 const { apiBaseUrl, apiProxyBase } = environment;
 const PUBLIC_AUTH_URLS = ["/auth/login", "/auth/register"];
+const PUBLIC_READ_URLS = ["/posts", "/comments"];
 
 function isPublicAuthRequest(url?: string): boolean {
   return Boolean(
     url && PUBLIC_AUTH_URLS.some((publicUrl) => url.includes(publicUrl)),
+  );
+}
+
+function isPublicReadRequest(config?: { url?: string; method?: string }) {
+  const method = config?.method?.toLowerCase() ?? "get";
+
+  return (
+    method === "get" &&
+    Boolean(
+      config?.url &&
+        PUBLIC_READ_URLS.some((publicUrl) => config.url?.includes(publicUrl)),
+    )
   );
 }
 
@@ -27,7 +40,8 @@ export function frontendHttp() {
 
       if (
         (status === 401) &&
-        !isPublicAuthRequest(error.config?.url)
+        !isPublicAuthRequest(error.config?.url) &&
+        !isPublicReadRequest(error.config)
       ) {
         clearAuthSession();
         if (typeof window !== "undefined") {
