@@ -15,9 +15,12 @@ import { toast } from "sonner";
 import { LoaderIcon } from "lucide-react";
 import ComponentCard from "@/components/common/ComponentCard";
 import Button from "@/components/ui/button/Button";
+import { useImageZoom } from "@/lib/shared/cloudinary/hooks/use-image-zoom";
+import { ImageZoomModal } from "@/lib/shared/cloudinary/components/image-zoom-modal";
 
 export default function UserImageCard() {
   const { user, setUser } = useSession();
+  const { previewImage, openZoom, closeZoom } = useImageZoom();
   const {
     handleSubmit,
     setValue,
@@ -81,7 +84,12 @@ export default function UserImageCard() {
       >
         {user?.avatarUrl && (
           <div className="mb-6 flex flex-col items-center rounded-xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-900">
-            <div className="relative">
+            <button
+              type="button"
+              onClick={() => openZoom(user.avatarUrl!, "Photo de profil")}
+              aria-label="Afficher la photo de profil en grand"
+              className="relative cursor-zoom-in"
+            >
               <Image
                 src={user.avatarUrl}
                 alt="Current profile picture"
@@ -93,7 +101,7 @@ export default function UserImageCard() {
               <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-brand-500 px-3 py-1 text-xs font-medium text-white shadow">
                 Current
               </span>
-            </div>
+            </button>
 
             <p className="mt-5 text-sm text-gray-500 dark:text-gray-400">
               This is your current profile picture.
@@ -122,6 +130,7 @@ export default function UserImageCard() {
           ) : null}
         </Button>
       </ComponentCard>
+      <ImageZoomModal image={previewImage} onClose={closeZoom} />
     </form>
   );
 }

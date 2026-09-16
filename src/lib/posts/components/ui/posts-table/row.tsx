@@ -5,6 +5,8 @@ import Badge from "@/components/ui/badge/Badge";
 import { Post } from "../../../api/types";
 import { CellActions } from "./cell-action";
 import Image from "next/image";
+import { useImageZoom } from "@/lib/shared/cloudinary/hooks/use-image-zoom";
+import { ImageZoomModal } from "@/lib/shared/cloudinary/components/image-zoom-modal";
 
 export function Row({
   post,
@@ -17,6 +19,8 @@ export function Row({
   onDelete: (post: Post) => void;
   detailsPath?: string;
 }) {
+  const { previewImage, openZoom, closeZoom } = useImageZoom();
+
   const cells = [
     post.description?.length > 20
       ? `${post.description.slice(0, 20)}...`
@@ -38,7 +42,20 @@ export function Row({
       </TableCell>
       <TableCell className="px-4 py-3 text-center align-middle">
         <div className="flex items-center gap-3">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+          <button
+            type="button"
+            disabled={!post.imageUrl}
+            onClick={() =>
+              post.imageUrl &&
+              openZoom(post.imageUrl, post.title || "Image du post")
+            }
+            className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700 disabled:cursor-default enabled:cursor-zoom-in"
+            aria-label={
+              post.imageUrl
+                ? `Afficher l'image du post ${post.title || "en grand"}`
+                : undefined
+            }
+          >
             {post.imageUrl ? (
               <Image
                 width={56}
@@ -52,7 +69,8 @@ export function Row({
                 {post.title?.slice(0, 2).toUpperCase() || "N/A"}
               </span>
             )}
-          </div>
+          </button>
+          <ImageZoomModal image={previewImage} onClose={closeZoom} />
           <span className="font-medium text-gray-800 dark:text-white/90">
             {post.title?.length > 20
               ? `${post.title.slice(0, 20)}...`

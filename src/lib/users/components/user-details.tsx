@@ -12,11 +12,14 @@ import Image from "next/image";
 import { Addresses } from "@/lib/addresses/component/addresses";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { userByIdQueryOptions } from "../api/queries/queries.client";
+import { useImageZoom } from "@/lib/shared/cloudinary/hooks/use-image-zoom";
+import { ImageZoomModal } from "@/lib/shared/cloudinary/components/image-zoom-modal";
 
 export default function UserDetails({ userId }: { userId: number }) {
   const [activeTab, setActiveTab] = useState<"info" | "addresses">("info");
   const { data } = useSuspenseQuery(userByIdQueryOptions(userId));
   const user = data;
+  const { previewImage, openZoom, closeZoom } = useImageZoom();
 
   const tabs = [
     {
@@ -56,7 +59,20 @@ export default function UserDetails({ userId }: { userId: number }) {
           {/* User identity */}
           <div className="flex items-center gap-5">
             {/* Avatar */}
-            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-4 border-gray-100 bg-gray-100 dark:border-gray-800 dark:bg-gray-800">
+            <button
+              type="button"
+              disabled={!user.avatarUrl}
+              onClick={() =>
+                user.avatarUrl &&
+                openZoom(user.avatarUrl, `${user.firstName} ${user.lastName}`)
+              }
+              aria-label={
+                user.avatarUrl
+                  ? `Afficher la photo de ${user.firstName} ${user.lastName} en grand`
+                  : undefined
+              }
+              className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-4 border-gray-100 bg-gray-100 enabled:cursor-zoom-in disabled:cursor-default dark:border-gray-800 dark:bg-gray-800"
+            >
               {user.avatarUrl ? (
                 <Image
                   src={user.avatarUrl}
@@ -71,7 +87,7 @@ export default function UserDetails({ userId }: { userId: number }) {
                   </span>
                 </div>
               )}
-            </div>
+            </button>
 
             {/* Identity */}
             <div className="min-w-0 flex-1">
@@ -255,6 +271,7 @@ export default function UserDetails({ userId }: { userId: number }) {
           <Addresses queryParams={{ userId: user.id }} />
         )}
       </main>
+      <ImageZoomModal image={previewImage} onClose={closeZoom} />
     </div>
   );
 }

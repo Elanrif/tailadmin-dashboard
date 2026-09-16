@@ -20,6 +20,8 @@ import Input from "@/components/form/input/InputField";
 import PhoneInput from "@/components/form/group-input/PhoneInput";
 import Button from "@/components/ui/button/Button";
 import { LoaderIcon } from "lucide-react";
+import { useImageZoom } from "@/lib/shared/cloudinary/hooks/use-image-zoom";
+import { ImageZoomModal } from "@/lib/shared/cloudinary/components/image-zoom-modal";
 
 const countries = [
   { code: "KM", label: "+269" },
@@ -33,6 +35,7 @@ const countries = [
 export default function UserMetaCard() {
   const { isOpen, openModal, closeModal } = useModal();
   const { user, setUser } = useSession();
+  const { previewImage, openZoom, closeZoom } = useImageZoom();
   const { data } = useSuspenseQuery(
     userAddressesQueryOptions({
       userId: user?.id,
@@ -86,7 +89,19 @@ export default function UserMetaCard() {
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
-            <div className="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
+            <button
+              type="button"
+              disabled={!user?.avatarUrl}
+              onClick={() =>
+                user?.avatarUrl && openZoom(user.avatarUrl, "Photo de profil")
+              }
+              aria-label={
+                user?.avatarUrl
+                  ? "Afficher la photo de profil en grand"
+                  : undefined
+              }
+              className="h-20 w-20 shrink-0 overflow-hidden rounded-full border border-gray-200 disabled:cursor-default enabled:cursor-zoom-in dark:border-gray-800"
+            >
               <Image
                 width={50}
                 height={50}
@@ -94,7 +109,7 @@ export default function UserMetaCard() {
                 className="object-cover w-full h-full"
                 alt="user"
               />
-            </div>
+            </button>
             <div className="order-3 xl:order-2">
               <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
                 {user?.firstName} {user?.lastName}
@@ -305,6 +320,7 @@ export default function UserMetaCard() {
           </form>
         </div>
       </Modal>
+      <ImageZoomModal image={previewImage} onClose={closeZoom} />
     </>
   );
 }

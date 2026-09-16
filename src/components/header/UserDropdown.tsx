@@ -5,10 +5,13 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { useSession } from "@/lib/auth/components/auth.context";
 import { UserRole } from "@/lib/users/api/types";
+import { useImageZoom } from "@/lib/shared/cloudinary/hooks/use-image-zoom";
+import { ImageZoomModal } from "@/lib/shared/cloudinary/components/image-zoom-modal";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useSession();
+  const { previewImage, openZoom, closeZoom } = useImageZoom();
   const pathname = window.location.pathname;
   const isAdmin =
     user?.role?.includes(UserRole.ADMIN) && !pathname.startsWith("/dashboard");
@@ -28,7 +31,20 @@ export default function UserDropdown() {
         onClick={toggleDropdown}
         className="flex items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
       >
-        <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
+        <span
+          className="mr-3 h-11 w-11 overflow-hidden rounded-full"
+          onClick={(event) => {
+            event.stopPropagation();
+            if (user?.avatarUrl) {
+              openZoom(user.avatarUrl, "Photo de profil");
+            }
+          }}
+          role={user?.avatarUrl ? "button" : undefined}
+          tabIndex={user?.avatarUrl ? 0 : undefined}
+          aria-label={
+            user?.avatarUrl ? "Afficher la photo de profil en grand" : undefined
+          }
+        >
           <Image
             width={50}
             height={50}
@@ -200,6 +216,7 @@ export default function UserDropdown() {
           Sign out
         </span>
       </Dropdown>
+      <ImageZoomModal image={previewImage} onClose={closeZoom} />
     </div>
   );
 }

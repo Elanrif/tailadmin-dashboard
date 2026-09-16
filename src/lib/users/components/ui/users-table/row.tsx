@@ -5,6 +5,8 @@ import { TableRow, TableCell } from "@/components/ui/table";
 import Badge from "@/components/ui/badge/Badge";
 import { CellActions } from "./cell-action";
 import { User, UserStatus } from "@/lib/users/api/types";
+import { useImageZoom } from "@/lib/shared/cloudinary/hooks/use-image-zoom";
+import { ImageZoomModal } from "@/lib/shared/cloudinary/components/image-zoom-modal";
 
 interface UserTableRowProps {
   user: User;
@@ -14,6 +16,7 @@ interface UserTableRowProps {
 }
 
 export function Row({ user, onView, onEdit, onDelete }: UserTableRowProps) {
+  const { previewImage, openZoom, closeZoom } = useImageZoom();
   const getFullName = () => `${user.firstName} ${user.lastName}`;
   const getUserAvatar = () =>
     user.avatarUrl || "/images/user/default-avatar.jpg";
@@ -56,7 +59,19 @@ export function Row({ user, onView, onEdit, onDelete }: UserTableRowProps) {
       </TableCell>
       <TableCell className="px-4 py-3 text-center align-middle text-theme-sm text-gray-500 dark:text-gray-400">
         <div className="flex items-center gap-3 sm:ps-10">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+          <button
+            type="button"
+            disabled={!user.avatarUrl}
+            onClick={() =>
+              user.avatarUrl && openZoom(user.avatarUrl, getFullName())
+            }
+            className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700 disabled:cursor-default enabled:cursor-zoom-in"
+            aria-label={
+              user.avatarUrl
+                ? `Afficher la photo de ${getFullName()} en grand`
+                : undefined
+            }
+          >
             {user.avatarUrl ? (
               <Image
                 width={56}
@@ -71,7 +86,8 @@ export function Row({ user, onView, onEdit, onDelete }: UserTableRowProps) {
                 {user.lastName[0]}
               </span>
             )}
-          </div>
+          </button>
+          <ImageZoomModal image={previewImage} onClose={closeZoom} />
 
           <span className="font-medium text-gray-800 dark:text-white/90">
             {getFullName()}

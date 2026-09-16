@@ -6,6 +6,8 @@ import { FileText, MessageSquare } from "lucide-react";
 import { Comments } from "@/lib/comments/components/comments";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { postByIdQueryOptions } from "../api/queries/queries.client";
+import { useImageZoom } from "@/lib/shared/cloudinary/hooks/use-image-zoom";
+import { ImageZoomModal } from "@/lib/shared/cloudinary/components/image-zoom-modal";
 
 export default function PostDetails({ postId }: { postId: number }) {
   const [activeTab, setActiveTab] = useState<"description" | "comments">(
@@ -14,6 +16,7 @@ export default function PostDetails({ postId }: { postId: number }) {
 
   const { data } = useSuspenseQuery(postByIdQueryOptions(postId));
   const post = data;
+  const { previewImage, openZoom, closeZoom } = useImageZoom();
 
   const tabs = [
     { id: "description", label: "Description", icon: FileText },
@@ -82,14 +85,21 @@ export default function PostDetails({ postId }: { postId: number }) {
               {/* Left column: Image + Description */}
               <div className="lg:col-span-2">
                 {post.imageUrl ? (
-                  <div className="relative w-full h-80 rounded-lg overflow-hidden mb-4">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      openZoom(post.imageUrl!, post.title || "Image du post")
+                    }
+                    aria-label={`Afficher l'image du post ${post.title || "en grand"}`}
+                    className="relative mb-4 h-80 w-full cursor-zoom-in overflow-hidden rounded-lg text-left"
+                  >
                     <Image
                       src={post.imageUrl}
                       alt={post.title}
                       fill
                       className="object-cover"
                     />
-                  </div>
+                  </button>
                 ) : (
                   <div className="w-full h-80 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
                     <span className="text-4xl font-bold text-gray-300 dark:text-gray-600">
@@ -202,6 +212,7 @@ export default function PostDetails({ postId }: { postId: number }) {
           <Comments queryParams={{ postId: post.id }} />
         )}
       </div>
+      <ImageZoomModal image={previewImage} onClose={closeZoom} />
     </div>
   );
 }
