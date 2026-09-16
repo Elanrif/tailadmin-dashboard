@@ -162,20 +162,23 @@ export default function AddressForm({
     isSubmitting || createMutation.isPending || updateMutation.isPending;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <div className="space-y-1">
-        <h1 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:text-xl">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex w-full flex-col gap-5 px-1 sm:gap-6 sm:px-0"
+    >
+      <div className="space-y-1 px-1 sm:px-0">
+        <h1 className="text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg lg:text-xl">
           {pageTitle}
         </h1>
 
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-xs leading-5 text-gray-500 dark:text-gray-400 sm:text-sm">
           {isEdit
             ? "Update the address details below."
             : "Create a new address for this user."}
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 px-1 sm:gap-5 sm:px-0 md:grid-cols-2">
         <div>
           <Label htmlFor="street" required>
             Street
@@ -188,7 +191,9 @@ export default function AddressForm({
           />
 
           {errors.street && (
-            <p className="mt-1 text-sm text-red-500">{errors.street.message}</p>
+            <p className="mt-1 text-xs text-red-500 sm:text-sm">
+              {errors.street.message}
+            </p>
           )}
         </div>
 
@@ -204,7 +209,7 @@ export default function AddressForm({
           />
 
           {errors.postalCode && (
-            <p className="mt-1 text-sm text-red-500">
+            <p className="mt-1 text-xs text-red-500 sm:text-sm">
               {errors.postalCode.message}
             </p>
           )}
@@ -218,7 +223,9 @@ export default function AddressForm({
           <Input id="city" {...register("city")} placeholder="Enter city" />
 
           {errors.city && (
-            <p className="mt-1 text-sm text-red-500">{errors.city.message}</p>
+            <p className="mt-1 text-xs text-red-500 sm:text-sm">
+              {errors.city.message}
+            </p>
           )}
         </div>
 
@@ -234,7 +241,7 @@ export default function AddressForm({
           />
 
           {errors.country && (
-            <p className="mt-1 text-sm text-red-500">
+            <p className="mt-1 text-xs text-red-500 sm:text-sm">
               {errors.country.message}
             </p>
           )}
@@ -268,7 +275,7 @@ export default function AddressForm({
               </div>
 
               {"userId" in errors && errors.userId && (
-                <p className="text-sm text-error-500">
+                <p className="text-xs text-error-500 sm:text-sm">
                   {errors.userId.message as string}
                 </p>
               )}
@@ -278,7 +285,7 @@ export default function AddressForm({
           ))}
       </div>
 
-      <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+      <div className="mx-1 rounded-lg border border-gray-200 p-3 dark:border-gray-700 sm:mx-0 sm:p-4">
         <Switch
           label="Set as default address"
           defaultChecked={initialData?.defaultAddress ?? false}
@@ -286,13 +293,14 @@ export default function AddressForm({
         />
       </div>
 
-      <div className="mt-5 flex justify-start">
+      <div className="mt-2 flex px-1 sm:mt-5 sm:px-0">
         <Button
           type="submit"
           size="sm"
           variant="primary"
           startIcon={isEdit && <PenIcon size={16} />}
           disabled={isSaving}
+          className="w-full sm:w-auto"
         >
           {isSaving ? "Saving..." : isEdit ? "Edit" : "Create"}
 

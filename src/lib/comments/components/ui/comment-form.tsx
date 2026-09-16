@@ -122,30 +122,35 @@ export function CommentForm({
     isSubmitting || createMutation.isPending || updateMutation.isPending;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="w-full space-y-4 px-1 sm:space-y-5 sm:px-0"
+    >
       {Object.keys(errors).length > 0 && (
         <ComponentCard>
-          <p className="text-sm text-error-500">
+          <p className="text-xs text-error-500 sm:text-sm">
             Some fields contain errors. Please fix them.
           </p>
         </ComponentCard>
       )}
 
       <ComponentCard title={pageTitle}>
-        <div className="space-y-5">
+        <div className="space-y-4 sm:space-y-5">
           {/* CONTENT */}
           <div>
             <Label required>Content</Label>
 
             <textarea
               {...register("content")}
-              rows={6}
-              className="w-full rounded-lg border px-3 py-2 dark:bg-gray-900"
+              rows={5}
+              className="w-full rounded-lg border px-3 py-2 text-sm dark:bg-gray-900 sm:text-base"
               placeholder="Write your comment..."
             />
 
             {errors.content && (
-              <p className="text-sm text-error-500">{errors.content.message}</p>
+              <p className="text-xs text-error-500 sm:text-sm">
+                {errors.content.message}
+              </p>
             )}
           </div>
 
@@ -177,7 +182,7 @@ export function CommentForm({
                 </div>
 
                 {"postId" in errors && errors.postId && (
-                  <p className="text-sm text-error-500">
+                  <p className="text-xs text-error-500 sm:text-sm">
                     {errors.postId.message as string}
                   </p>
                 )}
@@ -214,7 +219,7 @@ export function CommentForm({
                 </div>
 
                 {"authorId" in errors && errors.authorId && (
-                  <p className="text-sm text-error-500">
+                  <p className="text-xs text-error-500 sm:text-sm">
                     {errors.authorId.message as string}
                   </p>
                 )}
@@ -231,6 +236,7 @@ export function CommentForm({
         variant="primary"
         startIcon={isEdit && <PenIcon size={16} />}
         disabled={isSaving}
+        className="w-full sm:w-auto"
       >
         {isSaving ? "Saving..." : isEdit ? "Edit comment" : "Add comment"}
         {isSaving && <LoaderIcon className="ml-2 animate-spin" />}
