@@ -2,9 +2,9 @@
 
 import React from "react";
 import { Trash, Edit } from "lucide-react";
-import { useModal } from "../../hooks/useModal";
 import ChangePasswordModal from "./danger-zone/ChangePasswordModal";
 import DeleteAccountModal from "./danger-zone/DeleteAccountModal";
+import { useModal } from "@/hooks/useModal";
 
 export default function UserDangerZoneCard() {
   const {

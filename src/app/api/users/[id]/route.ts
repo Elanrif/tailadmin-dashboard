@@ -33,7 +33,7 @@ export async function PATCH(req: Request, { params }: { params: Params }) {
       {
         ok: false,
         error: {
-          message: "Invalid address id",
+          message: "Invalid user id",
           status: 400,
         },
       },

@@ -6,16 +6,10 @@ import { getLogger } from "@/config/logger.config";
 import {
   loginFormSchema,
   registerFormSchema,
-  changePasswordSchema,
   resetPasswordSchema,
-  CurrentUserSchema,
-  deleteFormSchema,
   LoginFormValues,
   RegisterFormValues,
   ResetPwdFormValues,
-  UserCreateFormValues,
-  ChangePwdFormValues,
-  DeleteFormValues,
 } from "@lib/auth/schemas/auth";
 import { User } from "@/lib/users/api/types";
 import { Result } from "@/lib/shared/types";
@@ -27,11 +21,10 @@ const {
     rest: {
       endpoints: {
         auth: {
-          deleteMyAccount: deleteMyAccountUrl,
-          login: loginUrl,
           register: registerUrl,
-          editMyAccount: editMyAccountUrl,
-          changeMyPwd: changeMyPwdUrl,
+          login: loginUrl,
+          logout: logoutUrl,
+          forgotPassword: forgotPasswordUrl,
           resetPassword: resetPasswordUrl,
         },
       },
@@ -87,6 +80,82 @@ export async function signIn(
     return {
       ok: false,
       error: ApiError(error, "signIn"),
+    };
+  }
+}
+
+export async function forgotPassword(
+  email: string,
+): Promise<Result<void, ApiError>> {
+  const normalizedEmail = email.trim();
+
+  if (!normalizedEmail || !normalizedEmail.includes("@")) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        error: "Bad Request",
+        message: "Please provide a valid email address",
+      },
+    };
+  }
+
+  try {
+    await apiClient().post(forgotPasswordUrl, { email: normalizedEmail });
+
+    logger.info(
+      {
+        email: normalizedEmail,
+      },
+      "Password reset email requested",
+    );
+
+    return {
+      ok: true,
+      data: undefined,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error: ApiError(error, "forgotPassword"),
+    };
+  }
+}
+
+export async function logout(): Promise<Result<void, ApiError>> {
+  try {
+    const response = await apiClient().post(logoutUrl);
+    const setCookieHeader = response.headers["set-cookie"];
+
+    if (setCookieHeader) {
+      const cookieStore = await cookies();
+
+      for (const rawCookie of setCookieHeader) {
+        const [nameValue] = rawCookie.split(";");
+        const [name] = nameValue.split("=");
+
+        if (!name) continue;
+
+        cookieStore.set(name.trim(), "", {
+          httpOnly: true,
+          secure: true,
+          sameSite: "lax",
+          path: "/",
+          expires: new Date(0),
+        });
+      }
+    }
+
+    logger.info("User signed out");
+
+    return {
+      ok: true,
+      data: undefined,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error: ApiError(error, "logout"),
     };
   }
 }
@@ -175,117 +244,6 @@ export async function resetPassword(
     return {
       ok: false,
       error: ApiError(error, "resetPassword"),
-    };
-  }
-}
-
-export async function updateMyAccount(
-  data: UserCreateFormValues,
-): Promise<Result<User, ApiError>> {
-  const parse = CurrentUserSchema.safeParse(data);
-
-  if (!parse.success) {
-    return {
-      ok: false,
-      error: fromZodError(parse.error, "updateMyAccount"),
-    };
-  }
-
-  try {
-    const response = await apiClient(true).patch<User>(
-      editMyAccountUrl,
-      parse.data,
-    );
-
-    logger.info(
-      {
-        id: response.data.id,
-        email: response.data.email,
-      },
-      "Profile updated successfully",
-    );
-
-    return {
-      ok: true,
-      data: response.data,
-    };
-  } catch (error) {
-    return {
-      ok: false,
-      error: ApiError(error, "updateMyAccount"),
-    };
-  }
-}
-
-export async function updateMyPassword(
-  data: ChangePwdFormValues,
-): Promise<Result<User, ApiError>> {
-  const parse = changePasswordSchema.safeParse(data);
-
-  // Zod validation error: directly create the ApiError.
-  if (!parse.success) {
-    return {
-      ok: false,
-      error: fromZodError(parse.error, "updateMyPassword"),
-    };
-  }
-
-  try {
-    const response = await apiClient(true).patch<User>(
-      changeMyPwdUrl,
-      parse.data,
-    );
-
-    logger.info(
-      {
-        id: response.data.id,
-        email: response.data.email,
-      },
-      "Password updated successfully",
-    );
-
-    return {
-      ok: true,
-      data: response.data,
-    };
-  } catch (error) {
-    return {
-      ok: false,
-      error: ApiError(error, "updateMyPassword"),
-    };
-  }
-}
-
-export async function deleteMyAccount(
-  data: DeleteFormValues,
-): Promise<Result<void, ApiError>> {
-  const parse = deleteFormSchema.safeParse(data);
-
-  if (!parse.success) {
-    return {
-      ok: false,
-      error: fromZodError(parse.error, "deleteMyAccount"),
-    };
-  }
-
-  try {
-    await apiClient(true).post(deleteMyAccountUrl, parse.data);
-
-    logger.info(
-      {
-        email: parse.data.emailInput,
-      },
-      "Account deleted successfully",
-    );
-
-    return {
-      ok: true,
-      data: undefined,
-    };
-  } catch (error) {
-    return {
-      ok: false,
-      error: ApiError(error, "deleteMyAccount"),
     };
   }
 }

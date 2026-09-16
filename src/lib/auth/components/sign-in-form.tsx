@@ -8,12 +8,12 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useSession } from "./auth.context";
 import { useForm } from "react-hook-form";
-// Remplacement par les nouveaux noms explicites
 import { LoginFormValues, loginFormSchema } from "../schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signInAction } from "../api/action";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 import BackButton from "@/layout/BackButton";
+import { signInMutation } from "@/lib/auth/api/mutation";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -35,27 +35,22 @@ export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
-  const onSubmit = async (data: LoginFormValues) => {
-    try {
-      setErrorFromApi(null);
-      const result = await signInAction({
-        email: data.email,
-        password: data.password,
-      });
+  const signInMutationHook = useMutation(signInMutation);
 
-      if (!result.ok) {
+  const onSubmit = (data: LoginFormValues) => {
+    setErrorFromApi(null);
+
+    signInMutationHook.mutate(data, {
+      onSuccess: (user) => {
+        setUser(user);
+        router.push(user.role === "ADMIN" ? "/dashboard" : "/account");
+        toast.success("Connexion réussie !");
+      },
+      onError: (error: any) => {
         toast.error("Oups! Une erreur est survenue.");
-        setErrorFromApi(result.error.message || "Une erreur est survenue.");
-        return;
-      }
-
-      setUser(result.data);
-      router.push(result.data.role === "ADMIN" ? "/dashboard" : "/account");
-      toast.success("Connexion réussie !");
-    } catch (error: any) {
-      toast.error("Oups! Une erreur est survenue.");
-      setErrorFromApi(error.message || "Une erreur est survenue.");
-    }
+        setErrorFromApi(error?.message || "Une erreur est survenue.");
+      },
+    });
   };
 
   return (
@@ -187,10 +182,12 @@ export default function SignInForm() {
                 <div>
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || signInMutationHook.isPending}
                     className="hover:cursor-pointer flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-blue-500 shadow-theme-xs hover:bg-blue-600 disabled:opacity-50"
                   >
-                    {loading ? "Signing in..." : "Sign In"}
+                    {loading || signInMutationHook.isPending
+                      ? "Signing in..."
+                      : "Sign In"}
                   </button>
                 </div>
               </div>

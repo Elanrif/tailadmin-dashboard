@@ -5,8 +5,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { deleteFormSchema, DeleteFormValues } from "@/lib/auth/schemas/auth";
-import { deleteMyAccountMutation } from "@/lib/auth/api/mutation";
+import {
+  deleteFormSchema,
+  DeleteFormValues,
+} from "@/lib/account/schemas/account";
+import { deleteMyAccountMutation } from "@/lib/account/api/mutation";
 import { useSession } from "@/lib/auth/components/auth.context";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
@@ -21,8 +24,8 @@ export default function DeleteAccountModal({
   isOpen,
   onClose,
 }: DeleteAccountModalProps) {
-  const MESSAGE_DELETE_ACCOUNT = '"I want to delete my account"';
-  const { user, signOut } = useSession();
+  const MESSAGE_DELETE_ACCOUNT = "I want to delete my account";
+  const { signOut } = useSession();
 
   const {
     register,
@@ -32,18 +35,13 @@ export default function DeleteAccountModal({
   } = useForm<DeleteFormValues>({
     resolver: zodResolver(deleteFormSchema),
     defaultValues: {
-      emailInput: user?.email || "",
-      messageInput: "",
+      message: "",
     },
   });
 
   const deleteAccountMutation = useMutation({
     ...deleteMyAccountMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error?.message || "Failed to delete account");
-        return;
-      }
+    onSuccess: async () => {
       toast.success("Account deleted successfully");
       signOut();
       onClose();
@@ -97,12 +95,12 @@ export default function DeleteAccountModal({
 
           <Input
             type="text"
-            {...register("messageInput")}
+            {...register("message")}
             placeholder="Enter the message to confirm deletion"
           />
-          {errors.messageInput && (
+          {errors.message && (
             <p className="mt-1 text-sm text-error-500">
-              {errors.messageInput.message}
+              {errors.message.message}
             </p>
           )}
         </div>

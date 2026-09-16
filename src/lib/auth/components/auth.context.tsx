@@ -2,12 +2,14 @@
 
 import { User } from "@/lib/users/api/types";
 import { createContext, useContext, useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
 import {
   clearAuthSession,
   getStoredAuthUser,
   storeAuthUser,
   subscribeToAuthSessionClear,
 } from "@/lib/auth/auth-session";
+import { logoutMutation } from "@/lib/auth/api/mutation";
 
 interface SessionContextType {
   user: User | null;
@@ -51,8 +53,18 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
     storeAuthUser(u);
   };
 
+  const logoutMutationHook = useMutation(logoutMutation);
   const signOut = () => {
-    clearAuthSession();
+    logoutMutationHook.mutate(undefined, {
+      onSuccess: () => {
+        clearAuthSession();
+        setUserState(null);
+      },
+      onError: () => {
+        clearAuthSession();
+        setUserState(null);
+      },
+    });
   };
 
   return (

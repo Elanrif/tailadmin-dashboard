@@ -1,31 +1,35 @@
 "use client";
 import { ImageUpload } from "@/lib/shared/cloudinary/components/image-upload";
-import ComponentCard from "../common/ComponentCard";
 import Image from "next/image";
 import { useSession } from "@/lib/auth/components/auth.context";
 import { useImageDraft } from "@/lib/shared/cloudinary/hooks/use-image-draft";
-import Button from "../ui/button/Button";
 import {
-  UserUpdateFormValues,
-  userUpdateSchema,
-} from "@/lib/users/schemas/user";
+  CurrentUserFormValues,
+  CurrentUserSchema,
+} from "@/lib/account/schemas/account";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { updateUserMutation } from "@/lib/users/api/mutations";
+import { updateMyProfileMutation } from "@/lib/account/api/mutation";
 import { toast } from "sonner";
 import { LoaderIcon } from "lucide-react";
+import ComponentCard from "@/components/common/ComponentCard";
+import Button from "@/components/ui/button/Button";
 
 export default function UserImageCard() {
   const { user, setUser } = useSession();
   const {
     handleSubmit,
     setValue,
-    control, // 👈 1. Récupère 'control' ici
+    control,
     formState: { isSubmitting },
-  } = useForm<UserUpdateFormValues>({
-    resolver: zodResolver(userUpdateSchema),
+  } = useForm<CurrentUserFormValues>({
+    resolver: zodResolver(CurrentUserSchema),
     defaultValues: {
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      email: user?.email,
+      phoneNumber: user?.phoneNumber,
       avatarUrl: user?.avatarUrl,
     },
   });
@@ -50,36 +54,24 @@ export default function UserImageCard() {
     setValue("avatarUrl", "");
   }
 
-  const updateMutation = useMutation(updateUserMutation);
-  const onSubmit = (values: UserUpdateFormValues) => {
-    const updateValues = values as UserUpdateFormValues;
-    const payload: UserUpdateFormValues = {
-      avatarUrl: updateValues.avatarUrl,
-    };
-    updateMutation.mutate(
-      {
-        id: user?.id as number,
-        values: payload,
+  const updateMutation = useMutation(updateMyProfileMutation);
+  const onSubmit = (values: CurrentUserFormValues) => {
+    updateMutation.mutate(values, {
+      onSuccess: (data) => {
+        setUser(data);
+        toast.success("Profile picture updated successfully");
       },
-      {
-        onSuccess: async (data) => {
-          setUser(data);
-          toast.success("User updated successfully");
-        },
-        onError: (error) => {
-          if (error.status === 401) {
-            toast.error("Votre session a expiré, veuillez vous reconnecter.");
-            return;
-          }
-          toast.error(error.message);
-        },
+      onError: (error) => {
+        if (error.status === 401) {
+          toast.error("Votre session a expiré, veuillez vous reconnecter.");
+          return;
+        }
+        toast.error(error.message);
       },
-    );
+    });
     handleImageRemove();
   };
 
-  // 👈 Étape 3 : On calcule si le bouton doit être désactivé
-  // Si currentAvatarUrl est faux (null, undefined, ou ""), l'expression devient 'true'
   const isButtonDisabled = !currentAvatarUrl;
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -125,7 +117,9 @@ export default function UserImageCard() {
           className="w-full mx-auto"
         >
           Update Profile Picture
-          {isSubmitting ? <LoaderIcon className="animate-spin" /> : ""}
+          {isSubmitting || updateMutation.isPending ? (
+            <LoaderIcon className="animate-spin" />
+          ) : null}
         </Button>
       </ComponentCard>
     </form>

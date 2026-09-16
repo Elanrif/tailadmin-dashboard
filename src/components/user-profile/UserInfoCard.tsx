@@ -5,95 +5,14 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
-import { useSession } from "@/lib/auth/components/auth.context";
-import {
-  UserUpdateFormValues,
-  userUpdateSchema,
-} from "@/lib/users/schemas/user";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
-import { updateUserMutation } from "@/lib/users/api/mutations";
-import { toast } from "sonner";
-import { UserRole, UserStatus } from "@/lib/users/api/types";
-import ComponentCard from "../common/ComponentCard";
-import PhoneInput from "../form/group-input/PhoneInput";
-import Switch from "../form/switch/Switch";
 
-const countries = [
-  { code: "KM", label: "+269" },
-  { code: "MA", label: "+212" },
-  { code: "US", label: "+1" },
-  { code: "GB", label: "+44" },
-  { code: "CA", label: "+1" },
-  { code: "AU", label: "+61" },
-];
 export default function UserInfoCard() {
-  const { user, setUser } = useSession();
   const { isOpen, openModal, closeModal } = useModal();
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors, isSubmitting },
-  } = useForm<UserUpdateFormValues>({
-    resolver: zodResolver(userUpdateSchema),
-    defaultValues: {
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      email: user?.email,
-      phoneNumber: user?.phoneNumber,
-      avatarUrl: user?.avatarUrl ?? "",
-    },
-  });
-
-  const updateMutation = useMutation(updateUserMutation);
-
-  const onSubmit = (values: UserUpdateFormValues) => {
-    const updateValues = values as UserUpdateFormValues;
-    const payload: UserUpdateFormValues = {
-      firstName: updateValues.firstName,
-      lastName: updateValues.lastName,
-      email: updateValues.email,
-      phoneNumber: updateValues.phoneNumber,
-      role: updateValues.role ?? UserRole.USER,
-      status: updateValues.status ?? UserStatus.ACTIVE,
-      avatarUrl: updateValues.avatarUrl,
-    };
-    // Solution : Ne pas inclure les champs vides dans le payload
-    if (updateValues.password && updateValues.password.trim() !== "") {
-      payload.password = updateValues.password;
-      payload.confirmPassword = updateValues.confirmPassword;
-    }
-    updateMutation.mutate(
-      {
-        id: user?.id as number,
-        values: payload,
-      },
-      {
-        onSuccess: async (data) => {
-          setUser(data);
-          toast.success("User updated successfully");
-          closeModal();
-        },
-        onError: (error) => {
-          if (error.status === 401) {
-            toast.error("Votre session a expiré, veuillez vous reconnecter.");
-            return;
-          }
-          toast.error(error.message);
-        },
-      },
-    );
+  const handleSave = () => {
+    // Handle save logic here
+    console.log("Saving changes...");
+    closeModal();
   };
-
-  const handlePhoneNumberChange = (phoneNumber: string) => {
-    setValue("phoneNumber", phoneNumber, {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
-  };
-
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -108,7 +27,7 @@ export default function UserInfoCard() {
                 First Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user?.firstName ?? "N/A"}
+                Musharof
               </p>
             </div>
 
@@ -117,7 +36,7 @@ export default function UserInfoCard() {
                 Last Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user?.lastName ?? "N/A"}
+                Chowdhury
               </p>
             </div>
 
@@ -126,7 +45,7 @@ export default function UserInfoCard() {
                 Email address
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user?.email ?? "N/A"}
+                randomuser@pimjo.com
               </p>
             </div>
 
@@ -135,19 +54,8 @@ export default function UserInfoCard() {
                 Phone
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user?.phoneNumber ?? "N/A"}
+                +09 363 398 46
               </p>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Compte activé?
-              </p>
-              <Switch
-                label={user?.status === UserStatus.ACTIVE ? "Oui" : "Non"}
-                defaultChecked={user?.status === UserStatus.ACTIVE}
-                disabled
-              />
             </div>
 
             <div>
@@ -163,7 +71,7 @@ export default function UserInfoCard() {
 
         <button
           onClick={openModal}
-          className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/3 dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
+          className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
         >
           <svg
             className="fill-current"
@@ -184,8 +92,8 @@ export default function UserInfoCard() {
         </button>
       </div>
 
-      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-175 m-4">
-        <div className="no-scrollbar relative w-full max-w-175 overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
+        <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
               Edit Personal Information
@@ -194,24 +102,8 @@ export default function UserInfoCard() {
               Update your details to keep your profile up-to-date.
             </p>
           </div>
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-            {Object.keys(errors).length > 0 && (
-              <ComponentCard>
-                <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
-                  <span className="text-xl">⚠️</span>
-                  <div>
-                    <h4 className="font-semibold text-red-700">
-                      Impossible de soumettre le formulaire
-                    </h4>
-                    <p className="mt-1 text-sm text-red-600">
-                      Certains champs contiennent des erreurs. Veuillez les
-                      corriger avant de réessayer.
-                    </p>
-                  </div>
-                </div>
-              </ComponentCard>
-            )}
-            <div className="custom-scrollbar h-112.5 overflow-y-auto px-2 pb-3">
+          <form className="flex flex-col">
+            <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
               <div>
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
                   Social Links
@@ -255,33 +147,25 @@ export default function UserInfoCard() {
 
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
-                    <Label required>First Name</Label>
-                    <Input {...register("firstName")} type="text" />
+                    <Label>First Name</Label>
+                    <Input type="text" defaultValue="Musharof" />
                   </div>
+
                   <div className="col-span-2 lg:col-span-1">
-                    <Label required>Last Name</Label>
-                    <Input {...register("lastName")} type="text" />
+                    <Label>Last Name</Label>
+                    <Input type="text" defaultValue="Chowdhury" />
                   </div>
+
                   <div className="col-span-2 lg:col-span-1">
-                    <Label required>Email Address</Label>
-                    <Input {...register("email")} type="text" />
+                    <Label>Email Address</Label>
+                    <Input type="text" defaultValue="randomuser@pimjo.com" />
                   </div>
-                  <div>
-                    <Label required>Phone</Label>
-                    <PhoneInput
-                      {...register("phoneNumber")}
-                      selectPosition="start"
-                      countries={countries}
-                      placeholder="+1 (555) 000-0000"
-                      onChange={handlePhoneNumberChange}
-                      value={user?.phoneNumber}
-                    />
-                    {errors.phoneNumber && (
-                      <p className="mt-1 text-sm text-error-500">
-                        {errors.phoneNumber.message}
-                      </p>
-                    )}
-                  </div>{" "}
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Phone</Label>
+                    <Input type="text" defaultValue="+09 363 398 46" />
+                  </div>
+
                   <div className="col-span-2">
                     <Label>Bio</Label>
                     <Input type="text" defaultValue="Team Manager" />
@@ -293,8 +177,8 @@ export default function UserInfoCard() {
               <Button size="sm" variant="outline" onClick={closeModal}>
                 Close
               </Button>
-              <Button type="submit" size="sm">
-                {isSubmitting ? "Saving..." : "Save Changes"}
+              <Button size="sm" onClick={handleSave}>
+                Save Changes
               </Button>
             </div>
           </form>

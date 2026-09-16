@@ -6,16 +6,16 @@ import { EyeCloseIcon, EyeIcon } from "@/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { useSession } from "./auth.context";
-// Remplacement par tes nouvelles conventions unifiées
-import { RegisterFormValues, registerFormSchema } from "../schemas/auth";
 import { Controller, useForm } from "react-hook-form";
+import { RegisterFormValues, registerFormSchema } from "../schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { signUpAction } from "../api/action";
+import { useMutation } from "@tanstack/react-query";
 import PhoneInput from "@/components/form/group-input/PhoneInput";
 import { UserRole } from "@/lib/users/api/types";
 import BackButton from "@/layout/BackButton";
+import { signUpMutation } from "@/lib/auth/api/mutation";
+import { useSession } from "@/lib/auth/components/auth.context";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -43,40 +43,27 @@ export default function SignUpForm() {
   const [showconfirmPassword, setShowconfirmPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
-  const onSubmit = async (data: RegisterFormValues) => {
+  const signUpMutationHook = useMutation(signUpMutation);
+
+  const onSubmit = (data: RegisterFormValues) => {
     if (!isChecked) {
       toast.error("Veuillez accepter les termes et conditions.");
       return;
     }
 
-    try {
-      setErrorFromApi(null);
-      const result = await signUpAction({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phoneNumber: data.phoneNumber,
-        email: data.email,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
-      });
+    setErrorFromApi(null);
 
-      if (!result.ok) {
-        setErrorFromApi(
-          result.error.message || "Échec de la création du compte",
-        );
+    signUpMutationHook.mutate(data, {
+      onSuccess: (user) => {
+        setUser(user);
+        router.push(user.role === UserRole.ADMIN ? "/dashboard" : "/account");
+        toast.success("Compte créé avec succès !");
+      },
+      onError: (error: any) => {
+        setErrorFromApi(error?.message || "Une erreur inattendue est survenue");
         toast.error("Erreur de création de compte !");
-        return;
-      }
-
-      setUser(result.data);
-      router.push(
-        result.data.role === UserRole.ADMIN ? "/dashboard" : "/account",
-      );
-      toast.success("Compte créé avec succès !");
-    } catch (error: any) {
-      setErrorFromApi(error?.message || "Une erreur inattendue est survenue");
-      toast.error("Erreur de création de compte !");
-    }
+      },
+    });
   };
 
   return (
@@ -299,10 +286,12 @@ export default function SignUpForm() {
                 <div>
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || signUpMutationHook.isPending}
                     className="hover: cursor-pointer flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-blue-500 shadow-theme-xs hover:bg-blue-600 disabled:opacity-50"
                   >
-                    {loading ? "Signing up..." : "Sign Up"}
+                    {loading || signUpMutationHook.isPending
+                      ? "Signing up..."
+                      : "Sign Up"}
                   </button>
                 </div>
               </div>

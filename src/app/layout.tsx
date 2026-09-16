@@ -30,14 +30,14 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
+          <QueryProvider>
             <AuthUserProvider>
               <SidebarProvider>
-                <QueryProvider>
-                  <Toaster />
-                  {children}
-                </QueryProvider>
+                <Toaster />
+                {children}
               </SidebarProvider>
             </AuthUserProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

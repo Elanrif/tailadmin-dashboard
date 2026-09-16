@@ -9,7 +9,12 @@ import { LoginFormValues, RegisterFormValues } from "../../schemas/auth";
 const {
   api: {
     rest: {
-      endpoints: { register: registerUrl, login: loginUrl },
+      endpoints: {
+        register: registerUrl,
+        login: loginUrl,
+        signOut: signOutUrl,
+        forgotPassword: forgotPasswordUrl,
+      },
     },
   },
 } = proxyEnvironment;
@@ -31,5 +36,23 @@ export async function signUp(
     any,
     AxiosResponse<Result<User, ApiError>>
   >(registerUrl, registration);
+  return res.data;
+}
+
+export async function logout(): Promise<Result<void, ApiError>> {
+  const res = await frontendHttp().post<
+    any,
+    AxiosResponse<Result<void, ApiError>>
+  >(signOutUrl);
+  return res.data;
+}
+
+export async function forgotPassword(
+  email: string,
+): Promise<Result<void, ApiError>> {
+  const res = await frontendHttp().post<
+    any,
+    AxiosResponse<Result<void, ApiError>>
+  >(forgotPasswordUrl, { email });
   return res.data;
 }

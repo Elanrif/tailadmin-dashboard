@@ -10,10 +10,9 @@ import { EyeCloseIcon, EyeIcon } from "@/icons";
 import {
   changePasswordSchema,
   ChangePwdFormValues,
-} from "@/lib/auth/schemas/auth";
-import { addressKeys } from "@/lib/addresses/api/queries";
+} from "@/lib/account/schemas/account";
 import { getQueryClient } from "@/lib/query-client";
-import { updateMyPasswordMutation } from "@/lib/auth/api/mutation";
+import { updateMyPasswordMutation } from "@/lib/account/api/mutation";
 import { useSession } from "@/lib/auth/components/auth.context";
 import { Modal } from "@/components/ui/modal";
 import ComponentCard from "@/components/common/ComponentCard";
@@ -35,7 +34,6 @@ export default function ChangePasswordModal({
 
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -47,20 +45,14 @@ export default function ChangePasswordModal({
     defaultValues: {
       currentPassword: "",
       newPassword: "",
-      confirmNewPassword: "",
-      email: user?.email || "",
     },
   });
 
   const updatePwdMutation = useMutation({
     ...updateMyPasswordMutation,
-    onSuccess: async (result) => {
-      if (!result.ok) {
-        toast.error(result.error?.message || "Failed to change password");
-        return;
-      }
+    onSuccess: async () => {
       toast.success("Password changed successfully");
-      await queryClient.invalidateQueries({ queryKey: addressKeys.all });
+      await queryClient.invalidateQueries({ queryKey: ["account"] });
       onClose();
       reset();
     },
@@ -147,31 +139,6 @@ export default function ChangePasswordModal({
                   {errors.newPassword && (
                     <p className="mt-1 text-sm text-error-500">
                       {errors.newPassword.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label required>Confirm Password</Label>
-                  <div className="relative">
-                    <Input
-                      type={showConfirmPassword ? "text" : "password"}
-                      {...register("confirmNewPassword")}
-                      placeholder="Confirm your password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                    >
-                      {showConfirmPassword ? <EyeIcon /> : <EyeCloseIcon />}
-                    </button>
-                  </div>
-                  {errors.confirmNewPassword && (
-                    <p className="mt-1 text-sm text-error-500">
-                      {errors.confirmNewPassword.message}
                     </p>
                   )}
                 </div>
