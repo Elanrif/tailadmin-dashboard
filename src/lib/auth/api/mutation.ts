@@ -17,11 +17,7 @@ export const signInMutation = mutationOptions<
   LoginFormValues,
   unknown
 >({
-  mutationFn: async (values) => {
-    const result = await signIn(values);
-    if (!result.ok) throw result.error;
-    return result.data;
-  },
+  mutationFn: (values) => signIn(values),
 });
 
 export const signUpMutation = mutationOptions<
@@ -30,11 +26,7 @@ export const signUpMutation = mutationOptions<
   RegisterFormValues,
   unknown
 >({
-  mutationFn: async (values) => {
-    const result = await signUp(values);
-    if (!result.ok) throw result.error;
-    return result.data;
-  },
+  mutationFn: (values) => signUp(values),
 });
 
 export const forgotPasswordMutation = mutationOptions<
@@ -43,17 +35,9 @@ export const forgotPasswordMutation = mutationOptions<
   string,
   unknown
 >({
-  mutationFn: async (email) => {
-    const result = await forgotPassword(email);
-    if (!result.ok) throw result.error;
-    return result.data;
-  },
+  mutationFn: (email) => forgotPassword(email),
 });
 
 export const logoutMutation = mutationOptions<void, ApiError, void, unknown>({
-  mutationFn: async () => {
-    const result = await logout();
-    if (!result.ok) throw result.error;
-    return result.data;
-  },
+  mutationFn: () => logout(),
 });

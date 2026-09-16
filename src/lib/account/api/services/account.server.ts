@@ -1,6 +1,5 @@
 import "server-only";
 
-import { z } from "zod";
 import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
 import { getLogger } from "@/config/logger.config";
@@ -63,7 +62,7 @@ export async function updateMyProfile(
 
 export async function changeMyPassword(
   data: ChangePwdFormValues,
-): Promise<Result<User, ApiError>> {
+): Promise<Result<void, ApiError>> {
   const parse = changePasswordSchema.safeParse(data);
 
   if (!parse.success) {
@@ -74,19 +73,18 @@ export async function changeMyPassword(
   }
 
   try {
-    const response = await apiClient(true).patch<User>(accountUrl, parse.data);
+    await apiClient(true).post(`${accountUrl}/change-password`, parse.data);
 
     logger.info(
       {
-        id: response.data.id,
-        email: response.data.email,
+        email: "current user",
       },
       "Password updated successfully",
     );
 
     return {
       ok: true,
-      data: response.data,
+      data: undefined,
     };
   } catch (error) {
     return {

@@ -8,7 +8,10 @@ export async function POST(req: NextRequest) {
   const body = (await req.json()) as RegisterFormValues;
   const response = await signUp(body);
 
-  return NextResponse.json(response, {
-    status: response.ok ? 200 : (response.error.status ?? 500),
-  });
+  if (!response.ok) {
+    return NextResponse.json(response.error, {
+      status: response.error.status ?? 500,
+    });
+  }
+  return NextResponse.json(response.data, { status: 200 });
 }

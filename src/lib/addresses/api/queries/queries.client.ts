@@ -11,26 +11,11 @@ import { ApiError } from "@/lib/shared/api-error";
 export const userAddressesQueryOptions = (filters: AddressFilters) =>
   queryOptions<AddressesResponse, ApiError>({
     queryKey: addressKeys.list(filters),
-    queryFn: async () => {
-      const response = await fetchUserAddresses(filters);
-      if (!response.ok) {
-        throw response.error;
-      }
-
-      return response.data;
-    },
+    queryFn: () => fetchUserAddresses(filters),
   });
 
 export const userAddressesByIdQueryOptions = (addressId: number) =>
   queryOptions<Address, ApiError>({
     queryKey: addressKeys.byId(addressId),
-    queryFn: async () => {
-      const response = await fetchUserAddressById(addressId);
-
-      if (!response.ok) {
-        throw response.error;
-      }
-
-      return response.data;
-    },
+    queryFn: () => fetchUserAddressById(addressId),
   });

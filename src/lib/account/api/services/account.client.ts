@@ -1,13 +1,12 @@
 import { proxyEnvironment } from "@config/proxy-api.config";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { User } from "@/lib/users/api/types";
-import { Result } from "@/lib/shared/types";
-import { ApiError } from "@/lib/shared/api-error";
 import {
   ChangePwdFormValues,
   CurrentUserFormValues,
   DeleteFormValues,
 } from "@/lib/account/schemas/account";
+import { unwrapApiError } from "@/lib/shared/handle-api-error";
 
 const {
   api: {
@@ -17,35 +16,35 @@ const {
   },
 } = proxyEnvironment;
 
+// --- Mutations ---
+
 export async function updateMyProfile(
   payload: CurrentUserFormValues,
-): Promise<Result<User, ApiError>> {
-  const { data } = await frontendHttp().patch<Result<User, ApiError>>(
-    accountUrl,
-    payload,
-  );
-
-  return data;
+): Promise<User> {
+  try {
+    const res = await frontendHttp().patch<User>(accountUrl, payload);
+    return res.data;
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }
 
 export async function changeMyPassword(
   payload: ChangePwdFormValues,
-): Promise<Result<User, ApiError>> {
-  const { data } = await frontendHttp().post<Result<User, ApiError>>(
-    accountUrl,
-    payload,
-  );
-
-  return data;
+): Promise<void> {
+  try {
+    await frontendHttp().post(accountUrl, payload);
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }
 
 export async function deleteMyAccount(
   payload: DeleteFormValues,
-): Promise<Result<void, ApiError>> {
-  const { data } = await frontendHttp().delete<Result<void, ApiError>>(
-    accountUrl,
-    { data: payload },
-  );
-
-  return data;
+): Promise<void> {
+  try {
+    await frontendHttp().delete(accountUrl, { data: payload });
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }

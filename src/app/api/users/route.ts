@@ -19,16 +19,22 @@ export async function GET(request: NextRequest) {
 
   const response = await getUsers(filters);
 
-  return NextResponse.json(response, {
-    status: response.ok ? 200 : (response.error.status ?? 500),
-  });
+  if (!response.ok) {
+    return NextResponse.json(response.error, {
+      status: response.error.status ?? 500,
+    });
+  }
+  return NextResponse.json(response.data, { status: 200 });
 }
 
 export async function POST(req: Request) {
   const payload = await req.json();
   const response = await createUser(payload);
 
-  return NextResponse.json(response, {
-    status: response.ok ? 201 : (response.error.status ?? 500),
-  });
+  if (!response.ok) {
+    return NextResponse.json(response.error, {
+      status: response.error.status ?? 500,
+    });
+  }
+  return NextResponse.json(response.data, { status: 201 });
 }

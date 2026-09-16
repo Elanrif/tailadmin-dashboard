@@ -20,24 +20,16 @@ export const updateMyProfileMutation = mutationOptions<
   CurrentUserFormValues,
   unknown
 >({
-  mutationFn: async (values) => {
-    const result = await updateMyProfile(values);
-    if (!result.ok) throw result.error;
-    return result.data;
-  },
+  mutationFn: (values) => updateMyProfile(values),
 });
 
 export const updateMyPasswordMutation = mutationOptions<
-  User,
+  void,
   ApiError,
   ChangePwdFormValues,
   unknown
 >({
-  mutationFn: async (values) => {
-    const result = await changeMyPassword(values);
-    if (!result.ok) throw result.error;
-    return result.data;
-  },
+  mutationFn: (values) => changeMyPassword(values),
 });
 
 export const deleteMyAccountMutation = mutationOptions<
@@ -46,9 +38,5 @@ export const deleteMyAccountMutation = mutationOptions<
   DeleteFormValues,
   unknown
 >({
-  mutationFn: async (values) => {
-    const result = await deleteMyAccount(values);
-    if (!result.ok) throw result.error;
-    return result.data;
-  },
+  mutationFn: (values) => deleteMyAccount(values),
 });

@@ -9,8 +9,7 @@ import {
   CommentFormValues,
   CommentUpdateFormValues,
 } from "../../schemas/comment";
-import { Result } from "@/lib/shared/types";
-import { ApiError } from "@/lib/shared/api-error";
+import { unwrapApiError } from "@/lib/shared/handle-api-error";
 
 const {
   api: {
@@ -24,56 +23,58 @@ const {
 
 export async function fetchComments(
   filters?: CommentFilters,
-): Promise<Result<CommentsResponse, ApiError>> {
-  const { data } = await frontendHttp().get<Result<CommentsResponse, ApiError>>(
-    commentsUrl,
-    { params: filters },
-  );
-
-  return data;
+): Promise<CommentsResponse> {
+  try {
+    const { data } = await frontendHttp().get<CommentsResponse>(commentsUrl, {
+      params: filters,
+    });
+    return data;
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }
 
-export async function fetchCommentById(
-  id: number,
-): Promise<Result<Comment, ApiError>> {
-  const { data } = await frontendHttp().get<Result<Comment, ApiError>>(
-    `${commentsUrl}/${id}`,
-  );
-
-  return data;
+export async function fetchCommentById(id: number): Promise<Comment> {
+  try {
+    const { data } = await frontendHttp().get<Comment>(`${commentsUrl}/${id}`);
+    return data;
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }
 
 // --- Mutations ---
 
 export async function createComment(
   payload: CommentFormValues,
-): Promise<Result<Comment, ApiError>> {
-  const { data } = await frontendHttp().post<Result<Comment, ApiError>>(
-    commentsUrl,
-    payload,
-  );
-
-  return data;
+): Promise<Comment> {
+  try {
+    const { data } = await frontendHttp().post<Comment>(commentsUrl, payload);
+    return data;
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }
 
 export async function updateComment(
   id: number,
   payload: CommentUpdateFormValues,
-): Promise<Result<Comment, ApiError>> {
-  const { data } = await frontendHttp().patch<Result<Comment, ApiError>>(
-    `${commentsUrl}/${id}`,
-    payload,
-  );
-
-  return data;
+): Promise<Comment> {
+  try {
+    const { data } = await frontendHttp().patch<Comment>(
+      `${commentsUrl}/${id}`,
+      payload,
+    );
+    return data;
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }
 
-export async function deleteComment(
-  id: number,
-): Promise<Result<void, ApiError>> {
-  const { data } = await frontendHttp().delete<Result<void, ApiError>>(
-    `${commentsUrl}/${id}`,
-  );
-
-  return data;
+export async function deleteComment(id: number): Promise<void> {
+  try {
+    await frontendHttp().delete(`${commentsUrl}/${id}`);
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }

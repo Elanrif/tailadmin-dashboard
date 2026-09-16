@@ -20,9 +20,12 @@ export async function GET(_: NextRequest, { params }: { params: Params }) {
   }
   const response = await getPostById(_id);
 
-  return NextResponse.json(response, {
-    status: response.ok ? 200 : (response.error.status ?? 500),
-  });
+ if (!response.ok) {
+    return NextResponse.json(response.error, {
+      status: response.error.status ?? 500,
+    });
+  }
+  return NextResponse.json(response.data, { status: 200 });
 }
 
 export async function PATCH(req: Request, { params }: { params: Params }) {
@@ -44,9 +47,12 @@ export async function PATCH(req: Request, { params }: { params: Params }) {
 
   const response = await updatePost(_id, payload);
 
-  return NextResponse.json(response, {
-    status: response.ok ? 200 : (response.error.status ?? 500),
-  });
+  if (!response.ok) {
+    return NextResponse.json(response.error, {
+      status: response.error.status ?? 500,
+    });
+  }
+  return NextResponse.json(response.data, { status: 200 });
 }
 
 export async function DELETE(_req: Request, { params }: { params: Params }) {
@@ -66,8 +72,10 @@ export async function DELETE(_req: Request, { params }: { params: Params }) {
   }
 
   const response = await deletePost(_id);
-
-  return NextResponse.json(response, {
-    status: response.ok ? 200 : (response.error.status ?? 500),
-  });
+  if(!response.ok) {
+    return NextResponse.json(response.error, {
+      status: response.error.status ?? 500,
+    });
+  }
+  return NextResponse.json(response.data, { status: 200 });
 }

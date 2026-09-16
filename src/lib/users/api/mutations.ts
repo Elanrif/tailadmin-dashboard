@@ -15,11 +15,7 @@ export const createUserMutation = mutationOptions<
   UserCreateFormValues,
   unknown
 >({
-  mutationFn: async (payload) => {
-    const result = await createUser(payload);
-    if (!result.ok) throw result.error;
-    return result.data;
-  },
+  mutationFn: (payload) => createUser(payload),
   onSettled: () => {
     void getQueryClient().invalidateQueries({ queryKey: userKeys.all });
   },
@@ -31,11 +27,7 @@ export const updateUserMutation = mutationOptions<
   { id: number; values: UserUpdateFormValues },
   unknown
 >({
-  mutationFn: async ({ id, values }) => {
-    const result = await updateUser(id, values);
-    if (!result.ok) throw result.error;
-    return result.data;
-  },
+  mutationFn: ({ id, values }) => updateUser(id, values),
   onSettled: () => {
     void getQueryClient().invalidateQueries({ queryKey: userKeys.all });
   },
@@ -47,11 +39,7 @@ export const deleteUserMutation = mutationOptions<
   number,
   unknown
 >({
-  mutationFn: async (id) => {
-    const result = await deleteUser(id);
-    if (!result.ok) throw result.error;
-    return result.data;
-  },
+  mutationFn: (id) => deleteUser(id),
   onSettled: () => {
     void getQueryClient().invalidateQueries({ queryKey: userKeys.all });
     void getQueryClient().invalidateQueries({ queryKey: postKeys.all });

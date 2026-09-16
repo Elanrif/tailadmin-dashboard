@@ -11,14 +11,13 @@ import {
   changePasswordSchema,
   ChangePwdFormValues,
 } from "@/lib/account/schemas/account";
-import { getQueryClient } from "@/lib/query-client";
 import { updateMyPasswordMutation } from "@/lib/account/api/mutation";
-import { useSession } from "@/lib/auth/components/auth.context";
 import { Modal } from "@/components/ui/modal";
 import ComponentCard from "@/components/common/ComponentCard";
 import Label from "@/components/form/Label";
 import Input from "@/components/form/input/InputField";
 import Button from "@/components/ui/button/Button";
+import { LoaderIcon } from "lucide-react";
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -29,11 +28,9 @@ export default function ChangePasswordModal({
   isOpen,
   onClose,
 }: ChangePasswordModalProps) {
-  const { user } = useSession();
-  const queryClient = getQueryClient();
-
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
     register,
@@ -48,25 +45,34 @@ export default function ChangePasswordModal({
     },
   });
 
-  const updatePwdMutation = useMutation({
-    ...updateMyPasswordMutation,
-    onSuccess: async () => {
-      toast.success("Password changed successfully");
-      await queryClient.invalidateQueries({ queryKey: ["account"] });
-      onClose();
-      reset();
-    },
-    onError: () => {
-      toast.error("Failed to change password");
-    },
-  });
+  const updatePwdMutation = useMutation(updateMyPasswordMutation);
 
   const onSubmitPassword = (values: ChangePwdFormValues) => {
-    updatePwdMutation.mutate(values);
+    setSubmitError(null);
+    updatePwdMutation.mutate(values, {
+      onSuccess: async () => {
+        toast.success("Password changed successfully");
+        onClose();
+        reset();
+      },
+      onError: (error) => {
+        if (error.status === 401) {
+          toast.error("Votre session a expiré, veuillez vous reconnecter.");
+          return;
+        }
+        setSubmitError(error.message);
+        toast.error(error.message);
+      },
+    });
+  };
+
+  const handleClose = () => {
+    setSubmitError(null);
+    onClose();
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-175 m-4">
+    <Modal isOpen={isOpen} onClose={handleClose} className="max-w-175 m-4">
       <div className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl dark:bg-gray-900 lg:p-11">
         <div className="px-2 pr-14">
           <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
@@ -94,8 +100,22 @@ export default function ChangePasswordModal({
             </ComponentCard>
           )}
 
+          {submitError && (
+            <ComponentCard>
+              <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
+                <span className="text-xl">⚠️</span>
+                <div>
+                  <h4 className="font-semibold text-red-700">
+                    Échec du changement de mot de passe
+                  </h4>
+                  <p className="mt-1 text-sm text-red-600">{submitError}</p>
+                </div>
+              </div>
+            </ComponentCard>
+          )}
+
           <div className="px-2 overflow-y-auto custom-scrollbar">
-            <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-1">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-5">
               <div>
                 <Label required>Current Password</Label>
                 <div className="relative">
@@ -119,7 +139,7 @@ export default function ChangePasswordModal({
                 )}
               </div>
 
-              <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+              <div className="grid grid-cols-1 gap-x-6 gap-y-5">
                 <div>
                   <Label required>New Password</Label>
                   <div className="relative">
@@ -146,12 +166,24 @@ export default function ChangePasswordModal({
             </div>
           </div>
 
-          <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-            <Button size="sm" variant="outline" onClick={onClose} type="button">
+          <div className="flex items-center gap-3 px-2 mt-6">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleClose}
+              type="button"
+            >
               Close
             </Button>
             <Button type="submit" size="sm" disabled={isSubmitting}>
-              {isSubmitting ? "Saving..." : "Save Changes"}
+              {isSubmitting || updatePwdMutation.isPending ? (
+                <>
+                  Saving...
+                  <LoaderIcon className="ml-2 animate-spin" />
+                </>
+              ) : (
+                "Save Changes"
+              )}
             </Button>
           </div>
         </form>

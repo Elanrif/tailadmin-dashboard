@@ -8,25 +8,11 @@ import type { ApiError } from "@/lib/shared/api-error";
 export const postsQueryOptions = (filters: PostFilters) =>
   queryOptions<PostsResponse, ApiError>({
     queryKey: postKeys.list(filters),
-    queryFn: async () => {
-      const response = await fetchPosts(filters);
-      if (!response.ok) {
-        throw response.error;
-      }
-
-      return response.data;
-    },
+    queryFn: () => fetchPosts(filters),
   });
 
 export const postByIdQueryOptions = (id: number) =>
   queryOptions<Post, ApiError>({
     queryKey: postKeys.detail(id),
-    queryFn: async () => {
-      const response = await fetchPostById(id);
-      if (!response.ok) {
-        throw response.error;
-      }
-
-      return response.data;
-    },
+    queryFn: () => fetchPostById(id),
   });

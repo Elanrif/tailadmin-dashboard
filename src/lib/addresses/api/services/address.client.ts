@@ -5,8 +5,7 @@ import {
   AddressCreateFormValues,
   AddressUpdateFormValues,
 } from "../../schemas/address";
-import { Result } from "@/lib/shared/types";
-import { ApiError } from "@/lib/shared/api-error";
+import { unwrapApiError } from "@/lib/shared/handle-api-error";
 
 const {
   api: {
@@ -20,78 +19,83 @@ const {
 
 export async function fetchUserAddresses(
   filters: AddressFilters = {},
-): Promise<Result<AddressesResponse, ApiError>> {
-  const { data } = await frontendHttp().get<
-    Result<AddressesResponse, ApiError>
-  >(addressesUrl, {
-    params: filters,
-  });
-
-  return data;
+): Promise<AddressesResponse> {
+  try {
+    const { data } = await frontendHttp().get<AddressesResponse>(addressesUrl, {
+      params: filters,
+    });
+    return data;
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }
 
 export async function fetchUserAddressById(
   addressId: number,
-): Promise<Result<Address, ApiError>> {
-  const { data } = await frontendHttp().get<Result<Address, ApiError>>(
-    `${addressesUrl}/${addressId}`,
-  );
-
-  return data;
+): Promise<Address> {
+  try {
+    const { data } = await frontendHttp().get<Address>(
+      `${addressesUrl}/${addressId}`,
+    );
+    return data;
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }
 
 // --- Mutations ---
 
 export async function createUserAddress(
   payload: AddressCreateFormValues,
-): Promise<Result<Address, ApiError>> {
-  const { data } = await frontendHttp().post<Result<Address, ApiError>>(
-    addressesUrl,
-    payload,
-  );
-
-  return data;
+): Promise<Address> {
+  try {
+    const { data } = await frontendHttp().post<Address>(addressesUrl, payload);
+    return data;
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }
 
 export async function updateAddress(
   addressId: number,
   payload: AddressUpdateFormValues,
-): Promise<Result<Address, ApiError>> {
-  const { data } = await frontendHttp().patch<Result<Address, ApiError>>(
-    `${addressesUrl}/${addressId}`,
-    payload,
-  );
-
-  return data;
+): Promise<Address> {
+  try {
+    const { data } = await frontendHttp().patch<Address>(
+      `${addressesUrl}/${addressId}`,
+      payload,
+    );
+    return data;
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }
 
-export async function deleteUserAddress(
-  addressId: number,
-): Promise<Result<void, ApiError>> {
-  const { data } = await frontendHttp().delete<Result<void, ApiError>>(
-    `${addressesUrl}/${addressId}`,
-  );
-
-  return data;
+export async function deleteUserAddress(addressId: number): Promise<void> {
+  try {
+    await frontendHttp().delete(`${addressesUrl}/${addressId}`);
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }
 
 export async function setDefaultAddress(
   userId: number,
   addressId: number,
-): Promise<Result<void, ApiError>> {
-  const { data } = await frontendHttp().post<Result<void, ApiError>>(
-    `${addressesUrl}/user/${userId}/default/${addressId}`,
-  );
-
-  return data;
+): Promise<void> {
+  try {
+    await frontendHttp().post(
+      `${addressesUrl}/user/${userId}/default/${addressId}`,
+    );
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }
 
-export async function resetDefaultAddress(
-  userId: number,
-): Promise<Result<void, ApiError>> {
-  const { data } = await frontendHttp().post<Result<void, ApiError>>(
-    `${addressesUrl}/user/${userId}/default`,
-  );
-
-  return data;
+export async function resetDefaultAddress(userId: number): Promise<void> {
+  try {
+    await frontendHttp().post(`${addressesUrl}/user/${userId}/default`);
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
 }

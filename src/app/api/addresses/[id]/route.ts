@@ -28,9 +28,12 @@ export async function GET(_: NextRequest, { params }: { params: Params }) {
 
   const response = await getUserAddress(_id);
 
-  return NextResponse.json(response, {
-    status: response.ok ? 200 : (response.error.status ?? 500),
-  });
+  if (!response.ok) {
+    return NextResponse.json(response.error, {
+      status: response.error.status ?? 500,
+    });
+  }
+  return NextResponse.json(response.data, { status: 200 });
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Params }) {
@@ -52,9 +55,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Params }) {
 
   const response = await updateAddress(_id, payload);
 
-  return NextResponse.json(response, {
-    status: response.ok ? 200 : (response.error.status ?? 500),
-  });
+  if (!response.ok) {
+    return NextResponse.json(response.error, {
+      status: response.error.status ?? 500,
+    });
+  }
+  return NextResponse.json(response.data, { status: 200 });
 }
 
 export async function DELETE(_: NextRequest, { params }: { params: Params }) {
@@ -75,7 +81,10 @@ export async function DELETE(_: NextRequest, { params }: { params: Params }) {
 
   const response = await deleteUserAddress(_id);
 
-  return NextResponse.json(response, {
-    status: response.ok ? 200 : (response.error.status ?? 500),
-  });
+  if (!response.ok) {
+    return NextResponse.json(response.error, {
+      status: response.error.status ?? 500,
+    });
+  }
+  return NextResponse.json(response.data, { status: 200 });
 }

@@ -20,14 +20,7 @@ export const createUserAddressMutation = mutationOptions<
   ApiError,
   { payload: AddressCreateFormValues }
 >({
-  mutationFn: async ({ payload }) => {
-    const response = await createUserAddress(payload);
-    if (!response.ok) {
-      throw response.error;
-    }
-
-    return response.data;
-  },
+  mutationFn: ({ payload }) => createUserAddress(payload),
 
   onSettled: () => {
     void getQueryClient().invalidateQueries({
@@ -44,14 +37,7 @@ export const updateAddressMutation = mutationOptions<
     payload: AddressUpdateFormValues;
   }
 >({
-  mutationFn: async ({ addressId, payload }) => {
-    const response = await updateAddress(addressId, payload);
-    if (!response.ok) {
-      throw response.error;
-    }
-
-    return response.data;
-  },
+  mutationFn: ({ addressId, payload }) => updateAddress(addressId, payload),
 
   onSettled: () => {
     void getQueryClient().invalidateQueries({
@@ -68,14 +54,7 @@ export const setDefaultAddressMutation = mutationOptions<
     addressId: number;
   }
 >({
-  mutationFn: async ({ userId, addressId }) => {
-    const response = await setDefaultAddress(userId, addressId);
-    if (!response.ok) {
-      throw response.error;
-    }
-
-    return response.data;
-  },
+  mutationFn: ({ userId, addressId }) => setDefaultAddress(userId, addressId),
 
   onSettled: () => {
     void getQueryClient().invalidateQueries({
@@ -89,14 +68,7 @@ export const resetDefaultAddressMutation = mutationOptions<
   ApiError,
   number
 >({
-  mutationFn: async (userId) => {
-    const response = await resetDefaultAddress(userId);
-    if (!response.ok) {
-      throw response.error;
-    }
-
-    return response.data;
-  },
+  mutationFn: (userId) => resetDefaultAddress(userId),
 
   onSettled: () => {
     void getQueryClient().invalidateQueries({
@@ -110,14 +82,7 @@ export const deleteUserAddressMutation = mutationOptions<
   ApiError,
   number
 >({
-  mutationFn: async (id) => {
-    const response = await deleteUserAddress(id);
-    if (!response.ok) {
-      throw response.error;
-    }
-
-    return response.data;
-  },
+  mutationFn: (id) => deleteUserAddress(id),
 
   onSettled: () => {
     void getQueryClient().invalidateQueries({

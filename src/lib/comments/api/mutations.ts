@@ -17,11 +17,7 @@ export const createCommentMutation = mutationOptions<
   CommentFormValues,
   unknown
 >({
-  mutationFn: async (payload) => {
-    const result = await createComment(payload);
-    if (!result.ok) throw result.error;
-    return result.data;
-  },
+  mutationFn: (payload) => createComment(payload),
   onSuccess: () => {
     getQueryClient().invalidateQueries({ queryKey: commentKeys.all });
     getQueryClient().invalidateQueries({ queryKey: postKeys.all });
@@ -34,11 +30,7 @@ export const updateCommentMutation = mutationOptions<
   { id: number; values: CommentUpdateFormValues },
   unknown
 >({
-  mutationFn: async ({ id, values }) => {
-    const result = await updateComment(id, values);
-    if (!result.ok) throw result.error;
-    return result.data;
-  },
+  mutationFn: ({ id, values }) => updateComment(id, values),
   onSuccess: () => {
     getQueryClient().invalidateQueries({ queryKey: commentKeys.all });
     getQueryClient().invalidateQueries({ queryKey: postKeys.all });
@@ -51,11 +43,7 @@ export const deleteCommentMutation = mutationOptions<
   number,
   unknown
 >({
-  mutationFn: async (id) => {
-    const result = await deleteComment(id);
-    if (!result.ok) throw result.error;
-    return result.data;
-  },
+  mutationFn: (id) => deleteComment(id),
   onSuccess: () => {
     getQueryClient().invalidateQueries({ queryKey: commentKeys.all });
     getQueryClient().invalidateQueries({ queryKey: postKeys.all });

@@ -8,25 +8,11 @@ import type { ApiError } from "@/lib/shared/api-error";
 export const commentsQueryOptions = (filters: CommentFilters) =>
   queryOptions<CommentsResponse, ApiError>({
     queryKey: commentKeys.list(filters),
-    queryFn: async () => {
-      const response = await fetchComments(filters);
-      if (!response.ok) {
-        throw response.error;
-      }
-
-      return response.data;
-    },
+    queryFn: () => fetchComments(filters),
   });
 
 export const commentByIdQueryOptions = (id: number) =>
   queryOptions<Comment, ApiError>({
     queryKey: commentKeys.detail(id),
-    queryFn: async () => {
-      const response = await fetchCommentById(id);
-      if (!response.ok) {
-        throw response.error;
-      }
-
-      return response.data;
-    },
+    queryFn: () => fetchCommentById(id),
   });
