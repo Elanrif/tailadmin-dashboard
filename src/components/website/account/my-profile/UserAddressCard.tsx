@@ -15,6 +15,7 @@ import { ChevronDownIcon } from "@/icons";
 import useCountryCity from "@/hooks/use-contry-city";
 import { userAddressesQueryOptions } from "@/lib/addresses/api/queries/queries.client";
 import { EmptyState } from "@/lib/shared/ui/empty-state";
+import AddressFormView from "@/lib/addresses/component/address-form-view";
 import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/components/ui/modal";
 import ComponentCard from "@/components/common/ComponentCard";
@@ -22,6 +23,7 @@ import Label from "@/components/form/Label";
 import Select from "@/components/form/Select";
 import Input from "@/components/form/input/InputField";
 import Button from "@/components/ui/button/Button";
+import { LoaderIcon } from "lucide-react";
 
 export default function UserAddressCard() {
   const { user } = useSession();
@@ -33,6 +35,7 @@ export default function UserAddressCard() {
     }),
   );
   const defaultAddress = data.content[0];
+  const createModal = useModal();
 
   const {
     selectedCountry,
@@ -111,14 +114,28 @@ export default function UserAddressCard() {
 
   if (!defaultAddress) {
     return (
-      <EmptyState
-        title="Aucune adresse par défaut"
-        description="Ajoutez votre première adresse pour compléter votre profil."
-        action={{
-          label: "Ajouter une adresse",
-          onClick: openModal,
-        }}
-      />
+      <>
+        <EmptyState
+          title="Aucune adresse par défaut"
+          description="Ajoutez votre première adresse pour compléter votre profil."
+          action={{
+            label: "Ajouter une adresse",
+            onClick: createModal.openModal,
+          }}
+        />
+
+        <Modal
+          isOpen={createModal.isOpen}
+          onClose={createModal.closeModal}
+          className="relative max-w-4xl p-6 lg:p-10 max-h-[90vh] overflow-y-auto"
+        >
+          <AddressFormView
+            addressId="new"
+            hiddenFields={{ userId: user?.id }}
+            onSaved={createModal.closeModal}
+          />
+        </Modal>
+      </>
     );
   }
 
@@ -333,7 +350,7 @@ export default function UserAddressCard() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
+            <div className="flex items-center gap-3 px-2 mt-6">
               <Button size="sm" variant="outline" onClick={closeModal}>
                 Close
               </Button>
@@ -343,6 +360,10 @@ export default function UserAddressCard() {
                 disabled={isSubmitting || !isCountrySelected || !selectedCity}
               >
                 {isSubmitting ? "Saving..." : "Save Changes"}
+                {isSubmitting ||
+                  (updateMutation.isPending && (
+                    <LoaderIcon className="ml-2 animate-spin" />
+                  ))}
               </Button>
             </div>
           </form>

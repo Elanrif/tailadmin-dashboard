@@ -19,6 +19,7 @@ import Label from "@/components/form/Label";
 import Input from "@/components/form/input/InputField";
 import PhoneInput from "@/components/form/group-input/PhoneInput";
 import Button from "@/components/ui/button/Button";
+import { LoaderIcon } from "lucide-react";
 
 const countries = [
   { code: "KM", label: "+269" },
@@ -245,44 +246,8 @@ export default function UserMetaCard() {
                 </div>
               </ComponentCard>
             )}
-            <div className="custom-scrollbar h-112.5 overflow-y-auto px-2 pb-3">
-              <div>
-                <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Social Links
-                </h5>
-
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                  <div>
-                    <Label>Facebook</Label>
-                    <Input
-                      type="text"
-                      defaultValue="https://www.facebook.com/PimjoHQ"
-                    />
-                  </div>
-
-                  <div>
-                    <Label>X.com</Label>
-                    <Input type="text" defaultValue="https://x.com/PimjoHQ" />
-                  </div>
-
-                  <div>
-                    <Label>Linkedin</Label>
-                    <Input
-                      type="text"
-                      defaultValue="https://www.linkedin.com/company/pimjo"
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Instagram</Label>
-                    <Input
-                      type="text"
-                      defaultValue="https://instagram.com/PimjoHQ"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="mt-7">
+            <div className="custom-scrollbar overflow-y-auto px-2 pb-3">
+              <div className="mt-4">
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
                   Personal Information
                 </h5>
@@ -323,7 +288,7 @@ export default function UserMetaCard() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
+            <div className="flex items-center gap-3 px-2 mt-4">
               <Button size="sm" variant="outline" onClick={closeModal}>
                 Close
               </Button>
@@ -331,6 +296,10 @@ export default function UserMetaCard() {
                 {isSubmitting || updateMutation.isPending
                   ? "Saving..."
                   : "Save Changes"}
+                {isSubmitting ||
+                  (updateMutation.isPending && (
+                    <LoaderIcon className="ml-2 animate-spin" />
+                  ))}
               </Button>
             </div>
           </form>

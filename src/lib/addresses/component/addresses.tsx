@@ -187,9 +187,9 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
           ) : (
             <EmptyState
               title="Aucune adresse"
-              description="Aucune adresse ne correspond à ces critères pour le moment."
+              description="Aucune adresse n'a été trouvée. Vous pouvez en ajouter une nouvelle."
               action={{
-                label: "Ajouter",
+                label: "Ajouter une adresse",
                 onClick: () => createModal.openModal(),
               }}
             />

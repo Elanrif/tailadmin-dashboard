@@ -21,7 +21,7 @@ import {
   addressUpdateSchema,
 } from "@/lib/addresses/schemas/address";
 import { Address } from "@/lib/addresses/api/types";
-import { ChevronDownIcon, LoaderIcon, PenIcon, PlusIcon } from "lucide-react";
+import { ChevronDownIcon, LoaderIcon, PenIcon } from "lucide-react";
 import { AddressesQueryProps } from "../addresses";
 import Select from "@/components/form/Select";
 import { User } from "@/lib/users/api/types";
@@ -291,7 +291,7 @@ export default function AddressForm({
           type="submit"
           size="sm"
           variant="primary"
-          startIcon={isEdit ? <PenIcon size={16} /> : <PlusIcon size={16} />}
+          startIcon={isEdit && <PenIcon size={16} />}
           disabled={isSaving}
         >
           {isSaving ? "Saving..." : isEdit ? "Edit" : "Create"}
