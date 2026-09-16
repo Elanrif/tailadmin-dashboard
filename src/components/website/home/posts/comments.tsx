@@ -77,8 +77,8 @@ export default function Comments({
 
   return (
     <>
-      <div className="mt-6 space-y-4 border-l border-stone-300 pl-4 dark:border-stone-700">
-        <h3 className="text-sm font-semibold text-stone-800 dark:text-stone-200">
+      <div className="mt-6 space-y-4 border-l border-stone-300 pl-3 dark:border-stone-700 sm:pl-4">
+        <h3 className="text-xs font-semibold text-stone-800 dark:text-stone-200 sm:text-sm">
           Commentaires
         </h3>
 
@@ -90,18 +90,29 @@ export default function Comments({
             return (
               <div
                 key={comment.id}
-                className="flex items-start justify-between gap-3"
+                className="flex items-start justify-between gap-2 sm:gap-3"
               >
-                <div className="flex min-w-0 items-start gap-3">
-                  <Avatar
-                    src={comment.author?.avatarUrl}
-                    name={`${comment.author?.firstName ?? ""} ${
-                      comment.author?.lastName ?? ""
-                    }`}
-                  />
+                <div className="flex min-w-0 items-start gap-2 sm:gap-3">
+                  <div className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-stone-700 text-[10px] font-semibold text-white sm:h-10 sm:w-10 sm:text-xs">
+                    {comment.author?.avatarUrl ? (
+                      <Image
+                        src={comment.author.avatarUrl}
+                        alt={`${comment.author?.firstName ?? ""} ${
+                          comment.author?.lastName ?? ""
+                        }`}
+                        fill
+                        sizes="40px"
+                        className="object-cover"
+                      />
+                    ) : (
+                      `${comment.author?.firstName?.[0] ?? ""}${
+                        comment.author?.lastName?.[0] ?? ""
+                      }`.toUpperCase() || "?"
+                    )}
+                  </div>
 
-                  <div>
-                    <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-semibold text-stone-800 dark:text-stone-200 sm:text-sm">
                       {comment.author?.firstName} {comment.author?.lastName}
                       <span className="ml-2 font-normal text-stone-400">
                         {new Date(comment.createdAt).toLocaleDateString(
@@ -114,7 +125,7 @@ export default function Comments({
                       </span>
                     </p>
 
-                    <p className="mt-1 font-serif text-base leading-7 text-stone-700 dark:text-stone-300">
+                    <p className="mt-1 wrap-break-word font-serif text-sm leading-6 text-stone-700 dark:text-stone-300 sm:text-base sm:leading-7">
                       {comment.content}
                     </p>
                   </div>
@@ -127,10 +138,10 @@ export default function Comments({
                       onClick={() =>
                         setOpenMenuId(isMenuOpen ? null : comment.id)
                       }
-                      className="rounded-full p-1.5 text-stone-500 hover:bg-stone-200 dark:hover:bg-stone-800"
+                      className="rounded-full p-1 text-stone-500 hover:bg-stone-200 dark:hover:bg-stone-800 sm:p-1.5"
                       aria-label="Options du commentaire"
                     >
-                      <MoreHorizontal size={16} />
+                      <MoreHorizontal className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </button>
 
                     {isMenuOpen && (
@@ -140,22 +151,22 @@ export default function Comments({
                           className="fixed inset-0 z-10"
                           onClick={() => setOpenMenuId(null)}
                         />
-                        <div className="absolute right-0 top-9 z-20 w-36 rounded-lg border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-900">
+                        <div className="absolute right-0 top-9 z-20 w-32 rounded-lg border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-900 sm:w-36">
                           <button
                             type="button"
                             onClick={() => handleEdit(comment)}
-                            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-stone-100 dark:hover:bg-stone-800"
+                            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs hover:bg-stone-100 dark:hover:bg-stone-800 sm:text-sm"
                           >
-                            <Pencil size={14} />
+                            <Pencil className="h-3.5 w-3.5" />
                             Modifier
                           </button>
 
                           <button
                             type="button"
                             onClick={() => handleDeleteComment(comment)}
-                            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+                            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 sm:text-sm"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 className="h-3.5 w-3.5" />
                             Supprimer
                           </button>
                         </div>
@@ -168,8 +179,8 @@ export default function Comments({
           })
         ) : (
           <div className="py-4 text-center">
-            <MessageSquare className="mx-auto mb-3 h-10 w-10 text-stone-300 dark:text-stone-600" />
-            <p className="text-sm italic text-stone-500">
+            <MessageSquare className="mx-auto mb-3 h-8 w-8 text-stone-300 dark:text-stone-600 sm:h-10 sm:w-10" />
+            <p className="text-xs italic text-stone-500 sm:text-sm">
               Aucun commentaire pour le moment.
             </p>
           </div>
@@ -192,32 +203,5 @@ export default function Comments({
         isDeleting={deleteMutation.isPending}
       />
     </>
-  );
-}
-
-function Avatar({ src, name }: { src?: string; name: string }) {
-  const initials = name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-
-  return (
-    <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-stone-700 text-xs font-semibold text-white">
-      {src ? (
-        <Image
-          src={src}
-          alt={name || "Avatar utilisateur"}
-          fill
-          sizes="40px"
-          className="object-cover"
-        />
-      ) : (
-        initials || "?"
-      )}
-    </div>
   );
 }

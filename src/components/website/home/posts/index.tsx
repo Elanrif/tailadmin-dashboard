@@ -24,11 +24,14 @@ import { Modals } from "@/lib/posts/components/ui/posts-table/modals";
 import Comments from "./comments";
 import environment from "@/config/environment.config";
 import { EmptyState } from "@/lib/shared/ui/empty-state";
+import { useImageZoom } from "@/lib/shared/cloudinary/hooks/use-image-zoom";
+import { ImageZoomModal } from "@/lib/shared/cloudinary/components/image-zoom-modal";
 
 export default function Posts() {
   const { user, isLoading } = useSession();
   const [expandedPost, setExpandedPost] = useState<number | null>(null);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const { previewImage, openZoom, closeZoom } = useImageZoom();
 
   /* Modals */
   const viewModal = useModal();
@@ -69,8 +72,8 @@ export default function Posts() {
   const posts = data.content;
 
   return (
-    <section className="mx-auto w-full max-w-3xl">
-      <div className="mb-8 flex items-end justify-between gap-4">
+    <section className="mx-auto w-full max-w-3xl px-4 sm:px-0">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-stone-500">
             Le Feuilleton
@@ -88,7 +91,8 @@ export default function Posts() {
             startIcon={<Plus size={16} />}
             onClick={createModal.openModal}
           >
-            Nouveau post
+            <span className="hidden sm:inline">Nouveau post</span>
+            <span className="sm:hidden">Nouveau</span>
           </Button>
         )}
       </div>
@@ -103,33 +107,55 @@ export default function Posts() {
               return (
                 <article
                   key={post.id}
-                  className="my-8 bg-[#faf8f3] px-0 py-8 dark:bg-slate-950 sm:px-6"
+                  className="my-8 bg-[#faf8f3] px-1 py-8 dark:bg-slate-950 sm:px-6"
                 >
                   <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
                     {post.imageUrl && (
-                      <div className="relative h-52 w-full shrink-0 overflow-hidden rounded-xl bg-stone-200 sm:h-32 sm:w-44">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          openZoom(
+                            post.imageUrl!,
+                            post.title || "Image du post",
+                          )
+                        }
+                        aria-label={`Afficher l'image du post ${post.title || "en grand"}`}
+                        className="relative h-40 w-full shrink-0 cursor-zoom-in overflow-hidden rounded-xl bg-stone-200 text-left sm:h-32 sm:w-44"
+                      >
                         <Image
                           src={post.imageUrl}
                           alt={post.title || "Image du post"}
                           fill
                           sizes="(max-width: 640px) 100vw, 176px"
-                          className="object-cover"
+                          className="object-cover transition-transform duration-300 hover:scale-105"
                         />
-                      </div>
+                      </button>
                     )}
 
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                          <Avatar
-                            src={post.author?.avatarUrl}
-                            name={`${post.author?.firstName ?? ""} ${
-                              post.author?.lastName ?? ""
-                            }`}
-                          />
+                    {/*   */}
+                    <div className="min-w-0 flex-1 px-5 sm:px-0">
+                      <div className="flex min-w-0 items-start justify-between gap-3">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <div className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-stone-700 text-[10px] font-semibold text-white sm:h-10 sm:w-10 sm:text-xs">
+                            {post.author?.avatarUrl ? (
+                              <Image
+                                src={post.author.avatarUrl}
+                                alt={`${post.author?.firstName ?? ""} ${
+                                  post.author?.lastName ?? ""
+                                }`}
+                                fill
+                                sizes="40px"
+                                className="object-cover"
+                              />
+                            ) : (
+                              `${post.author?.firstName?.[0] ?? ""}${
+                                post.author?.lastName?.[0] ?? ""
+                              }`.toUpperCase() || "?"
+                            )}
+                          </div>
 
-                          <div>
-                            <p className="text-sm text-stone-500">
+                          <div className="min-w-0">
+                            <p className="truncate text-xs text-stone-500 sm:text-sm">
                               {post.author?.firstName} {post.author?.lastName}
                               <span className="mx-2">·</span>
                               {new Date(post.createdAt).toLocaleDateString(
@@ -141,7 +167,10 @@ export default function Posts() {
                               )}
                             </p>
 
-                            <h2 className="font-serif text-2xl font-semibold leading-tight text-stone-900 dark:text-stone-100">
+                            <h2
+                              className="wrap-break-word font-serif text-sm font-semibold
+                             leading-tight text-stone-900 dark:text-stone-100 sm:text-xl"
+                            >
                               {post.title}
                             </h2>
                           </div>
@@ -151,19 +180,18 @@ export default function Posts() {
                           <div className="group relative shrink-0">
                             <button
                               type="button"
-                              className="rounded-full p-2 text-stone-500 hover:bg-stone-200 dark:hover:bg-stone-800"
+                              className="rounded-full p-1.5 text-stone-500 hover:bg-stone-200 dark:hover:bg-stone-800 sm:p-2"
                               aria-label="Options du post"
                             >
-                              <MoreHorizontal size={20} />
+                              <MoreHorizontal className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
                             </button>
-
-                            <div className="invisible absolute right-0 top-10 z-10 w-36 rounded-lg border border-stone-200 bg-white p-1 opacity-0 shadow-lg transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100 dark:border-stone-700 dark:bg-stone-900">
+                            <div className="invisible absolute right-0 top-10 z-10 w-32 rounded-lg border border-stone-200 bg-white p-1 opacity-0 shadow-lg transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100 dark:border-stone-700 dark:bg-stone-900 sm:w-36">
                               <button
                                 type="button"
                                 onClick={() => openPostEdit(post)}
-                                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-stone-100 dark:hover:bg-stone-800"
+                                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs hover:bg-stone-100 dark:hover:bg-stone-800 sm:text-sm"
                               >
-                                <Pencil size={14} />
+                                <Pencil className="h-3.5 w-3.5" />
                                 Modifier
                               </button>
 
@@ -173,9 +201,9 @@ export default function Posts() {
                                   setSelectedPost(post);
                                   deleteModal.openModal();
                                 }}
-                                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+                                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 sm:text-sm"
                               >
-                                <Trash2 size={14} />
+                                <Trash2 className="h-3.5 w-3.5" />
                                 Supprimer
                               </button>
                             </div>
@@ -183,13 +211,16 @@ export default function Posts() {
                         )}
                       </div>
 
-                      <p className="mt-4 whitespace-pre-line font-serif text-lg leading-8 text-stone-700 dark:text-stone-300">
+                      <p
+                        className="mt-4 wrap-break-word whitespace-pre-line font-serif text-sm
+                       leading-7 text-stone-700 dark:text-stone-300 sm:text-lg sm:leading-8"
+                      >
                         {post.description}
                       </p>
 
-                      <div className="mt-6 flex items-center gap-6 border-t border-stone-200 pt-4 text-sm text-stone-500 dark:border-stone-800">
-                        <span className="inline-flex items-center gap-2">
-                          <Heart size={17} />
+                      <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-stone-200 pt-4 text-xs text-stone-500 dark:border-stone-800 sm:gap-x-4 sm:gap-6 sm:text-sm">
+                        <span className="inline-flex items-center gap-1.5 sm:gap-2">
+                          <Heart className="h-4 w-4 sm:h-4.25 sm:w-4.25" />
                           {post.likes}
                         </span>
 
@@ -198,16 +229,21 @@ export default function Posts() {
                           onClick={() =>
                             setExpandedPost(isExpanded ? null : post.id)
                           }
-                          className="inline-flex items-center gap-2 hover:text-stone-900 dark:hover:text-stone-100"
+                          className="inline-flex items-center gap-1.5 hover:text-stone-900 dark:hover:text-stone-100 sm:gap-2"
                         >
-                          <MessageSquare size={17} />
-                          {(post.numberOfComments as number) > 0
-                            ? `${post.numberOfComments} commentaire${(post.numberOfComments as number) > 1 ? "s" : ""}`
-                            : `Aucun commentaire`}
+                          <MessageSquare className="h-4 w-4 sm:h-4.25 sm:w-4.25" />
+                          <span className="hidden sm:inline">
+                            {(post.numberOfComments as number) > 0
+                              ? `${post.numberOfComments} commentaire${(post.numberOfComments as number) > 1 ? "s" : ""}`
+                              : "Aucun commentaire"}
+                          </span>
+                          <span className="sm:hidden">
+                            {post.numberOfComments as number}
+                          </span>
                           {isExpanded ? (
-                            <ChevronUp size={15} />
+                            <ChevronUp className="h-3.5 w-3.5 sm:h-3.75 sm:w-3.75" />
                           ) : (
-                            <ChevronDown size={15} />
+                            <ChevronDown className="h-3.5 w-3.5 sm:h-3.75 sm:w-3.75" />
                           )}
                         </button>
 
@@ -218,10 +254,10 @@ export default function Posts() {
                               setExpandedPost(post.id);
                               createModalComment.openModal();
                             }}
-                            className="ml-auto inline-flex items-center gap-2 hover:text-stone-900 dark:hover:text-stone-100"
+                            className="ml-auto inline-flex items-center gap-1.5 hover:text-stone-900 dark:hover:text-stone-100 sm:gap-2"
                           >
-                            <Plus size={17} />
-                            Commenter
+                            <Plus className="h-4 w-4 sm:h-4.25 sm:w-4.25" />
+                            <span className="hidden sm:inline">Commenter</span>
                           </button>
                         )}
                       </div>
@@ -263,33 +299,7 @@ export default function Posts() {
         onConfirmDelete={handleDelete}
         isDeleting={deleteMutation.isPending}
       />
+      <ImageZoomModal image={previewImage} onClose={closeZoom} />
     </section>
-  );
-}
-
-function Avatar({ src, name }: { src?: string; name: string }) {
-  const initials = name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-
-  return (
-    <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-stone-700 text-xs font-semibold text-white">
-      {src ? (
-        <Image
-          src={src}
-          alt={name || "Avatar utilisateur"}
-          fill
-          sizes="40px"
-          className="object-cover"
-        />
-      ) : (
-        initials || "?"
-      )}
-    </div>
   );
 }
