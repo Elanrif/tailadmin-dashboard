@@ -17,7 +17,7 @@ export function ImageZoomModal({ image, onClose }: Props) {
       className="max-h-[calc(100dvh-2rem)] max-w-6xl overflow-hidden bg-black/95 p-3 sm:max-h-[95dvh] sm:p-6"
     >
       {image && (
-        <div className="relative h-[calc(100dvh-6rem)] w-full sm:h-[calc(95dvh-3rem)]">
+        <div className="relative mx-auto h-[70vh] max-h-[70vh] w-full sm:h-[calc(95dvh-3rem)] sm:max-h-none">
           <Image
             src={image.src}
             alt={image.alt}
