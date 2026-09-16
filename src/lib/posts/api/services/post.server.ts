@@ -4,7 +4,12 @@ import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
 import { getLogger } from "@config/logger.config";
 
-import { Post, PostFilters, PostsResponse } from "@/lib/posts/api/types";
+import {
+  Post,
+  PostFilters,
+  PostsResponse,
+  TogglePostLikeResponse,
+} from "@/lib/posts/api/types";
 import {
   postCreateSchema,
   PostCreateFormValues,
@@ -145,6 +150,31 @@ export async function deletePost(id: number): Promise<Result<void, ApiError>> {
     return {
       ok: false,
       error: ApiError(error, "deletePost"),
+    };
+  }
+}
+
+export async function togglePostLike(
+  id: number,
+): Promise<Result<TogglePostLikeResponse, ApiError>> {
+  const idCheck = checkValidId(id, "post");
+  if (idCheck) return idCheck;
+
+  try {
+    const response = await apiClient(true).post<TogglePostLikeResponse>(
+      `${postUrl(id)}/like`,
+    );
+
+    logger.info({ id, liked: response.data.liked }, "Post like toggled");
+
+    return {
+      ok: true,
+      data: response.data,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error: ApiError(error, "togglePostLike"),
     };
   }
 }

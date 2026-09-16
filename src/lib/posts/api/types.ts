@@ -17,6 +17,11 @@ export interface Post {
 
 export type PostsResponse = PageResponse<Post>;
 
+export type TogglePostLikeResponse = {
+  likes: number;
+  liked: boolean;
+};
+
 export type PostFilters = {
   page?: number;
   size?: number;

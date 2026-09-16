@@ -4816,3 +4816,74 @@
 {"level":30,"time":1789573121676,"pid":7568,"hostname":"ELTECH","id":6,"msg":"Post fetched"}
 {"level":30,"time":1789573244235,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
 {"level":30,"time":1789573346148,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789573422015,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789573485345,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789573488715,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789573564384,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789573636424,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789574046320,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575220447,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":50,"time":1789575229921,"pid":7568,"hostname":"ELTECH","error":"Not Found","timestamp":"2026-09-16T16:13:49.903Z","status":404,"message":"Post not found: 6","path":"/api/v1/posts/6/like","msg":"API error"}
+{"level":40,"time":1789575229922,"pid":7568,"hostname":"ELTECH","timestamp":"2026-09-16T16:13:49.903Z","status":404,"error":"Not Found","message":"Post not found: 6","path":"/api/v1/posts/6/like","msg":"[API Error] [togglePostLike]"}
+{"level":30,"time":1789575230008,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575231650,"pid":7568,"hostname":"ELTECH","id":5,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789575231731,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575233537,"pid":7568,"hostname":"ELTECH","id":5,"liked":false,"msg":"Post like toggled"}
+{"level":30,"time":1789575233635,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575234942,"pid":7568,"hostname":"ELTECH","id":5,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789575235047,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575238698,"pid":7568,"hostname":"ELTECH","id":4,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789575238782,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575240293,"pid":7568,"hostname":"ELTECH","id":4,"liked":false,"msg":"Post like toggled"}
+{"level":30,"time":1789575240557,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575241834,"pid":7568,"hostname":"ELTECH","id":4,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789575242074,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575242694,"pid":7568,"hostname":"ELTECH","id":4,"liked":false,"msg":"Post like toggled"}
+{"level":30,"time":1789575242765,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575244390,"pid":7568,"hostname":"ELTECH","id":4,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789575244644,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575245293,"pid":7568,"hostname":"ELTECH","id":4,"liked":false,"msg":"Post like toggled"}
+{"level":30,"time":1789575245363,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575246412,"pid":7568,"hostname":"ELTECH","id":4,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789575246554,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575250978,"pid":7568,"hostname":"ELTECH","id":2,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789575251040,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575252709,"pid":7568,"hostname":"ELTECH","id":2,"liked":false,"msg":"Post like toggled"}
+{"level":30,"time":1789575252821,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575254176,"pid":7568,"hostname":"ELTECH","id":2,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789575267454,"pid":7568,"hostname":"ELTECH","id":2,"liked":false,"msg":"Post like toggled"}
+{"level":30,"time":1789575268136,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575280466,"pid":7568,"hostname":"ELTECH","id":3,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789575280526,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575282183,"pid":7568,"hostname":"ELTECH","id":3,"liked":false,"msg":"Post like toggled"}
+{"level":30,"time":1789575289855,"pid":7568,"hostname":"ELTECH","id":3,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789575290029,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575293126,"pid":7568,"hostname":"ELTECH","id":3,"liked":false,"msg":"Post like toggled"}
+{"level":30,"time":1789575293186,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575294889,"pid":7568,"hostname":"ELTECH","id":3,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789575295047,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789575453681,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":50,"time":1789575583230,"pid":7568,"hostname":"ELTECH","error":"","msg":"API error"}
+{"level":50,"time":1789575583231,"pid":7568,"hostname":"ELTECH","status":500,"error":"Internal Server Error","message":"","msg":"[API Error] [getPosts]"}
+{"level":50,"time":1789575584258,"pid":7568,"hostname":"ELTECH","error":"","msg":"API error"}
+{"level":50,"time":1789575584259,"pid":7568,"hostname":"ELTECH","status":500,"error":"Internal Server Error","message":"","msg":"[API Error] [getPosts]"}
+{"level":50,"time":1789575586305,"pid":7568,"hostname":"ELTECH","error":"","msg":"API error"}
+{"level":50,"time":1789575586306,"pid":7568,"hostname":"ELTECH","status":500,"error":"Internal Server Error","message":"","msg":"[API Error] [getPosts]"}
+{"level":50,"time":1789575587998,"pid":7568,"hostname":"ELTECH","error":"","msg":"API error"}
+{"level":50,"time":1789575587998,"pid":7568,"hostname":"ELTECH","status":500,"error":"Internal Server Error","message":"","msg":"[API Error] [getPosts]"}
+{"level":50,"time":1789575591747,"pid":7568,"hostname":"ELTECH","error":"","msg":"API error"}
+{"level":50,"time":1789575591755,"pid":7568,"hostname":"ELTECH","status":500,"error":"Internal Server Error","message":"","msg":"[API Error] [getPosts]"}
+{"level":50,"time":1789575592806,"pid":7568,"hostname":"ELTECH","error":"","msg":"API error"}
+{"level":50,"time":1789575592808,"pid":7568,"hostname":"ELTECH","status":500,"error":"Internal Server Error","message":"","msg":"[API Error] [getPosts]"}
+{"level":50,"time":1789575594842,"pid":7568,"hostname":"ELTECH","error":"","msg":"API error"}
+{"level":50,"time":1789575594842,"pid":7568,"hostname":"ELTECH","status":500,"error":"Internal Server Error","message":"","msg":"[API Error] [getPosts]"}
+{"level":30,"time":1789575599540,"pid":7568,"hostname":"ELTECH","count":0,"msg":"Posts fetched"}
+{"level":30,"time":1789576373564,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789576385030,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789576386940,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789576392220,"pid":7568,"hostname":"ELTECH","id":5,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789576392344,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789576395621,"pid":7568,"hostname":"ELTECH","id":5,"liked":false,"msg":"Post like toggled"}
+{"level":30,"time":1789576395799,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789576396515,"pid":7568,"hostname":"ELTECH","id":5,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789576396617,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}

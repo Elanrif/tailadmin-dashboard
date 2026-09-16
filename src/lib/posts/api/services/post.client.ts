@@ -1,6 +1,11 @@
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { proxyEnvironment } from "@config/proxy-api.config";
-import { Post, PostFilters, PostsResponse } from "@/lib/posts/api/types";
+import {
+  Post,
+  PostFilters,
+  PostsResponse,
+  TogglePostLikeResponse,
+} from "@/lib/posts/api/types";
 import { PostCreateFormValues, PostUpdateFormValues } from "../../schemas/post";
 import { unwrapApiError } from "@/lib/shared/handle-api-error";
 
@@ -65,6 +70,19 @@ export async function updatePost(
 export async function deletePost(id: number): Promise<void> {
   try {
     await frontendHttp().delete(`${postsUrl}/${id}`);
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
+}
+
+export async function togglePostLike(
+  id: number,
+): Promise<TogglePostLikeResponse> {
+  try {
+    const { data } = await frontendHttp().post<TogglePostLikeResponse>(
+      `${postsUrl}/${id}/like`,
+    );
+    return data;
   } catch (error) {
     throw unwrapApiError(error);
   }

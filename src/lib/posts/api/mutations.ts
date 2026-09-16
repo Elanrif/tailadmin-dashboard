@@ -3,9 +3,14 @@ import { postKeys } from "./queries";
 import { getQueryClient } from "@/lib/query-client";
 import { PostCreateFormValues, PostUpdateFormValues } from "../schemas/post";
 import { ApiError } from "@/lib/shared/api-error";
-import { Post } from "./types";
+import { Post, TogglePostLikeResponse } from "./types";
 import { commentKeys } from "@/lib/comments/api/queries";
-import { createPost, updatePost, deletePost } from "./services/post.client";
+import {
+  createPost,
+  updatePost,
+  deletePost,
+  togglePostLike,
+} from "./services/post.client";
 
 export const createPostMutation = mutationOptions<
   Post,
@@ -41,5 +46,17 @@ export const deletePostMutation = mutationOptions<
   onSuccess: () => {
     getQueryClient().invalidateQueries({ queryKey: postKeys.all });
     getQueryClient().invalidateQueries({ queryKey: commentKeys.all });
+  },
+});
+
+export const togglePostLikeMutation = mutationOptions<
+  TogglePostLikeResponse,
+  ApiError,
+  number,
+  unknown
+>({
+  mutationFn: (id) => togglePostLike(id),
+  onSettled: () => {
+    void getQueryClient().invalidateQueries({ queryKey: postKeys.all });
   },
 });

@@ -21,7 +21,10 @@ import { useModal } from "@/hooks/useModal";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSession } from "@/lib/auth/components/auth.context";
 import { postsQueryOptions } from "@/lib/posts/api/queries/queries.client";
-import { deletePostMutation } from "@/lib/posts/api/mutations";
+import {
+  deletePostMutation,
+  togglePostLikeMutation,
+} from "@/lib/posts/api/mutations";
 import type { Post } from "@/lib/posts/api/types";
 import { Modals } from "@/lib/posts/components/ui/posts-table/modals";
 import Comments from "./comments";
@@ -49,6 +52,8 @@ export default function Posts() {
   const [expandedContentPost, setExpandedContentPost] = useState<number | null>(
     null,
   );
+  const [likedPosts, setLikedPosts] = useState<Record<number, boolean>>({});
+  const [likeCounts, setLikeCounts] = useState<Record<number, number>>({});
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const { previewImage, openZoom, closeZoom } = useImageZoom();
 
@@ -60,6 +65,19 @@ export default function Posts() {
   const deleteModal = useModal();
 
   const deleteMutation = useMutation(deletePostMutation);
+  const likeMutation = useMutation({
+    ...togglePostLikeMutation,
+    onSuccess: (result, postId) => {
+      setLikedPosts((current) => ({ ...current, [postId]: result.liked }));
+      setLikeCounts((current) => ({ ...current, [postId]: result.likes }));
+    },
+  });
+
+  const handleLike = (postId: number) => {
+    if (!user || likeMutation.isPending) return;
+    likeMutation.mutate(postId);
+  };
+
   const handleDelete = () => {
     if (!selectedPost) return;
     deleteMutation.mutate(selectedPost.id, {
@@ -131,6 +149,8 @@ export default function Posts() {
                 isContentExpanded || !hasLongDescription
                   ? formattedDescription
                   : `${formattedDescription.slice(0, postPreviewLength).trimEnd()}…`;
+              const isLiked = likedPosts[post.id] ?? false;
+              const likes = likeCounts[post.id] ?? post.likes;
               const owner = isPostOwner(post);
 
               return (
@@ -281,10 +301,27 @@ export default function Posts() {
                     )}
 
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-stone-200 pt-4 text-xs text-stone-500 dark:border-stone-800 sm:gap-x-4 sm:gap-6 sm:text-sm">
-                      <span className="inline-flex items-center gap-1.5 sm:gap-2">
-                        <Heart className="h-4 w-4 sm:h-4.25 sm:w-4.25" />
-                        {post.likes}
-                      </span>
+                      {user ? (
+                        <button
+                          type="button"
+                          onClick={() => handleLike(post.id)}
+                          disabled={likeMutation.isPending}
+                          aria-pressed={isLiked}
+                          aria-label={isLiked ? "Retirer le j'aime" : "J'aime"}
+                          className="inline-flex items-center gap-1.5 transition-colors hover:text-red-600 disabled:cursor-wait disabled:opacity-60 sm:gap-2"
+                        >
+                          <Heart
+                            className="h-4 w-4 sm:h-4.25 sm:w-4.25"
+                            fill={isLiked ? "currentColor" : "none"}
+                          />
+                          {likes}
+                        </button>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 sm:gap-2">
+                          <Heart className="h-4 w-4 sm:h-4.25 sm:w-4.25" />
+                          {likes}
+                        </span>
+                      )}
 
                       <button
                         type="button"
