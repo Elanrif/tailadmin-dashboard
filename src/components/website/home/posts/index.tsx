@@ -5,6 +5,8 @@ import Image from "next/image";
 import {
   ChevronDown,
   ChevronUp,
+  ChevronsDown,
+  ChevronsUp,
   Heart,
   MessageSquare,
   MoreHorizontal,
@@ -16,6 +18,7 @@ import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Button from "@/components/ui/button/Button";
 import { useModal } from "@/hooks/useModal";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useSession } from "@/lib/auth/components/auth.context";
 import { postsQueryOptions } from "@/lib/posts/api/queries/queries.client";
 import { deletePostMutation } from "@/lib/posts/api/mutations";
@@ -27,9 +30,25 @@ import { EmptyState } from "@/lib/shared/ui/empty-state";
 import { useImageZoom } from "@/lib/shared/cloudinary/hooks/use-image-zoom";
 import { ImageZoomModal } from "@/lib/shared/cloudinary/components/image-zoom-modal";
 
+const POST_PREVIEW_LENGTH_DESKTOP = 220;
+const POST_PREVIEW_LENGTH_MOBILE = 120;
+
+const formatPostDescription = (description: string) =>
+  description
+    .split(/\r?\n\s*\r?\n/)
+    .map((paragraph) => paragraph.replace(/\s*\r?\n\s*/g, " ").trim())
+    .join("\n\n");
+
 export default function Posts() {
   const { user, isLoading } = useSession();
+  const isMobile = useIsMobile();
+  const postPreviewLength = isMobile
+    ? POST_PREVIEW_LENGTH_MOBILE
+    : POST_PREVIEW_LENGTH_DESKTOP;
   const [expandedPost, setExpandedPost] = useState<number | null>(null);
+  const [expandedContentPost, setExpandedContentPost] = useState<number | null>(
+    null,
+  );
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const { previewImage, openZoom, closeZoom } = useImageZoom();
 
@@ -102,6 +121,16 @@ export default function Posts() {
           <>
             {posts.map((post: Post) => {
               const isExpanded = expandedPost === post.id;
+              const isContentExpanded = expandedContentPost === post.id;
+              const formattedDescription = formatPostDescription(
+                post.description,
+              );
+              const hasLongDescription =
+                formattedDescription.length > postPreviewLength;
+              const description =
+                isContentExpanded || !hasLongDescription
+                  ? formattedDescription
+                  : `${formattedDescription.slice(0, postPreviewLength).trimEnd()}…`;
               const owner = isPostOwner(post);
 
               return (
@@ -109,31 +138,8 @@ export default function Posts() {
                   key={post.id}
                   className="my-8 bg-[#faf8f3] px-1 py-8 dark:bg-slate-950 sm:px-6"
                 >
-                  <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-                    {post.imageUrl && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          openZoom(
-                            post.imageUrl!,
-                            post.title || "Image du post",
-                          )
-                        }
-                        aria-label={`Afficher l'image du post ${post.title || "en grand"}`}
-                        className="relative h-40 w-full shrink-0 cursor-zoom-in overflow-hidden rounded-xl bg-stone-200 text-left sm:h-32 sm:w-44"
-                      >
-                        <Image
-                          src={post.imageUrl}
-                          alt={post.title || "Image du post"}
-                          fill
-                          sizes="(max-width: 640px) 100vw, 176px"
-                          className="object-cover transition-transform duration-300 hover:scale-105"
-                        />
-                      </button>
-                    )}
-
-                    {/*   */}
-                    <div className="min-w-0 flex-1 px-5 sm:px-0">
+                  <div className="flex flex-col gap-6">
+                    <div className="w-full min-w-0 px-5 sm:px-0">
                       <div className="flex min-w-0 items-start justify-between gap-3">
                         <div className="flex min-w-0 items-center gap-3">
                           <div className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-stone-700 text-[10px] font-semibold text-white sm:h-10 sm:w-10 sm:text-xs">
@@ -215,60 +221,115 @@ export default function Posts() {
                         className="mt-4 wrap-break-word whitespace-pre-line font-serif text-sm
                        leading-7 text-stone-700 dark:text-stone-300 sm:text-lg sm:leading-8"
                       >
-                        {post.description}
+                        {description}
                       </p>
 
-                      <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-stone-200 pt-4 text-xs text-stone-500 dark:border-stone-800 sm:gap-x-4 sm:gap-6 sm:text-sm">
-                        <span className="inline-flex items-center gap-1.5 sm:gap-2">
-                          <Heart className="h-4 w-4 sm:h-4.25 sm:w-4.25" />
-                          {post.likes}
-                        </span>
-
+                      {hasLongDescription && (
                         <button
                           type="button"
+                          aria-expanded={isContentExpanded}
                           onClick={() =>
-                            setExpandedPost(isExpanded ? null : post.id)
+                            setExpandedContentPost(
+                              isContentExpanded ? null : post.id,
+                            )
                           }
-                          className="inline-flex items-center gap-1.5 hover:text-stone-900 dark:hover:text-stone-100 sm:gap-2"
+                          className="mt-2 inline-flex items-center gap-1 text-sm
+                           text-blue-600 underline-offset-4 hover:text-blue-900 hover:underline
+                            dark:text-stone-400 dark:hover:text-stone-100"
                         >
-                          <MessageSquare className="h-4 w-4 sm:h-4.25 sm:w-4.25" />
-                          <span className="hidden sm:inline">
-                            {(post.numberOfComments as number) > 0
-                              ? `${post.numberOfComments} commentaire${(post.numberOfComments as number) > 1 ? "s" : ""}`
-                              : "Aucun commentaire"}
-                          </span>
-                          <span className="sm:hidden">
-                            {post.numberOfComments as number}
-                          </span>
-                          {isExpanded ? (
-                            <ChevronUp className="h-3.5 w-3.5 sm:h-3.75 sm:w-3.75" />
+                          {isContentExpanded ? (
+                            <>
+                              Réduire
+                              <ChevronsUp
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
+                            </>
                           ) : (
-                            <ChevronDown className="h-3.5 w-3.5 sm:h-3.75 sm:w-3.75" />
+                            <>
+                              Lire la suite
+                              <ChevronsDown
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
+                            </>
                           )}
                         </button>
-
-                        {user && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setExpandedPost(post.id);
-                              createModalComment.openModal();
-                            }}
-                            className="ml-auto inline-flex items-center gap-1.5 hover:text-stone-900 dark:hover:text-stone-100 sm:gap-2"
-                          >
-                            <Plus className="h-4 w-4 sm:h-4.25 sm:w-4.25" />
-                            <span className="hidden sm:inline">Commenter</span>
-                          </button>
-                        )}
-                      </div>
-
-                      {isExpanded && (
-                        <Comments
-                          queryParams={{ postId: post.id, authorId: user?.id }}
-                          action={createModalComment}
-                        />
                       )}
                     </div>
+
+                    {post.imageUrl && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          openZoom(
+                            post.imageUrl!,
+                            post.title || "Image du post",
+                          )
+                        }
+                        aria-label={`Afficher l'image du post ${post.title || "en grand"}`}
+                        className="relative h-56 w-full cursor-zoom-in overflow-hidden rounded-xl bg-stone-200 text-left sm:h-96"
+                      >
+                        <Image
+                          src={post.imageUrl}
+                          alt={post.title || "Image du post"}
+                          fill
+                          sizes="(max-width: 640px) 100vw, 768px"
+                          className="object-cover transition-transform duration-300 hover:scale-105"
+                        />
+                      </button>
+                    )}
+
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-stone-200 pt-4 text-xs text-stone-500 dark:border-stone-800 sm:gap-x-4 sm:gap-6 sm:text-sm">
+                      <span className="inline-flex items-center gap-1.5 sm:gap-2">
+                        <Heart className="h-4 w-4 sm:h-4.25 sm:w-4.25" />
+                        {post.likes}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setExpandedPost(isExpanded ? null : post.id)
+                        }
+                        className="inline-flex items-center gap-1.5 hover:text-stone-900 dark:hover:text-stone-100 sm:gap-2"
+                      >
+                        <MessageSquare className="h-4 w-4 sm:h-4.25 sm:w-4.25" />
+                        <span className="hidden sm:inline">
+                          {(post.numberOfComments as number) > 0
+                            ? `${post.numberOfComments} commentaire${(post.numberOfComments as number) > 1 ? "s" : ""}`
+                            : "Aucun commentaire"}
+                        </span>
+                        <span className="sm:hidden">
+                          {post.numberOfComments as number}
+                        </span>
+                        {isExpanded ? (
+                          <ChevronUp className="h-3.5 w-3.5 sm:h-3.75 sm:w-3.75" />
+                        ) : (
+                          <ChevronDown className="h-3.5 w-3.5 sm:h-3.75 sm:w-3.75" />
+                        )}
+                      </button>
+
+                      {user && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setExpandedPost(post.id);
+                            createModalComment.openModal();
+                          }}
+                          className="ml-auto inline-flex items-center gap-1.5 hover:text-stone-900 dark:hover:text-stone-100 sm:gap-2"
+                        >
+                          <Plus className="h-4 w-4 sm:h-4.25 sm:w-4.25" />
+                          <span className="hidden sm:inline">Commenter</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {isExpanded && (
+                      <Comments
+                        queryParams={{ postId: post.id, authorId: user?.id }}
+                        action={createModalComment}
+                      />
+                    )}
                   </div>
                 </article>
               );
