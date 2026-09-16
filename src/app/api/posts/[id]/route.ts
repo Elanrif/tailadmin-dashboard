@@ -77,5 +77,5 @@ export async function DELETE(_req: Request, { params }: { params: Params }) {
       status: response.error.status ?? 500,
     });
   }
-  return NextResponse.json(response.data, { status: 200 });
+  return new NextResponse(null, { status: 204 });
 }

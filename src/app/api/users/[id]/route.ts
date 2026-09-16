@@ -25,6 +25,7 @@ export async function GET(_: NextRequest, { params }: { params: Params }) {
       status: response.error.status ?? 500,
     });
   }
+
   return NextResponse.json(response.data, { status: 200 });
 }
 
@@ -78,5 +79,7 @@ export async function DELETE(_req: Request, { params }: { params: Params }) {
       status: response.error.status ?? 500,
     });
   }
-  return NextResponse.json(response.data, { status: 200 });
+  // A successful delete has no payload. Passing `undefined` to
+  // `NextResponse.json` throws because it is not JSON serializable.
+  return new NextResponse(null, { status: 204 });
 }
