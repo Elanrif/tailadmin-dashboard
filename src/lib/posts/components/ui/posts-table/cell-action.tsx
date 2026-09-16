@@ -12,14 +12,14 @@ import { useRouter } from "next/navigation";
 
 export function CellActions({
   post,
-  onView,
   onEdit,
   onDelete,
+  detailsPath = "/dashboard/posts",
 }: {
   post: Post;
-  onView: (post: Post) => void;
   onEdit: (post: Post) => void;
   onDelete: (post: Post) => void;
+  detailsPath?: string;
 }) {
   const router = useRouter();
 
@@ -35,15 +35,11 @@ export function CellActions({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem
-          onClick={() => router.push(`/dashboard/posts/${post.id}`)}
+          onClick={() => router.push(`${detailsPath}/${post.id}`)}
         >
           <Eye className="mr-2 h-4 w-4" />
           View details
         </DropdownMenuItem>
-        {/* <DropdownMenuItem onClick={() => onView(post)}>
-          <Eye className="mr-2 h-4 w-4" />
-          View details Modals
-        </DropdownMenuItem> */}
         <DropdownMenuItem onClick={() => onEdit(post)}>
           <Pencil className="mr-2 h-4 w-4" />
           Edit post

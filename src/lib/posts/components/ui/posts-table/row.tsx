@@ -8,14 +8,14 @@ import Image from "next/image";
 
 export function Row({
   post,
-  onView,
   onEdit,
   onDelete,
+  detailsPath,
 }: {
   post: Post;
-  onView: (post: Post) => void;
   onEdit: (post: Post) => void;
   onDelete: (post: Post) => void;
+  detailsPath?: string;
 }) {
   const cells = [
     post.description?.length > 20
@@ -73,9 +73,9 @@ export function Row({
       <TableCell className="px-4 py-3 text-center align-middle">
         <CellActions
           post={post}
-          onView={onView}
           onEdit={onEdit}
           onDelete={onDelete}
+          detailsPath={detailsPath}
         />
       </TableCell>
     </TableRow>

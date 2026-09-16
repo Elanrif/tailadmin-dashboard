@@ -31,6 +31,7 @@ export type PostQueryProps = {
   queryParams?: {
     authorId?: number;
   };
+  detailsPath?: string;
 };
 
 const {
@@ -38,7 +39,7 @@ const {
   export: { maxSize: MAX_EXPORT_SIZE },
 } = environment;
 
-export function Posts({ queryParams }: PostQueryProps) {
+export function Posts({ queryParams, detailsPath = "/dashboard/posts" }: PostQueryProps) {
   const queryClient = useQueryClient();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isExporting, setIsExporting] = useState(false);
@@ -181,9 +182,9 @@ export function Posts({ queryParams }: PostQueryProps) {
                 <Row
                   key={post.id}
                   post={post}
-                  onView={openWith(viewModal)}
                   onEdit={openWith(editModal)}
                   onDelete={openWith(deleteModal)}
+                  detailsPath={detailsPath}
                 />
               ))}
             </TableBody>

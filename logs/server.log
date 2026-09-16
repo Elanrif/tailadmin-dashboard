@@ -4679,3 +4679,23 @@
 {"level":40,"time":1789554755890,"pid":25292,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [getUserAddresses]"}
 {"level":30,"time":1789554766416,"pid":25292,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
 {"level":30,"time":1789554766698,"pid":25292,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"User signed in"}
+{"level":30,"time":1789556543850,"pid":25292,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":30,"time":1789556560161,"pid":25292,"hostname":"ELTECH","id":5,"msg":"Post fetched"}
+{"level":30,"time":1789556605154,"pid":25292,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":30,"time":1789556632806,"pid":25292,"hostname":"ELTECH","id":5,"msg":"Post fetched"}
+{"level":30,"time":1789556696119,"pid":25292,"hostname":"ELTECH","id":5,"msg":"Post fetched"}
+{"level":30,"time":1789556726841,"pid":25292,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":30,"time":1789556749908,"pid":25292,"hostname":"ELTECH","id":5,"msg":"Post fetched"}
+{"level":30,"time":1789557001471,"pid":25292,"hostname":"ELTECH","id":5,"msg":"Post fetched"}
+{"level":30,"time":1789557005791,"pid":25292,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":30,"time":1789557011843,"pid":25292,"hostname":"ELTECH","id":3,"msg":"Post fetched"}
+{"level":30,"time":1789557039620,"pid":25292,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789557045774,"pid":25292,"hostname":"ELTECH","count":16,"msg":"Users fetched"}
+{"level":30,"time":1789557107352,"pid":25292,"hostname":"ELTECH","id":5,"msg":"Post fetched"}
+{"level":30,"time":1789557124606,"pid":25292,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
+{"level":30,"time":1789557126640,"pid":25292,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789557139924,"pid":25292,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789557140018,"pid":25292,"hostname":"ELTECH","count":16,"msg":"Users fetched"}
+{"level":30,"time":1789557157366,"pid":25292,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
+{"level":30,"time":1789557162866,"pid":25292,"hostname":"ELTECH","count":6,"msg":"Users fetched"}
+{"level":30,"time":1789557173132,"pid":25292,"hostname":"ELTECH","id":1,"msg":"User fetched"}

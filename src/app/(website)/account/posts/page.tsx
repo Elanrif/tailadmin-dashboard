@@ -12,7 +12,10 @@ export default function PostsPage() {
       <PageBreadcrumb pageTitle="Posts" />
       <div className="space-y-6">
         <ComponentCard>
-          <Posts queryParams={{ authorId : user?.id }}/>
+          <Posts
+            queryParams={{ authorId: user?.id }}
+            detailsPath="/account/posts"
+          />
         </ComponentCard>
       </div>
     </div>
