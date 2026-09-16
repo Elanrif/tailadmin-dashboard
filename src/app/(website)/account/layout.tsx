@@ -28,7 +28,7 @@ export default function AccountLayout({
         <Backdrop />
         {/* Main Content Area */}
         <div
-          className={`flex-1 transition-all px-5 duration-300 ease-in-out ${mainContentMargin}`}
+          className={`flex-1 px-0 transition-all duration-300 ease-in-out lg:px-5 ${mainContentMargin}`}
         >
           {/* Header */}
           <AppHeader />
