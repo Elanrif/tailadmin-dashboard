@@ -39,7 +39,10 @@ const {
   export: { maxSize: MAX_EXPORT_SIZE },
 } = environment;
 
-export function Posts({ queryParams, detailsPath = "/dashboard/posts" }: PostQueryProps) {
+export function Posts({
+  queryParams,
+  detailsPath = "/dashboard/posts",
+}: PostQueryProps) {
   const queryClient = useQueryClient();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isExporting, setIsExporting] = useState(false);
@@ -172,31 +175,33 @@ export function Posts({ queryParams, detailsPath = "/dashboard/posts" }: PostQue
         of {pagination.total} posts
       </div>
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/5 dark:bg-white/3">
-        {posts.length > 0 ? (
-          <Table>
-            <TableHeader className="text-start bg-brand-500 text-white border-b border-gray-100 dark:border-white/5">
-              <Columns />
-            </TableHeader>
-            <TableBody>
-              {posts.map((post) => (
-                <Row
-                  key={post.id}
-                  post={post}
-                  onEdit={openWith(editModal)}
-                  onDelete={openWith(deleteModal)}
-                  detailsPath={detailsPath}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <EmptyState
-            title="Aucun post"
-            description="Aucun post ne correspond à ces critères pour le moment."
-            fullWidth={false}
-            className="border-0 bg-transparent"
-          />
-        )}
+        <div className="max-w-full overflow-x-auto">
+          {posts.length > 0 ? (
+            <Table>
+              <TableHeader className="text-start bg-brand-500 text-white border-b border-gray-100 dark:border-white/5">
+                <Columns />
+              </TableHeader>
+              <TableBody>
+                {posts.map((post) => (
+                  <Row
+                    key={post.id}
+                    post={post}
+                    onEdit={openWith(editModal)}
+                    onDelete={openWith(deleteModal)}
+                    detailsPath={detailsPath}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <EmptyState
+              title="Aucun post"
+              description="Aucun post ne correspond à ces critères pour le moment."
+              fullWidth={false}
+              className="border-0 bg-transparent"
+            />
+          )}
+        </div>
       </div>
       {pagination && (
         <UnifiedPagination

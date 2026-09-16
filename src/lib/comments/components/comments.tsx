@@ -173,32 +173,34 @@ export function Comments({ queryParams }: CommentsQueryProps) {
       </div>
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/5 dark:bg-white/3">
-        {comments.length > 0 ? (
-          <Table>
-            <TableHeader className="text-start bg-brand-500 text-white border-b border-gray-100 dark:border-white/5">
-              <Columns />
-            </TableHeader>
-            <TableBody>
-              {comments.map((comment) => (
-                <Row
-                  key={comment.id}
-                  comment={comment}
-                  onView={openWith(viewModal)}
-                  onEdit={openWith(editModal)}
-                  onDelete={openWith(deleteModal)}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <EmptyState
-            icon={MessageSquare}
-            title="Aucun commentaire"
-            description="Aucun commentaire ne correspond à ces critères pour le moment."
-            fullWidth={false}
-            className="border-0 bg-transparent"
-          />
-        )}
+        <div className="max-w-full overflow-x-auto">
+          {comments.length > 0 ? (
+            <Table>
+              <TableHeader className="text-start bg-brand-500 text-white border-b border-gray-100 dark:border-white/5">
+                <Columns />
+              </TableHeader>
+              <TableBody>
+                {comments.map((comment) => (
+                  <Row
+                    key={comment.id}
+                    comment={comment}
+                    onView={openWith(viewModal)}
+                    onEdit={openWith(editModal)}
+                    onDelete={openWith(deleteModal)}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <EmptyState
+              icon={MessageSquare}
+              title="Aucun commentaire"
+              description="Aucun commentaire ne correspond à ces critères pour le moment."
+              fullWidth={false}
+              className="border-0 bg-transparent"
+            />
+          )}
+        </div>
       </div>
 
       <UnifiedPagination

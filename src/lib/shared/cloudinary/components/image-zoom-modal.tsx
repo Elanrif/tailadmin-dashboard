@@ -14,15 +14,15 @@ export function ImageZoomModal({ image, onClose }: Props) {
     <Modal
       isOpen={image !== null}
       onClose={onClose}
-      className="max-h-[95vh] max-w-6xl bg-black/95 p-3 sm:p-6"
+      className="max-h-[calc(100dvh-2rem)] max-w-6xl overflow-hidden bg-black/95 p-3 sm:max-h-[95dvh] sm:p-6"
     >
       {image && (
-        <div className="relative h-[75vh] w-[calc(100vw-2rem)] max-w-6xl sm:h-[85vh] sm:w-[min(90vw,72rem)]">
+        <div className="relative h-[calc(100dvh-6rem)] w-full sm:h-[calc(95dvh-3rem)]">
           <Image
             src={image.src}
             alt={image.alt}
             fill
-            sizes="90vw"
+            sizes="(max-width: 640px) calc(100vw - 3.5rem), (max-width: 1280px) calc(100vw - 5rem), 72rem"
             quality={100}
             className="object-contain"
           />

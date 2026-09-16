@@ -173,27 +173,29 @@ export function Addresses({ queryParams }: AddressesQueryProps) {
       </div>
 
       <div className="overflow-hidden rounded-xl border">
-        <div className="grid grid-cols-1 gap-5 p-3 xl:grid-cols-3">
-          {addresses.length > 0 ? (
-            addresses.map((address) => (
-              <Row
-                key={address.id}
-                address={address}
-                onView={openWith(viewModal)}
-                onEdit={openWith(editModal)}
-                onDelete={openWith(deleteModal)}
+        <div className="max-w-full overflow-x-auto">
+          <div className="grid grid-cols-1 gap-5 p-3 xl:grid-cols-3">
+            {addresses.length > 0 ? (
+              addresses.map((address) => (
+                <Row
+                  key={address.id}
+                  address={address}
+                  onView={openWith(viewModal)}
+                  onEdit={openWith(editModal)}
+                  onDelete={openWith(deleteModal)}
+                />
+              ))
+            ) : (
+              <EmptyState
+                title="Aucune adresse"
+                description="Aucune adresse n'a été trouvée. Vous pouvez en ajouter une nouvelle."
+                action={{
+                  label: "Ajouter une adresse",
+                  onClick: () => createModal.openModal(),
+                }}
               />
-            ))
-          ) : (
-            <EmptyState
-              title="Aucune adresse"
-              description="Aucune adresse n'a été trouvée. Vous pouvez en ajouter une nouvelle."
-              action={{
-                label: "Ajouter une adresse",
-                onClick: () => createModal.openModal(),
-              }}
-            />
-          )}
+            )}
+          </div>
         </div>
       </div>
 
