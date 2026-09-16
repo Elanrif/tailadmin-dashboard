@@ -38,7 +38,7 @@ export default function SignUpForm() {
     },
   });
 
-  const [errorFromApi, setErrorFromApi] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showconfirmPassword, setShowconfirmPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -46,12 +46,12 @@ export default function SignUpForm() {
   const signUpMutationHook = useMutation(signUpMutation);
 
   const onSubmit = (data: RegisterFormValues) => {
+    setSubmitError(null);
+
     if (!isChecked) {
       toast.error("Veuillez accepter les termes et conditions.");
       return;
     }
-
-    setErrorFromApi(null);
 
     signUpMutationHook.mutate(data, {
       onSuccess: (user) => {
@@ -60,7 +60,7 @@ export default function SignUpForm() {
         toast.success("Compte créé avec succès !");
       },
       onError: (error: any) => {
-        setErrorFromApi(error?.message || "Une erreur inattendue est survenue");
+        setSubmitError(error?.message || "Une erreur inattendue est survenue");
         toast.error("Erreur de création de compte !");
       },
     });
@@ -135,9 +135,9 @@ export default function SignUpForm() {
 
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-5">
-                {errorFromApi && (
+                {submitError && (
                   <p className="p-3 text-sm text-center text-red-500 bg-red-100 rounded">
-                    {errorFromApi}
+                    {submitError}
                   </p>
                 )}
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">

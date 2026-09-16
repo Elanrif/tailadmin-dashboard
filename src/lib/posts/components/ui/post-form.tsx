@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -41,6 +42,7 @@ export function PostForm({
   hiddenFields: { authorId } = {},
   onSaved,
 }: PostFormProps) {
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const isEdit = !!initialData;
   const selectedAuthorId = initialData?.author?.id ?? authorId;
   const showAuthorSelect = !isEdit && selectedAuthorId == null;
@@ -83,6 +85,8 @@ export function PostForm({
   const updateMutation = useMutation(updatePostMutation);
 
   const onSubmit = (values: PostCreateFormValues | PostUpdateFormValues) => {
+    setSubmitError(null);
+
     if (isEdit) {
       updateMutation.mutate(
         {
@@ -101,6 +105,7 @@ export function PostForm({
               toast.error("Votre session a expiré, veuillez vous reconnecter.");
               return;
             }
+            setSubmitError(error.message);
             toast.error(error.message);
           },
         },
@@ -121,6 +126,7 @@ export function PostForm({
           toast.error("Votre session a expiré, veuillez vous reconnecter.");
           return;
         }
+        setSubmitError(error.message);
         toast.error(error.message);
       },
     });
@@ -150,6 +156,17 @@ export function PostForm({
                 variant="error"
                 title="Error Message"
                 message="Please check the form for errors and try again."
+                showLink={false}
+              />
+            </ComponentCard>
+          )}
+
+          {submitError && (
+            <ComponentCard>
+              <Alert
+                variant="error"
+                title="Failed to save post"
+                message={submitError}
                 showLink={false}
               />
             </ComponentCard>

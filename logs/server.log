@@ -4752,3 +4752,15 @@
 {"level":40,"time":1789559954332,"pid":25292,"hostname":"ELTECH","timestamp":"2026-09-16T11:59:14.315Z","status":400,"error":"Bad Request","message":"Current password is incorrect","path":"/api/v1/account/change-password","msg":"[API Error] [updateMyPassword]"}
 {"level":50,"time":1789561084217,"pid":25292,"hostname":"ELTECH","error":"Bad Request","timestamp":"2026-09-16T12:18:04.101Z","status":400,"message":"Current password is incorrect","path":"/api/v1/account/change-password","msg":"API error"}
 {"level":40,"time":1789561084217,"pid":25292,"hostname":"ELTECH","timestamp":"2026-09-16T12:18:04.101Z","status":400,"error":"Bad Request","message":"Current password is incorrect","path":"/api/v1/account/change-password","msg":"[API Error] [updateMyPassword]"}
+{"level":50,"time":1789565630586,"pid":30876,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789565630591,"pid":30876,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [getUserAddresses]"}
+{"level":50,"time":1789565630607,"pid":30876,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789565630609,"pid":30876,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [getUserAddresses]"}
+{"level":50,"time":1789565631951,"pid":30876,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789565631954,"pid":30876,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [getUserAddresses]"}
+{"level":50,"time":1789565636550,"pid":30876,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789565636551,"pid":30876,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [getUserAddresses]"}
+{"level":30,"time":1789565692918,"pid":30876,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1789565693156,"pid":30876,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"User signed in"}
+{"level":50,"time":1789565827927,"pid":30876,"hostname":"ELTECH","error":"Bad Request","timestamp":"2026-09-16T13:37:07.913Z","status":400,"message":"Current password is incorrect","path":"/api/v1/account/change-password","msg":"API error"}
+{"level":40,"time":1789565827929,"pid":30876,"hostname":"ELTECH","timestamp":"2026-09-16T13:37:07.913Z","status":400,"error":"Bad Request","message":"Current password is incorrect","path":"/api/v1/account/change-password","msg":"[API Error] [updateMyPassword]"}

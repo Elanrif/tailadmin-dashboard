@@ -31,14 +31,14 @@ export default function SignInForm() {
     },
   });
 
-  const [errorFromApi, setErrorFromApi] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
   const signInMutationHook = useMutation(signInMutation);
 
   const onSubmit = (data: LoginFormValues) => {
-    setErrorFromApi(null);
+    setSubmitError(null);
 
     signInMutationHook.mutate(data, {
       onSuccess: (user) => {
@@ -48,7 +48,7 @@ export default function SignInForm() {
       },
       onError: (error: any) => {
         toast.error("Oups! Une erreur est survenue.");
-        setErrorFromApi(error?.message || "Une erreur est survenue.");
+        setSubmitError(error?.message || "Une erreur est survenue.");
       },
     });
   };
@@ -122,9 +122,9 @@ export default function SignInForm() {
 
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-6">
-                {errorFromApi && (
+                {submitError && (
                   <p className="p-3 text-sm text-center text-red-500 bg-red-100 rounded">
-                    {errorFromApi}
+                    {submitError}
                   </p>
                 )}
                 <div>

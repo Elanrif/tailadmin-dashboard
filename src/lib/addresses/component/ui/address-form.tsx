@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -27,6 +27,7 @@ import Select from "@/components/form/Select";
 import { User } from "@/lib/users/api/types";
 import { usersQueryOptions } from "@/lib/users/api/queries/queries.client";
 import environment from "@/config/environment.config";
+import ComponentCard from "@/components/common/ComponentCard";
 
 export default function AddressForm({
   initialData,
@@ -40,6 +41,7 @@ export default function AddressForm({
   onSaved?: () => void;
 }) {
   const isEdit = !!initialData;
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const selectedAuthorId = initialData?.userId ?? userId;
 
@@ -107,6 +109,8 @@ export default function AddressForm({
   const onSubmit = (
     values: AddressCreateFormValues | AddressUpdateFormValues,
   ) => {
+    setSubmitError(null);
+
     if (isEdit && initialData) {
       updateMutation.mutate(
         {
@@ -123,6 +127,7 @@ export default function AddressForm({
               toast.error("Votre session a expiré, veuillez vous reconnecter.");
               return;
             }
+            setSubmitError(error.message);
             toast.error(error.message);
           },
         },
@@ -145,6 +150,7 @@ export default function AddressForm({
             toast.error("Votre session a expiré, veuillez vous reconnecter.");
             return;
           }
+          setSubmitError(error.message);
           toast.error(error.message);
         },
       },
@@ -177,6 +183,20 @@ export default function AddressForm({
             : "Create a new address for this user."}
         </p>
       </div>
+
+      {submitError && (
+        <ComponentCard>
+          <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
+            <span className="text-xl">⚠️</span>
+            <div>
+              <h4 className="font-semibold text-red-700">
+                Failed to save address
+              </h4>
+              <p className="mt-1 text-sm text-red-600">{submitError}</p>
+            </div>
+          </div>
+        </ComponentCard>
+      )}
 
       <div className="grid grid-cols-1 gap-4 px-1 sm:gap-5 sm:px-0 md:grid-cols-2">
         <div>

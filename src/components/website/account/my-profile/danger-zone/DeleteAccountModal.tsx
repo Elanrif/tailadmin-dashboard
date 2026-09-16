@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -14,6 +14,7 @@ import { useSession } from "@/lib/auth/components/auth.context";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
+import ComponentCard from "@/components/common/ComponentCard";
 
 interface DeleteAccountModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export default function DeleteAccountModal({
 }: DeleteAccountModalProps) {
   const MESSAGE_DELETE_ACCOUNT = "I want to delete my account";
   const { signOut } = useSession();
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
     register,
@@ -47,17 +49,25 @@ export default function DeleteAccountModal({
       onClose();
       reset();
     },
-    onError: () => {
-      toast.error("Failed to delete account");
+    onError: (error) => {
+      const message = error.message || "Failed to delete account";
+      setSubmitError(message);
+      toast.error(message);
     },
   });
 
   const onSubmitDelete = (values: DeleteFormValues) => {
+    setSubmitError(null);
     deleteAccountMutation.mutate(values);
   };
 
+  const handleClose = () => {
+    setSubmitError(null);
+    onClose();
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-175 m-4">
+    <Modal isOpen={isOpen} onClose={handleClose} className="max-w-175 m-4">
       <form
         onSubmit={handleSubmit(onSubmitDelete)}
         className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl dark:bg-gray-900 lg:p-11"
@@ -77,21 +87,19 @@ export default function DeleteAccountModal({
             </strong>
           </p>
 
-          {/*           {Object.keys(errors).length > 0 && (
+          {submitError && (
             <ComponentCard>
               <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
                 <span className="text-xl">⚠️</span>
                 <div>
                   <h4 className="font-semibold text-red-700">
-                    Impossible de soumettre le formulaire
+                    Failed to delete account
                   </h4>
-                  <p className="mt-1 text-sm text-red-600">
-                    Certains champs contiennent des erreurs.
-                  </p>
+                  <p className="mt-1 text-sm text-red-600">{submitError}</p>
                 </div>
               </div>
             </ComponentCard>
-          )} */}
+          )}
 
           <Input
             type="text"
@@ -106,7 +114,12 @@ export default function DeleteAccountModal({
         </div>
 
         <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-          <Button size="sm" variant="outline" onClick={onClose} type="button">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleClose}
+            type="button"
+          >
             Close
           </Button>
           <Button

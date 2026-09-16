@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -41,6 +42,7 @@ export function CommentForm({
   onSaved,
   hiddenFields: { postId, authorId } = {},
 }: CommentFormProps) {
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const isEdit = !!initialData;
   const selectedPostId = initialData?.postId ?? postId;
   const selectedAuthorId = initialData?.author?.id ?? authorId;
@@ -80,6 +82,8 @@ export function CommentForm({
   const updateMutation = useMutation(updateCommentMutation);
 
   const onSubmit = (values: CommentFormValues | CommentUpdateFormValues) => {
+    setSubmitError(null);
+
     if (isEdit) {
       updateMutation.mutate(
         {
@@ -96,6 +100,7 @@ export function CommentForm({
               toast.error("Votre session a expiré, veuillez vous reconnecter.");
               return;
             }
+            setSubmitError(error.message);
             toast.error(error.message);
           },
         },
@@ -113,6 +118,7 @@ export function CommentForm({
           toast.error("Votre session a expiré, veuillez vous reconnecter.");
           return;
         }
+        setSubmitError(error.message);
         toast.error(error.message);
       },
     });
@@ -131,6 +137,20 @@ export function CommentForm({
           <p className="text-xs text-error-500 sm:text-sm">
             Some fields contain errors. Please fix them.
           </p>
+        </ComponentCard>
+      )}
+
+      {submitError && (
+        <ComponentCard>
+          <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
+            <span className="text-xl">⚠️</span>
+            <div>
+              <h4 className="font-semibold text-red-700">
+                Failed to save comment
+              </h4>
+              <p className="mt-1 text-sm text-red-600">{submitError}</p>
+            </div>
+          </div>
         </ComponentCard>
       )}
 

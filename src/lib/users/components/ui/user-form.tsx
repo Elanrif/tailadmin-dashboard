@@ -57,6 +57,7 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
     register,
@@ -114,6 +115,8 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
   };
 
   const onSubmit = (values: UserCreateFormValues | UserUpdateFormValues) => {
+    setSubmitError(null);
+
     if (isEdit) {
       updateMutation.mutate(
         {
@@ -134,6 +137,7 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
               toast.error("Votre session a expiré, veuillez vous reconnecter.");
               return;
             }
+            setSubmitError(error.message);
             toast.error(error.message);
           },
         },
@@ -157,6 +161,7 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
           toast.error("Votre session a expiré, veuillez vous reconnecter.");
           return;
         }
+        setSubmitError(error.message);
         toast.error(error.message);
       },
     });
@@ -205,6 +210,15 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
             variant="error"
             title="Error Message"
             message="Please check the form for errors and try again."
+            showLink={false}
+          />
+        )}
+
+        {submitError && (
+          <Alert
+            variant="error"
+            title="Failed to save user"
+            message={submitError}
             showLink={false}
           />
         )}
