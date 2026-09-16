@@ -4786,3 +4786,5 @@
 {"level":30,"time":1789571551860,"pid":7568,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
 {"level":30,"time":1789571551998,"pid":7568,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
 {"level":30,"time":1789571561562,"pid":7568,"hostname":"ELTECH","id":17,"msg":"Comment deleted successfully"}
+{"level":30,"time":1789571866519,"pid":7568,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789571866554,"pid":7568,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
