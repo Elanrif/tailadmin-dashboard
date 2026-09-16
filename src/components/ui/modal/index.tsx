@@ -56,7 +56,11 @@ export const Modal: React.FC<ModalProps> = ({
 
   /* default: backdrop-blur-[32px] */
   return (
-    <div className="fixed inset-0 flex items-center justify-center overflow-y-auto modal z-99999">
+    <div
+      className={`fixed inset-0 z-99999 flex items-center justify-center overflow-y-auto modal ${
+        isFullscreen ? "" : "px-4 sm:px-6"
+      }`}
+    >
       {!isFullscreen && (
         <div
           className="fixed inset-0 h-full w-full bg-gray-400/50 backdrop-blur-sm"
