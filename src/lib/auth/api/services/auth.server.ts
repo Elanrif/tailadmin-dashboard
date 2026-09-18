@@ -15,6 +15,10 @@ import { User } from "@/lib/users/api/types";
 import { Result } from "@/lib/shared/types";
 import { ApiError, fromZodError } from "@/lib/shared/api-error";
 import { cookies } from "next/headers";
+import {
+  signIn as keycloakSignIn,
+  signOut as keycloakSignOut,
+} from "@/../auth";
 
 const {
   api: {
@@ -37,6 +41,11 @@ const logger = getLogger("server");
 export async function signIn(
   login: LoginFormValues,
 ): Promise<Result<User, ApiError>> {
+  if (process.env.AUTH_PROVIDER === "keycloak") {
+    await keycloakSignIn("keycloak", { redirectTo: "/" });
+    return { ok: true, data: {} as User };
+  }
+
   const parse = loginFormSchema.safeParse(login);
 
   if (!parse.success) {
@@ -123,6 +132,11 @@ export async function forgotPassword(
 }
 
 export async function logout(): Promise<Result<void, ApiError>> {
+  if (process.env.AUTH_PROVIDER === "keycloak") {
+    await keycloakSignOut({ redirectTo: "/sign-in" });
+    return { ok: true, data: undefined };
+  }
+
   try {
     const response = await apiClient().post(logoutUrl);
     const setCookieHeader = response.headers["set-cookie"];

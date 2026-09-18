@@ -6,9 +6,17 @@ import {
   responseLoggerInterceptor,
 } from "@config/interceptors/logger.interceptor";
 import { expiredSessionInterceptor } from "@config/interceptors/auth.interceptor";
+import { sessionCookieInterceptor } from "@config/interceptors/auth.interceptor";
+import { bearerTokenInterceptor } from "@config/interceptors/bearer-token.interceptor";
 
 export { baseRequestConfig } from "@config/axios/base-request.config";
-export default function httpClient({ logger }: { logger: Logger }) {
+export default function httpClient({
+  logger,
+  authenticated = false,
+}: {
+  logger: Logger;
+  authenticated?: boolean;
+}) {
   const instance = axios.create({
     ...baseRequestConfig,
   });
@@ -19,6 +27,13 @@ export default function httpClient({ logger }: { logger: Logger }) {
       return Promise.reject(error);
     },
   );
+  if (authenticated) {
+    instance.interceptors.request.use(
+      process.env.AUTH_PROVIDER === "keycloak"
+        ? bearerTokenInterceptor
+        : sessionCookieInterceptor,
+    );
+  }
   instance.interceptors.response.use(
     responseLoggerInterceptor(logger),
     (error: AxiosError) => {

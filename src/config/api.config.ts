@@ -1,9 +1,5 @@
 import httpClient from "@config/axios.config";
-import {
-  anonTokenInterceptor,
-  ownTokenInterceptor,
-  sessionCookieInterceptor,
-} from "@config/interceptors/auth.interceptor";
+import { anonTokenInterceptor } from "@config/interceptors/auth.interceptor";
 import { getLogger } from "@config/logger.config";
 
 const logger = getLogger("server");
@@ -28,18 +24,12 @@ const apiLogger = (config?: Config) => {
 export default function apiClient(own?: boolean, config?: Config) {
   const instance = httpClient({
     logger: apiLogger(config),
+    authenticated: own,
   });
 
-  instance.interceptors.request.use(
-    own ? sessionCookieInterceptor : anonTokenInterceptor,
-  )
-  // Token-based auth (Bearer), for future use if a specific flow needs it
-  // instead of the session cookie:
-  // instance.interceptors.request.use(
-  //   own
-  //     ? (c) => ownTokenInterceptor(c, config?.access_token)
-  //     : anonTokenInterceptor,
-  // );
-  
+  if (!own) {
+    instance.interceptors.request.use(anonTokenInterceptor);
+  }
+
   return instance;
 }

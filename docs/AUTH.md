@@ -196,6 +196,60 @@ npm run check-types
 npm run lint
 ```
 
+## Authentification Keycloak avec Auth.js
+
+L’application peut utiliser Keycloak comme second provider sans modifier le flux
+legacy. Le provider est sélectionné par `AUTH_PROVIDER` côté serveur et par
+`NEXT_PUBLIC_AUTH_PROVIDER` côté client :
+
+```dotenv
+AUTH_PROVIDER=keycloak
+NEXT_PUBLIC_AUTH_PROVIDER=keycloak
+AUTH_KEYCLOAK_ID=<client_id>
+AUTH_KEYCLOAK_SECRET=<client_secret>
+AUTH_KEYCLOAK_ISSUER=https://<host>/realms/<realm>
+AUTH_SECRET=<secret_aleatoire>
+```
+
+Pour conserver l’authentification Spring Boot existante, utiliser
+`AUTH_PROVIDER=legacy` et `NEXT_PUBLIC_AUTH_PROVIDER=legacy`.
+
+### Fonctionnement Keycloak
+
+- `auth.ts` configure Auth.js v5 avec le provider Keycloak et une session JWT.
+- La page `/sign-in` affiche un bouton de redirection OAuth en mode Keycloak,
+  ou le formulaire email/mot de passe existant en mode legacy.
+- Le callback JWT conserve `access_token`, `refresh_token`, `expires_at` et
+  convertit `realm_access.roles` vers `UserRole.ADMIN` ou `UserRole.USER`.
+- Lorsque le token arrive à expiration, le callback renouvelle automatiquement
+  l’access token via le endpoint OpenID Connect de Keycloak.
+- Les appels serveur à `apiClient(true)` utilisent l’interceptor Bearer en mode
+  Keycloak et continuent à transmettre les cookies en mode legacy.
+- `AuthUserProvider` adapte la session Auth.js à la même interface
+  `SessionContextType` que le stockage `localStorage` historique.
+
+Le handler Auth.js est disponible sous `/api/auth/[...nextauth]`. Le composant
+`ProtectedRoute` reste inchangé : il dépend uniquement de `useSession()` et
+fonctionne donc dans les deux modes.
+
+### Flux de renouvellement
+
+```mermaid
+sequenceDiagram
+    participant B as Navigateur
+    participant A as Auth.js
+    participant K as Keycloak
+    participant API as Backend
+
+    B->>A: Session JWT
+    B->>API: Requête protégée
+    A->>A: Vérifie expires_at
+    A->>K: refresh_token si nécessaire
+    K-->>A: Nouveau access_token
+    A-->>API: Authorization: Bearer <access_token>
+    API-->>B: Réponse
+```
+
 ## Ressources
 
 - [Documentation Next.js](https://nextjs.org/docs)

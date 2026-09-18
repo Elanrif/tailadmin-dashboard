@@ -4982,3 +4982,5 @@
 {"level":30,"time":1789580530922,"pid":7568,"hostname":"ELTECH","id":5,"liked":true,"msg":"Post like toggled"}
 {"level":30,"time":1789580532722,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
 {"level":30,"time":1789580534122,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":50,"time":1789580889329,"pid":7568,"hostname":"ELTECH","error":"read ECONNRESET","msg":"API error"}
+{"level":50,"time":1789580889330,"pid":7568,"hostname":"ELTECH","status":500,"error":"Internal Server Error","message":"read ECONNRESET","msg":"[API Error] [getPosts]"}
