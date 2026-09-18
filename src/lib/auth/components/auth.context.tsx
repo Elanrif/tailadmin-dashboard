@@ -2,7 +2,7 @@
 
 import { User } from "@/lib/users/api/types";
 import { createContext, useContext, useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   clearAuthSession,
   getStoredAuthUser,
@@ -14,7 +14,7 @@ import {
   signOut as authSignOut,
   useSession as useAuthSession,
 } from "next-auth/react";
-import { UserRole, UserStatus } from "@/lib/users/api/types";
+import { myProfileQueryOptions } from "@/lib/account/api/queries/queries.client";
 
 interface SessionContextType {
   user: User | null;
@@ -79,7 +79,17 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const keycloakUser: User | null = authSession.data?.user
+  const { data: meUser, isLoading: meLoading } = useQuery({
+    ...myProfileQueryOptions(),
+    enabled: isKeycloak && authSession.status === "authenticated",
+  });
+
+  const sessionUser = isKeycloak ? (meUser ?? null) : user;
+  const sessionLoading = isKeycloak
+    ? authSession.status === "loading" || meLoading
+    : isLoading;
+
+/*   const keycloakUser: User | null = authSession.data?.user
     ? {
         id: Number.parseInt(authSession.data.user.id, 10) || 0,
         email: authSession.data.user.email ?? "",
@@ -96,7 +106,7 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
   const sessionUser = isKeycloak ? keycloakUser : user;
   const sessionLoading = isKeycloak
     ? authSession.status === "loading"
-    : isLoading;
+    : isLoading; */
 
   return (
     <SessionContext.Provider

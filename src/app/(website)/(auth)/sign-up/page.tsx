@@ -1,5 +1,5 @@
 import SignUpForm from "@/lib/auth/components/sign-up-form";
-import KeycloakSignUpButton from "@/lib/auth/components/keycloak-sign-up-button";
+import KeycloakSignUp from "@/lib/auth/components/keycloak-sign-up-button";
 
 export const metadata = {
   title: "Sign Up",
@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function SignUpPage() {
   if (process.env.AUTH_PROVIDER === "keycloak") {
-    return <KeycloakSignUpButton />;
+    return <KeycloakSignUp />;
   }
 
   return (

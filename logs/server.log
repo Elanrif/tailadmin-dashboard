@@ -5015,3 +5015,38 @@
 {"level":50,"time":1789730722701,"pid":34428,"hostname":"ELTECH","error":"Not Authenticated","msg":"Outgoing request failed"}
 {"level":50,"time":1789730722701,"pid":34428,"hostname":"ELTECH","error":"Unauthorized","status":401,"message":"Not Authenticated","msg":"API error"}
 {"level":40,"time":1789730722711,"pid":34428,"hostname":"ELTECH","status":401,"error":"Unauthorized","message":"Not Authenticated","msg":"[API Error] [getPosts]"}
+{"level":30,"time":1789733093768,"pid":34428,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
+{"level":30,"time":1789733142413,"pid":34428,"hostname":"ELTECH","id":17,"msg":"User deleted"}
+{"level":30,"time":1789733143937,"pid":34428,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
+{"level":30,"time":1789733171339,"pid":34428,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":50,"time":1789733523678,"pid":34428,"hostname":"ELTECH","error":"Internal Server Error","timestamp":"2026-09-18T12:12:03.420Z","status":500,"message":"An error occurred while attempting to decode the Jwt: I/O error on GET request for \"http://localhost:8080/realms/kickstart-realm/protocol/openid-connect/certs\": Read timed out","path":"/api/v1/addresses","msg":"API error"}
+{"level":50,"time":1789733523680,"pid":34428,"hostname":"ELTECH","timestamp":"2026-09-18T12:12:03.420Z","status":500,"error":"Internal Server Error","message":"An error occurred while attempting to decode the Jwt: I/O error on GET request for \"http://localhost:8080/realms/kickstart-realm/protocol/openid-connect/certs\": Read timed out","path":"/api/v1/addresses","msg":"[API Error] [getUserAddresses]"}
+{"level":30,"time":1789733552105,"pid":34428,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":30,"time":1789733956336,"pid":34428,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":30,"time":1789735857721,"pid":34428,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789736204751,"pid":34428,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789736319115,"pid":34428,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789736604450,"pid":34428,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":50,"time":1789736700256,"pid":34428,"hostname":"ELTECH","error":"Not Authenticated","msg":"Outgoing request failed"}
+{"level":50,"time":1789736700257,"pid":34428,"hostname":"ELTECH","error":"Unauthorized","status":401,"message":"Not Authenticated","msg":"API error"}
+{"level":40,"time":1789736700768,"pid":34428,"hostname":"ELTECH","status":401,"error":"Unauthorized","message":"Not Authenticated","msg":"[API Error] [getPosts]"}
+{"level":30,"time":1789736702180,"pid":34428,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789736703382,"pid":34428,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":50,"time":1789736726867,"pid":34428,"hostname":"ELTECH","error":"Not Authenticated","msg":"Outgoing request failed"}
+{"level":50,"time":1789736726867,"pid":34428,"hostname":"ELTECH","error":"Unauthorized","status":401,"message":"Not Authenticated","msg":"API error"}
+{"level":40,"time":1789736726880,"pid":34428,"hostname":"ELTECH","status":401,"error":"Unauthorized","message":"Not Authenticated","msg":"[API Error] [getPosts]"}
+{"level":30,"time":1789736728148,"pid":34428,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789736904982,"pid":34428,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789736905090,"pid":34428,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789736991167,"pid":34428,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789737056162,"pid":34428,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":30,"time":1789737075114,"pid":34428,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789737096210,"pid":34428,"hostname":"ELTECH","id":21,"content":"je confirme","msg":"Comment created successfully"}
+{"level":30,"time":1789737096505,"pid":34428,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789737160990,"pid":34428,"hostname":"ELTECH","addressId":23,"msg":"Address created successfully"}
+{"level":30,"time":1789737171620,"pid":34428,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":30,"time":1789737181705,"pid":34428,"hostname":"ELTECH","id":3,"msg":"Post deleted"}
+{"level":30,"time":1789737181872,"pid":34428,"hostname":"ELTECH","count":2,"msg":"Posts fetched"}
+{"level":30,"time":1789737681610,"pid":34428,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789737682894,"pid":34428,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789739115040,"pid":34428,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
