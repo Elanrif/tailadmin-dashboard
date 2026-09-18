@@ -18,6 +18,11 @@ function mapRolesToUserRole(roles: string[] = []): UserRole {
     : UserRole.USER;
 }
 
+// realm_access.roles n'est fiable que sur l'access_token (le "profile" issu de
+// l'id_token/userinfo ne le contient pas forcément selon la config des mappers
+// Keycloak). On décode donc l'access_token lui-même, sans vérifier la
+// signature : NextAuth a déjà validé ce token en l'obtenant directement du
+// token_endpoint via TLS, ce n'est pas une donnée qui transite par le client.
 function extractRealmRoles(accessToken?: string): string[] {
   if (!accessToken) return [];
   try {
@@ -29,6 +34,31 @@ function extractRealmRoles(accessToken?: string): string[] {
   } catch {
     return [];
   }
+}
+
+// Le sub Keycloak est un UUID, pas l'id (Long) de la table `users` en Postgres.
+// Ces deux espaces d'identifiants sont indépendants — on ne peut pas les
+// convertir l'un en l'autre. La seule source fiable de l'id DB est le
+// backend lui-même : le JitProvisioningFilter y crée/retrouve l'utilisateur
+// par email, et GET /api/v1/account (SecurityUtils.getCurrentUser()) le
+// résout de la même façon, que l'auth soit une session ou un JWT Keycloak.
+async function fetchDbUser(accessToken: string) {
+  const apiUrl = process.env.API_URL ?? "http://localhost:8081";
+  const response = await fetch(`${apiUrl}/api/v1/account`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Impossible de récupérer le profil DB (status ${response.status})`,
+    );
+  }
+
+  return (await response.json()) as {
+    id: number;
+    firstName?: string;
+    lastName?: string;
+  };
 }
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
@@ -81,6 +111,22 @@ export const {
       clientSecret: process.env.AUTH_KEYCLOAK_SECRET,
       issuer: process.env.AUTH_KEYCLOAK_ISSUER,
     }),
+    // Même client Keycloak, mais pointé sur /registrations au lieu de /auth,
+    // pour le bouton "Sign up". NextAuth génère PKCE + state normalement pour
+    // ce provider aussi — c'est ça qui manquait dans la route custom
+    // /api/auth/keycloak/register (voir InvalidCheck: pkceCodeVerifier).
+    // Callback attendu côté Keycloak : /api/auth/callback/keycloak-register
+    // (à ajouter dans "Valid redirect URIs" du client, en plus de l'existant).
+    Keycloak({
+      id: "keycloak-register",
+      name: "Keycloak (register)",
+      clientId: process.env.AUTH_KEYCLOAK_ID,
+      clientSecret: process.env.AUTH_KEYCLOAK_SECRET,
+      issuer: process.env.AUTH_KEYCLOAK_ISSUER,
+      authorization: {
+        url: `${(process.env.AUTH_KEYCLOAK_ISSUER ?? "").replace(/\/$/, "")}/protocol/openid-connect/registrations`,
+      },
+    }),
   ],
   trustHost: process.env.AUTH_TRUST_HOST === "true",
   session: { strategy: "jwt" },
@@ -89,6 +135,17 @@ export const {
       if (account) {
         const keycloakProfile = profile as KeycloakProfile | undefined;
         const roles = extractRealmRoles(account.access_token);
+
+        let dbUserId: number | undefined;
+        try {
+          const dbUser = await fetchDbUser(account.access_token!);
+          dbUserId = dbUser.id;
+        } catch {
+          // Le JIT provisioning peut avoir une latence (création de la ligne
+          // User en base côté Spring au tout premier login) — dbUserId reste
+          // undefined, session.user.id sera "" et le reste de l'app doit
+          // gérer ce cas (voir isLoading côté client).
+        }
 
         return {
           ...token,
@@ -100,6 +157,7 @@ export const {
           role: mapRolesToUserRole(roles),
           firstName: keycloakProfile?.given_name,
           lastName: keycloakProfile?.family_name,
+          dbUserId,
         };
       }
 
@@ -111,7 +169,7 @@ export const {
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.sub ?? "";
+        session.user.id = token.dbUserId != null ? String(token.dbUserId) : "";
         session.user.role = token.role ?? UserRole.USER;
         session.user.firstName = token.firstName;
         session.user.lastName = token.lastName;
@@ -146,6 +204,7 @@ declare module "next-auth/jwt" {
     role?: UserRole;
     firstName?: string;
     lastName?: string;
+    dbUserId?: number;
     error?: string;
   }
 }
