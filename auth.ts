@@ -18,6 +18,19 @@ function mapRolesToUserRole(roles: string[] = []): UserRole {
     : UserRole.USER;
 }
 
+function extractRealmRoles(accessToken?: string): string[] {
+  if (!accessToken) return [];
+  try {
+    const payload = accessToken.split(".")[1];
+    const decoded = JSON.parse(
+      Buffer.from(payload, "base64url").toString("utf-8"),
+    ) as { realm_access?: { roles?: string[] } };
+    return decoded.realm_access?.roles ?? [];
+  } catch {
+    return [];
+  }
+}
+
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
     const response = await fetch(
@@ -75,7 +88,7 @@ export const {
     async jwt({ token, account, profile }) {
       if (account) {
         const keycloakProfile = profile as KeycloakProfile | undefined;
-        const roles = keycloakProfile?.realm_access?.roles ?? [];
+        const roles = extractRealmRoles(account.access_token);
 
         return {
           ...token,

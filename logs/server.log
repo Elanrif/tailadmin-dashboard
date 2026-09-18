@@ -4995,3 +4995,23 @@
 {"level":30,"time":1789715586581,"pid":34428,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
 {"level":30,"time":1789715752244,"pid":34428,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
 {"level":30,"time":1789717032096,"pid":34428,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":30,"time":1789717472708,"pid":34428,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":30,"time":1789717536881,"pid":34428,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":30,"time":1789717608535,"pid":34428,"hostname":"ELTECH","id":17,"email":"saidbaco.elanrif@gmail.com","msg":"Profile updated successfully"}
+{"level":30,"time":1789717687432,"pid":34428,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":50,"time":1789717713719,"pid":34428,"hostname":"ELTECH","error":"Request failed with status code 403","msg":"API error"}
+{"level":40,"time":1789717713721,"pid":34428,"hostname":"ELTECH","status":403,"error":"Internal Server Error","message":"Request failed with status code 403","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789717714879,"pid":34428,"hostname":"ELTECH","error":"Request failed with status code 403","msg":"API error"}
+{"level":40,"time":1789717714879,"pid":34428,"hostname":"ELTECH","status":403,"error":"Internal Server Error","message":"Request failed with status code 403","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789717717024,"pid":34428,"hostname":"ELTECH","error":"Request failed with status code 403","msg":"API error"}
+{"level":40,"time":1789717717028,"pid":34428,"hostname":"ELTECH","status":403,"error":"Internal Server Error","message":"Request failed with status code 403","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789717721153,"pid":34428,"hostname":"ELTECH","error":"Request failed with status code 403","msg":"API error"}
+{"level":40,"time":1789717721154,"pid":34428,"hostname":"ELTECH","status":403,"error":"Internal Server Error","message":"Request failed with status code 403","msg":"[API Error] [getUsers]"}
+{"level":50,"time":1789719587435,"pid":34428,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789719587456,"pid":34428,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [getPosts]"}
+{"level":50,"time":1789730699159,"pid":34428,"hostname":"ELTECH","error":"Not Authenticated","msg":"Outgoing request failed"}
+{"level":50,"time":1789730699159,"pid":34428,"hostname":"ELTECH","error":"Unauthorized","status":401,"message":"Not Authenticated","msg":"API error"}
+{"level":40,"time":1789730699167,"pid":34428,"hostname":"ELTECH","status":401,"error":"Unauthorized","message":"Not Authenticated","msg":"[API Error] [getPosts]"}
+{"level":50,"time":1789730722701,"pid":34428,"hostname":"ELTECH","error":"Not Authenticated","msg":"Outgoing request failed"}
+{"level":50,"time":1789730722701,"pid":34428,"hostname":"ELTECH","error":"Unauthorized","status":401,"message":"Not Authenticated","msg":"API error"}
+{"level":40,"time":1789730722711,"pid":34428,"hostname":"ELTECH","status":401,"error":"Unauthorized","message":"Not Authenticated","msg":"[API Error] [getPosts]"}
