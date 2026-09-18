@@ -5052,3 +5052,29 @@
 {"level":30,"time":1789739115040,"pid":34428,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
 {"level":30,"time":1789741170067,"pid":34428,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
 {"level":30,"time":1789741183804,"pid":34428,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789769653151,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789769843053,"pid":40572,"hostname":"ELTECH","addressId":24,"msg":"Address created successfully"}
+{"level":30,"time":1789769898525,"pid":40572,"hostname":"ELTECH","count":0,"msg":"Posts fetched"}
+{"level":30,"time":1789769987018,"pid":40572,"hostname":"ELTECH","id":6,"msg":"Post created"}
+{"level":30,"time":1789769987532,"pid":40572,"hostname":"ELTECH","count":1,"msg":"Posts fetched"}
+{"level":30,"time":1789770010502,"pid":40572,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789770025254,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789770223792,"pid":40572,"hostname":"ELTECH","addressId":24,"msg":"Address updated successfully"}
+{"level":30,"time":1789770624245,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789770657166,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789770675814,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789770855272,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789771261158,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789771656465,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789772080983,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789772404285,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789772669425,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789773012756,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789773015014,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789773045221,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile updated successfully"}
+{"level":30,"time":1789773073261,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789773095764,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile updated successfully"}
+{"level":50,"time":1789773224689,"pid":40572,"hostname":"ELTECH","error":"Internal Server Error","timestamp":"2026-09-18T23:13:44.333Z","status":500,"message":"An error occurred while attempting to decode the Jwt: I/O error on GET request for \"http://localhost:8080/realms/kickstart-realm/protocol/openid-connect/certs\": Read timed out","path":"/api/v1/addresses","msg":"API error"}
+{"level":50,"time":1789773224691,"pid":40572,"hostname":"ELTECH","timestamp":"2026-09-18T23:13:44.333Z","status":500,"error":"Internal Server Error","message":"An error occurred while attempting to decode the Jwt: I/O error on GET request for \"http://localhost:8080/realms/kickstart-realm/protocol/openid-connect/certs\": Read timed out","path":"/api/v1/addresses","msg":"[API Error] [getUserAddresses]"}
+{"level":30,"time":1789773316051,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789773344875,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}

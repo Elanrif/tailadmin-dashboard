@@ -14,7 +14,6 @@ import { toast } from "sonner";
 import { userAddressesQueryOptions } from "@/lib/addresses/api/queries/queries.client";
 import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/components/ui/modal";
-import ComponentCard from "@/components/common/ComponentCard";
 import Label from "@/components/form/Label";
 import Input from "@/components/form/input/InputField";
 import PhoneInput from "@/components/form/group-input/PhoneInput";
@@ -22,6 +21,7 @@ import Button from "@/components/ui/button/Button";
 import { LoaderIcon } from "lucide-react";
 import { useImageZoom } from "@/lib/shared/cloudinary/hooks/use-image-zoom";
 import { ImageZoomModal } from "@/lib/shared/cloudinary/components/image-zoom-modal";
+import Alert from "@/components/ui/alert/Alert";
 
 const countries = [
   { code: "KM", label: "+269" },
@@ -54,7 +54,7 @@ export default function UserMetaCard() {
       firstName: user?.firstName,
       lastName: user?.lastName,
       email: user?.email,
-      phoneNumber: user?.phoneNumber,
+      phoneNumber: user?.phoneNumber ?? "",
       avatarUrl: user?.avatarUrl ?? "",
     },
   });
@@ -246,20 +246,27 @@ export default function UserMetaCard() {
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
             {Object.keys(errors).length > 0 && (
-              <ComponentCard>
-                <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
-                  <span className="text-xl">⚠️</span>
-                  <div>
-                    <h4 className="font-semibold text-red-700">
-                      Impossible de soumettre le formulaire
-                    </h4>
-                    <p className="mt-1 text-sm text-red-600">
-                      Certains champs contiennent des erreurs. Veuillez les
-                      corriger avant de réessayer.
-                    </p>
-                  </div>
-                </div>
-              </ComponentCard>
+              <>
+                <Alert
+                  variant="error"
+                  title="Error Message"
+                  message={
+                    Object.values(errors)
+                      .map((e) => e?.message)
+                      .filter(Boolean)
+                      .join(" · ") ||
+                    "Please check the form for errors and try again."
+                  }
+                  showLink={false}
+                />
+                {/* Diagnostic temporaire — à retirer une fois le vrai problème identifié */}
+                {/* <pre
+                  className="mt-2 overflow-x-auto rounded bg-gray-100 p-2 
+                      text-xs text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                >
+                  {JSON.stringify(errors, null, 2)}
+                </pre> */}
+              </>
             )}
             <div className="custom-scrollbar overflow-y-auto px-2 pb-3">
               <div className="mt-4">

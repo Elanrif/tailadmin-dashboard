@@ -1,4 +1,4 @@
-export const accountKeys = {
-  all: ["users"] as const,
-  me: () => [...accountKeys.all, "me"] as const,
+export const currentUserKeys = {
+  all: ["current-user"] as const,
+  me: () => [...currentUserKeys.all, "me"] as const,
 };

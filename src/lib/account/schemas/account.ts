@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const CurrentUserSchema = z.object({
+const CurrentUserFields = {
   firstName: z
     .string()
     .trim()
@@ -22,7 +22,7 @@ export const CurrentUserSchema = z.object({
     .email({ message: "Invalid email address" })
     .max(255, "Email must be at most 255 characters"),
   avatarUrl: z.string().trim().max(1000, "Avatar URL is too long").optional(),
-});
+};
 
 const passwordSchema = z
   .string()
@@ -49,6 +49,8 @@ export const deleteFormSchema = z.object({
       },
     ),
 });
+
+export const CurrentUserSchema = z.object(CurrentUserFields).partial();
 
 export type CurrentUserFormValues = z.infer<typeof CurrentUserSchema>;
 export type ChangePwdFormValues = z.infer<typeof changePasswordSchema>;

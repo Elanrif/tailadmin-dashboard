@@ -55,6 +55,13 @@ export async function updateMyProfile(
   const parse = CurrentUserSchema.safeParse(data);
 
   if (!parse.success) {
+    logger.error(
+      {
+        context: "updateMyProfile",
+        error: parse.error,
+      },
+      "Validation error while updating profile",
+    );
     return {
       ok: false,
       error: fromZodError(parse.error, "updateMyProfile"),

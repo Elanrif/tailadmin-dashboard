@@ -22,7 +22,7 @@ export const createUserAddressMutation = mutationOptions<
 >({
   mutationFn: ({ payload }) => createUserAddress(payload),
 
-  onSettled: () => {
+  onSuccess: () => {
     void getQueryClient().invalidateQueries({
       queryKey: addressKeys.all,
     });
@@ -39,7 +39,7 @@ export const updateAddressMutation = mutationOptions<
 >({
   mutationFn: ({ addressId, payload }) => updateAddress(addressId, payload),
 
-  onSettled: () => {
+  onSuccess: () => {
     void getQueryClient().invalidateQueries({
       queryKey: addressKeys.all,
     });
@@ -56,7 +56,7 @@ export const setDefaultAddressMutation = mutationOptions<
 >({
   mutationFn: ({ userId, addressId }) => setDefaultAddress(userId, addressId),
 
-  onSettled: () => {
+  onSuccess: () => {
     void getQueryClient().invalidateQueries({
       queryKey: addressKeys.all,
     });
@@ -70,7 +70,7 @@ export const resetDefaultAddressMutation = mutationOptions<
 >({
   mutationFn: (userId) => resetDefaultAddress(userId),
 
-  onSettled: () => {
+  onSuccess: () => {
     void getQueryClient().invalidateQueries({
       queryKey: addressKeys.all,
     });
@@ -84,7 +84,7 @@ export const deleteUserAddressMutation = mutationOptions<
 >({
   mutationFn: (id) => deleteUserAddress(id),
 
-  onSettled: () => {
+  onSuccess: () => {
     void getQueryClient().invalidateQueries({
       queryKey: addressKeys.all,
     });
