@@ -29,7 +29,7 @@ export default function httpClient({
   );
   if (authenticated) {
     instance.interceptors.request.use(
-      process.env.AUTH_PROVIDER === "keycloak"
+      process.env.NEXT_PUBLIC_AUTH_PROVIDER === "keycloak"
         ? bearerTokenInterceptor
         : sessionCookieInterceptor,
     );

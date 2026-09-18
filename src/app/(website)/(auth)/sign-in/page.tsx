@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 export default function SignInPage() {
-  if (process.env.AUTH_PROVIDER === "keycloak") {
+  if (process.env.NEXT_PUBLIC_AUTH_PROVIDER === "keycloak") {
     return <KeycloakSignIn />;
   }
 

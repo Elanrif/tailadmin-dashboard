@@ -27,7 +27,8 @@ const SessionContext = createContext<SessionContextType | null>(null);
 
 export function AuthUserProvider({ children }: { children: React.ReactNode }) {
   const authSession = useAuthSession();
-  const isKeycloak = process.env.NEXT_PUBLIC_AUTH_PROVIDER === "keycloak";
+  const isKeycloak =
+    process.env.NEXT_PUBLIC_NEXT_PUBLIC_AUTH_PROVIDER === "keycloak";
   const [user, setUserState] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -89,7 +90,7 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
     ? authSession.status === "loading" || meLoading
     : isLoading;
 
-/*   const keycloakUser: User | null = authSession.data?.user
+  /*   const keycloakUser: User | null = authSession.data?.user
     ? {
         id: Number.parseInt(authSession.data.user.id, 10) || 0,
         email: authSession.data.user.email ?? "",

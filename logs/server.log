@@ -5078,3 +5078,24 @@
 {"level":50,"time":1789773224691,"pid":40572,"hostname":"ELTECH","timestamp":"2026-09-18T23:13:44.333Z","status":500,"error":"Internal Server Error","message":"An error occurred while attempting to decode the Jwt: I/O error on GET request for \"http://localhost:8080/realms/kickstart-realm/protocol/openid-connect/certs\": Read timed out","path":"/api/v1/addresses","msg":"[API Error] [getUserAddresses]"}
 {"level":30,"time":1789773316051,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
 {"level":30,"time":1789773344875,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":50,"time":1789774109509,"pid":40572,"hostname":"ELTECH","error":"Internal Server Error","timestamp":"2026-09-18T23:28:29.476Z","status":500,"message":"An error occurred while attempting to decode the Jwt: I/O error on GET request for \"http://localhost:8080/realms/kickstart-realm/protocol/openid-connect/certs\": Read timed out","path":"/api/v1/account/me","msg":"API error"}
+{"level":50,"time":1789774109510,"pid":40572,"hostname":"ELTECH","timestamp":"2026-09-18T23:28:29.476Z","status":500,"error":"Internal Server Error","message":"An error occurred while attempting to decode the Jwt: I/O error on GET request for \"http://localhost:8080/realms/kickstart-realm/protocol/openid-connect/certs\": Read timed out","path":"/api/v1/account/me","msg":"[API Error] [getMyProfile]"}
+{"level":30,"time":1789774109981,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile updated successfully"}
+{"level":30,"time":1789774110237,"pid":40572,"hostname":"ELTECH","id":17,"email":"elanrif.said@gmail.com","msg":"Profile fetched successfully"}
+{"level":50,"time":1789774348402,"pid":39040,"hostname":"ELTECH","error":"","msg":"API error"}
+{"level":50,"time":1789774348404,"pid":39040,"hostname":"ELTECH","status":500,"error":"Internal Server Error","message":"","msg":"[API Error] [getMyProfile]"}
+{"level":50,"time":1789774392893,"pid":39040,"hostname":"ELTECH","error":"","msg":"API error"}
+{"level":50,"time":1789774392894,"pid":39040,"hostname":"ELTECH","status":500,"error":"Internal Server Error","message":"","msg":"[API Error] [getMyProfile]"}
+{"level":50,"time":1789774699602,"pid":39040,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789774699615,"pid":39040,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [getMyProfile]"}
+{"level":50,"time":1789774714103,"pid":39040,"hostname":"ELTECH","error":"Request failed with status code 401","msg":"API error"}
+{"level":40,"time":1789774714105,"pid":39040,"hostname":"ELTECH","status":401,"error":"Internal Server Error","message":"Request failed with status code 401","msg":"[API Error] [getMyProfile]"}
+{"level":30,"time":1789774759072,"pid":39040,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1789774759683,"pid":39040,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"User signed in"}
+{"level":30,"time":1789774775444,"pid":39040,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1789774775755,"pid":39040,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"User signed in"}
+{"level":30,"time":1789774782098,"pid":39040,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1789774782381,"pid":39040,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"User signed in"}
+{"level":30,"time":1789775288734,"pid":32968,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1789775289058,"pid":32968,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"User signed in"}
+{"level":30,"time":1789775334340,"pid":32968,"hostname":"ELTECH","count":10,"msg":"Users fetched"}

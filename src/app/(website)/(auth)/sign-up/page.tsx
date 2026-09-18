@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 export default function SignUpPage() {
-  if (process.env.AUTH_PROVIDER === "keycloak") {
+  if (process.env.NEXT_PUBLIC_AUTH_PROVIDER === "keycloak") {
     return <KeycloakSignUp />;
   }
 

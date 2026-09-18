@@ -199,12 +199,12 @@ npm run lint
 ## Authentification Keycloak avec Auth.js
 
 L’application peut utiliser Keycloak comme second provider sans modifier le flux
-legacy. Le provider est sélectionné par `AUTH_PROVIDER` côté serveur et par
-`NEXT_PUBLIC_AUTH_PROVIDER` côté client :
+legacy. Le provider est sélectionné par `NEXT_PUBLIC_AUTH_PROVIDER` côté serveur et par
+`NEXT_PUBLIC_NEXT_PUBLIC_AUTH_PROVIDER` côté client :
 
 ```dotenv
-AUTH_PROVIDER=keycloak
 NEXT_PUBLIC_AUTH_PROVIDER=keycloak
+NEXT_PUBLIC_NEXT_PUBLIC_AUTH_PROVIDER=keycloak
 AUTH_KEYCLOAK_ID=<client_id>
 AUTH_KEYCLOAK_SECRET=<client_secret>
 AUTH_KEYCLOAK_ISSUER=https://<host>/realms/<realm>
@@ -212,7 +212,7 @@ AUTH_SECRET=<secret_aleatoire>
 ```
 
 Pour conserver l’authentification Spring Boot existante, utiliser
-`AUTH_PROVIDER=legacy` et `NEXT_PUBLIC_AUTH_PROVIDER=legacy`.
+`NEXT_PUBLIC_AUTH_PROVIDER=legacy` et `NEXT_PUBLIC_NEXT_PUBLIC_AUTH_PROVIDER=legacy`.
 
 ### Fonctionnement Keycloak
 
