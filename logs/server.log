@@ -4984,3 +4984,13 @@
 {"level":30,"time":1789580534122,"pid":7568,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
 {"level":50,"time":1789580889329,"pid":7568,"hostname":"ELTECH","error":"read ECONNRESET","msg":"API error"}
 {"level":50,"time":1789580889330,"pid":7568,"hostname":"ELTECH","status":500,"error":"Internal Server Error","message":"read ECONNRESET","msg":"[API Error] [getPosts]"}
+{"level":30,"time":1789715538482,"pid":34428,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":50,"time":1789715559146,"pid":34428,"hostname":"ELTECH","error":"Request failed with status code 403","msg":"API error"}
+{"level":40,"time":1789715559147,"pid":34428,"hostname":"ELTECH","status":403,"error":"Internal Server Error","message":"Request failed with status code 403","msg":"[API Error] [deletePost]"}
+{"level":50,"time":1789715572049,"pid":34428,"hostname":"ELTECH","error":"Request failed with status code 403","msg":"API error"}
+{"level":40,"time":1789715572050,"pid":34428,"hostname":"ELTECH","status":403,"error":"Internal Server Error","message":"Request failed with status code 403","msg":"[API Error] [deletePost]"}
+{"level":30,"time":1789715580410,"pid":34428,"hostname":"ELTECH","id":5,"msg":"Post deleted"}
+{"level":30,"time":1789715580732,"pid":34428,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789715586243,"pid":34428,"hostname":"ELTECH","id":3,"msg":"Post deleted"}
+{"level":30,"time":1789715586581,"pid":34428,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}
+{"level":30,"time":1789715752244,"pid":34428,"hostname":"ELTECH","count":3,"msg":"Posts fetched"}

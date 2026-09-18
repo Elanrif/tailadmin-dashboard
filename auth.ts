@@ -69,6 +69,7 @@ export const {
       issuer: process.env.AUTH_KEYCLOAK_ISSUER,
     }),
   ],
+  trustHost: process.env.AUTH_TRUST_HOST === "true",
   session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, account, profile }) {
