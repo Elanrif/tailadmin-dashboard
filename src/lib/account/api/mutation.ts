@@ -13,6 +13,8 @@ import {
   CurrentUserFormValues,
   DeleteFormValues,
 } from "@/lib/account/schemas/account";
+import { getQueryClient } from "@/lib/query-client";
+import { currentUserKeys } from "./queries";
 
 export const updateMyProfileMutation = mutationOptions<
   User,
@@ -21,6 +23,9 @@ export const updateMyProfileMutation = mutationOptions<
   unknown
 >({
   mutationFn: (values) => updateMyProfile(values),
+  onSuccess: () => {
+    void getQueryClient().invalidateQueries({ queryKey: currentUserKeys.all });
+  }
 });
 
 export const updateMyPasswordMutation = mutationOptions<
@@ -30,6 +35,9 @@ export const updateMyPasswordMutation = mutationOptions<
   unknown
 >({
   mutationFn: (values) => changeMyPassword(values),
+  onSuccess: () => {
+    void getQueryClient().invalidateQueries({ queryKey: currentUserKeys.all });
+  }
 });
 
 export const deleteMyAccountMutation = mutationOptions<
@@ -39,4 +47,7 @@ export const deleteMyAccountMutation = mutationOptions<
   unknown
 >({
   mutationFn: (values) => deleteMyAccount(values),
+  onSuccess: () => {
+    void getQueryClient().invalidateQueries({ queryKey: currentUserKeys.all });
+  }
 });

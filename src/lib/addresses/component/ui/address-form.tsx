@@ -28,6 +28,7 @@ import { User } from "@/lib/users/api/types";
 import { usersQueryOptions } from "@/lib/users/api/queries/queries.client";
 import environment from "@/config/environment.config";
 import ComponentCard from "@/components/common/ComponentCard";
+import Alert from "@/components/ui/alert/Alert";
 
 export default function AddressForm({
   initialData,
@@ -184,6 +185,29 @@ export default function AddressForm({
         </p>
       </div>
 
+      {Object.keys(errors).length > 0 && (
+        <>
+          <Alert
+            variant="error"
+            title="Error Message"
+            message={
+              Object.values(errors)
+                .map((e) => e?.message)
+                .filter(Boolean)
+                .join(" · ") ||
+              "Please check the form for errors and try again."
+            }
+            showLink={false}
+          />
+          {/* Diagnostic temporaire — à retirer une fois le vrai problème identifié */}
+          {/* <pre
+                  className="mt-2 overflow-x-auto rounded bg-gray-100 p-2 
+                      text-xs text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                >
+                  {JSON.stringify(errors, null, 2)}
+                </pre> */}
+        </>
+      )}
       {submitError && (
         <ComponentCard>
           <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">

@@ -1,4 +1,5 @@
 "use client";
+
 import { ImageUpload } from "@/lib/shared/cloudinary/components/image-upload";
 import Image from "next/image";
 import { useSession } from "@/lib/auth/components/auth.context";
@@ -17,22 +18,21 @@ import ComponentCard from "@/components/common/ComponentCard";
 import Button from "@/components/ui/button/Button";
 import { useImageZoom } from "@/lib/shared/cloudinary/hooks/use-image-zoom";
 import { ImageZoomModal } from "@/lib/shared/cloudinary/components/image-zoom-modal";
+import Alert from "@/components/ui/alert/Alert";
+import { useState } from "react";
 
 export default function UserImageCard() {
   const { user, setUser } = useSession();
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const { previewImage, openZoom, closeZoom } = useImageZoom();
   const {
     handleSubmit,
     setValue,
     control,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm<CurrentUserFormValues>({
     resolver: zodResolver(CurrentUserSchema),
     defaultValues: {
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      email: user?.email,
-      phoneNumber: user?.phoneNumber,
       avatarUrl: user?.avatarUrl,
     },
   });
@@ -59,6 +59,8 @@ export default function UserImageCard() {
 
   const updateMutation = useMutation(updateMyProfileMutation);
   const onSubmit = (values: CurrentUserFormValues) => {
+    setSubmitError(null);
+
     updateMutation.mutate(values, {
       onSuccess: (data) => {
         setUser(data);
@@ -69,6 +71,7 @@ export default function UserImageCard() {
           toast.error("Votre session a expiré, veuillez vous reconnecter.");
           return;
         }
+        setSubmitError(error.message);
         toast.error(error.message);
       },
     });
@@ -78,6 +81,36 @@ export default function UserImageCard() {
   const isButtonDisabled = !currentAvatarUrl;
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      {Object.keys(errors).length > 0 && (
+        <>
+          <Alert
+            variant="error"
+            title="Error Message"
+            message={
+              Object.values(errors)
+                .map((e) => e?.message)
+                .filter(Boolean)
+                .join(" · ") ||
+              "Please check the form for errors and try again."
+            }
+            showLink={false}
+          />
+          {/* Diagnostic temporaire — à retirer une fois le vrai problème identifié */}
+          <pre className="mt-2 overflow-x-auto rounded bg-gray-100 p-2 
+          text-xs text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+            {JSON.stringify(errors, null, 2)}
+          </pre>
+        </>
+      )}
+
+      {submitError && (
+        <Alert
+          variant="error"
+          title="Failed to save user"
+          message={submitError}
+          showLink={false}
+        />
+      )}
       <ComponentCard
         title="Change Profile Picture"
         desc="Update your profile picture."

@@ -25,12 +25,43 @@ const {
 
 const logger = getLogger("server");
 
+export async function getMyProfile(): Promise<Result<User, ApiError>> {
+  try {
+    const response = await apiClient(true).get<User>(`${accountUrl}/me`);
+
+    logger.info(
+      {
+        id: response.data.id,
+        email: response.data.email,
+      },
+      "Profile fetched successfully",
+    );
+
+    return {
+      ok: true,
+      data: response.data,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error: ApiError(error, "getMyProfile"),
+    };
+  }
+}
+
 export async function updateMyProfile(
   data: CurrentUserFormValues,
 ): Promise<Result<User, ApiError>> {
   const parse = CurrentUserSchema.safeParse(data);
 
   if (!parse.success) {
+    logger.error(
+      {
+        context: "updateMyProfile",
+        error: parse.error,
+      },
+      "Validation error while updating profile",
+    );
     return {
       ok: false,
       error: fromZodError(parse.error, "updateMyProfile"),

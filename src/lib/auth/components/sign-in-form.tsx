@@ -26,8 +26,8 @@ export default function SignInForm() {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      email: process.env.NEXT_PUBLIC_LOGIN_EMAIL ?? "",
-      password: process.env.NEXT_PUBLIC_LOGIN_PASSWORD ?? "",
+      email: "",
+      password: "",
     },
   });
 

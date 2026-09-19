@@ -28,6 +28,7 @@ import {
 import { Comment } from "../../api/types";
 import { CommentsQueryProps } from "../comments";
 import environment from "@/config/environment.config";
+import Alert from "@/components/ui/alert/Alert";
 
 interface CommentFormProps {
   initialData: Comment | null;
@@ -133,11 +134,27 @@ export function CommentForm({
       className="w-full space-y-4 px-1 sm:space-y-5 sm:px-0"
     >
       {Object.keys(errors).length > 0 && (
-        <ComponentCard>
-          <p className="text-xs text-error-500 sm:text-sm">
-            Some fields contain errors. Please fix them.
-          </p>
-        </ComponentCard>
+        <>
+          <Alert
+            variant="error"
+            title="Error Message"
+            message={
+              Object.values(errors)
+                .map((e) => e?.message)
+                .filter(Boolean)
+                .join(" · ") ||
+              "Please check the form for errors and try again."
+            }
+            showLink={false}
+          />
+          {/* Diagnostic temporaire — à retirer une fois le vrai problème identifié */}
+          {/* <pre
+                  className="mt-2 overflow-x-auto rounded bg-gray-100 p-2 
+                      text-xs text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                >
+                  {JSON.stringify(errors, null, 2)}
+                </pre> */}
+        </>
       )}
 
       {submitError && (

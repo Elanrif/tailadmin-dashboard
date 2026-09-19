@@ -206,12 +206,27 @@ export function UserForm({ initialData, pageTitle, onSaved }: UserFormProps) {
       {/* Content scrollable */}
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:p-6">
         {Object.keys(errors).length > 0 && (
-          <Alert
-            variant="error"
-            title="Error Message"
-            message="Please check the form for errors and try again."
-            showLink={false}
-          />
+          <>
+            <Alert
+              variant="error"
+              title="Error Message"
+              message={
+                Object.values(errors)
+                  .map((e) => e?.message)
+                  .filter(Boolean)
+                  .join(" · ") ||
+                "Please check the form for errors and try again."
+              }
+              showLink={false}
+            />
+            {/* Diagnostic temporaire — à retirer une fois le vrai problème identifié */}
+            {/* <pre
+                  className="mt-2 overflow-x-auto rounded bg-gray-100 p-2 
+                      text-xs text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                >
+                  {JSON.stringify(errors, null, 2)}
+                </pre> */}
+          </>
         )}
 
         {submitError && (

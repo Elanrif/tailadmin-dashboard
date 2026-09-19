@@ -16,7 +16,7 @@ export const createUserMutation = mutationOptions<
   unknown
 >({
   mutationFn: (payload) => createUser(payload),
-  onSettled: () => {
+  onSuccess: () => {
     void getQueryClient().invalidateQueries({ queryKey: userKeys.all });
   },
 });
@@ -28,7 +28,7 @@ export const updateUserMutation = mutationOptions<
   unknown
 >({
   mutationFn: ({ id, values }) => updateUser(id, values),
-  onSettled: () => {
+  onSuccess: () => {
     void getQueryClient().invalidateQueries({ queryKey: userKeys.all });
   },
 });
@@ -40,7 +40,7 @@ export const deleteUserMutation = mutationOptions<
   unknown
 >({
   mutationFn: (id) => deleteUser(id),
-  onSettled: () => {
+  onSuccess: () => {
     void getQueryClient().invalidateQueries({ queryKey: userKeys.all });
     void getQueryClient().invalidateQueries({ queryKey: postKeys.all });
     void getQueryClient().invalidateQueries({ queryKey: commentKeys.all });
