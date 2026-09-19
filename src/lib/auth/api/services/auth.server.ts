@@ -42,7 +42,7 @@ export async function signIn(
   login: LoginFormValues,
 ): Promise<Result<User, ApiError>> {
   if (process.env.NEXT_PUBLIC_AUTH_PROVIDER === "keycloak") {
-    await keycloakSignIn("keycloak", { redirectTo: "/" });
+    await keycloakSignIn("keycloak", { redirectTo: "/dashboard" });
     return { ok: true, data: {} as User };
   }
 

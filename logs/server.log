@@ -5099,3 +5099,6 @@
 {"level":30,"time":1789775288734,"pid":32968,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
 {"level":30,"time":1789775289058,"pid":32968,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"User signed in"}
 {"level":30,"time":1789775334340,"pid":32968,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
+{"level":30,"time":1789813496024,"pid":31356,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789813856850,"pid":31356,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789813886421,"pid":31356,"hostname":"ELTECH","count":10,"msg":"Users fetched"}

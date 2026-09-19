@@ -36,5 +36,5 @@ export async function GET(request: Request) {
   // stockés correctement dans les cookies) vers le provider dédié
   // "keycloak-register" (voir auth.ts), qui pointe sur
   // /protocol/openid-connect/registrations au lieu de /auth.
-  return signIn("keycloak-register", { redirectTo: "/" });
+  return signIn("keycloak-register", { redirectTo: "/dashboard" });
 }

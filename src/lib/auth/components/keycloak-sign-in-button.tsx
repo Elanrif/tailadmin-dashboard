@@ -10,7 +10,7 @@ export function KeycloakSignInButton() {
   return (
     <button
       type="button"
-      onClick={() => void signIn("keycloak", { callbackUrl: "/" })}
+      onClick={() => void signIn("keycloak", { callbackUrl: "/dashboard" })}
       className="inline-flex items-center justify-center w-full gap-3 
       px-7 py-3 text-sm font-normal text-gray-700 transition-colors
        bg-gray-100 rounded-lg hover:bg-gray-200 hover:text-gray-800

@@ -22,15 +22,14 @@ export default function MainHeader() {
   const { user, isLoading, signOut } = useSession();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isKeycloak =
-    process.env.NEXT_PUBLIC_NEXT_PUBLIC_AUTH_PROVIDER === "keycloak";
+  const isKeycloak = process.env.NEXT_PUBLIC_AUTH_PROVIDER === "keycloak";
 
   const startKeycloakRegistration = () => {
     window.location.assign("/api/auth/keycloak/register");
   };
 
   const startKeycloakSignIn = () => {
-    void signIn("keycloak", { callbackUrl: "/" });
+    void signIn("keycloak", { callbackUrl: "/dashboard" });
   };
 
   const isActiveLink = (href: string) => {
