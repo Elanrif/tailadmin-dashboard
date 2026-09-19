@@ -5104,3 +5104,5 @@
 {"level":30,"time":1789813886421,"pid":31356,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
 {"level":30,"time":1789813926115,"pid":31356,"hostname":"ELTECH","id":16,"msg":"User deleted"}
 {"level":30,"time":1789813927817,"pid":31356,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
+{"level":30,"time":1789815499192,"pid":31356,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789815503162,"pid":31356,"hostname":"ELTECH","count":10,"msg":"Users fetched"}

@@ -2,6 +2,7 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 const API_URL = `${process.env.API_URL ?? "http://localhost:8081"}/api/v1`;
 
 const environment = {
+  env: process.env.ENV ?? "local",
   app: {
     name: process.env.APP_NAME ?? "Nextjs Starter Kit",
     url: APP_URL,
@@ -10,6 +11,7 @@ const environment = {
   apiBaseUrl: `${APP_URL}/api`,
   apiProxyBase: `/api`,
   api: {
+    backendUrl: process.env.API_URL ?? "http://localhost:8081",
     rest: {
       endpoints: {
         addresses: `${API_URL}/addresses`,
@@ -25,6 +27,17 @@ const environment = {
           resetPassword: `${API_URL}/auth/reset-password`,
         },
       },
+    },
+  },
+  auth: {
+    // "legacy" (cookie de session Spring) | "keycloak" (OIDC via NextAuth)
+    provider: process.env.NEXT_PUBLIC_AUTH_PROVIDER ?? "legacy",
+    secret: process.env.AUTH_SECRET,
+    trustHost: process.env.AUTH_TRUST_HOST === "true",
+    keycloak: {
+      clientId: process.env.AUTH_KEYCLOAK_ID,
+      clientSecret: process.env.AUTH_KEYCLOAK_SECRET,
+      issuer: process.env.AUTH_KEYCLOAK_ISSUER,
     },
   },
   pagination: {
@@ -43,8 +56,7 @@ const environment = {
     apiKey: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
     apiSecret: process.env.CLOUDINARY_API_SECRET,
     uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
-    uploadFolder:
-      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_FOLDER ?? "nextjs-starter",
+    uploadFolder: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_FOLDER ?? "nextjs-starter",
     secureDistribution:
       process.env.NEXT_PUBLIC_CLOUDINARY_SECURE_DISTRIBUTION || undefined,
     privateCdn: process.env.NEXT_PUBLIC_CLOUDINARY_PRIVATE_CDN === "true",
@@ -61,7 +73,6 @@ const environment = {
   log: {
     client: {
       level: process.env.NEXT_PUBLIC_LOG_LEVEL || "info",
-      // "console" → browser devtools | "none" → silence all (useful in test/CI)
       output: process.env.NEXT_PUBLIC_LOG_OUTPUT || "console",
     },
     server: {
