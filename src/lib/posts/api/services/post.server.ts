@@ -36,7 +36,7 @@ export async function getPosts(
   filters: PostFilters = {},
 ): Promise<Result<PostsResponse, ApiError>> {
   try {
-    const res = await apiClient(true).get<PostsResponse>(postsUrl, {
+    const res = await apiClient().get<PostsResponse>(postsUrl, {
       params: filters,
     });
     logger.info({ count: res.data?.content?.length || 0 }, "Posts fetched");
@@ -134,7 +134,8 @@ export async function updatePost(
   }
 }
 
-export async function deletePost(id: number): Promise<Result<void, ApiError>> {
+export async function deletePost(
+  id: number): Promise<Result<void, ApiError>> {
   const idCheck = checkValidId(id);
   if (idCheck) return idCheck;
 

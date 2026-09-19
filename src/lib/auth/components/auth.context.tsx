@@ -2,7 +2,7 @@
 
 import { User } from "@/lib/users/api/types";
 import { createContext, useContext, useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   clearAuthSession,
   getStoredAuthUser,
@@ -10,6 +10,12 @@ import {
   subscribeToAuthSessionClear,
 } from "@/lib/auth/auth-session";
 import { logoutMutation } from "@/lib/auth/api/mutation";
+import {
+  signOut as authSignOut,
+  useSession as useAuthSession,
+} from "next-auth/react";
+import { myProfileQueryOptions } from "@/lib/account/api/queries/queries.client";
+import environment from "@/config/environment.config";
 
 interface SessionContextType {
   user: User | null;
@@ -19,8 +25,14 @@ interface SessionContextType {
 }
 
 const SessionContext = createContext<SessionContextType | null>(null);
-
+const {
+  auth: { provider },
+} = environment;
+  
 export function AuthUserProvider({ children }: { children: React.ReactNode }) {
+  const authSession = useAuthSession();
+  const isKeycloak =
+    provider === "keycloak";
   const [user, setUserState] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -55,6 +67,11 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
 
   const logoutMutationHook = useMutation(logoutMutation);
   const signOut = () => {
+    if (isKeycloak) {
+      void authSignOut({ callbackUrl: "/sign-in" });
+      return;
+    }
+
     logoutMutationHook.mutate(undefined, {
       onSuccess: () => {
         clearAuthSession();
@@ -67,8 +84,25 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const { data: meUser, isLoading: meLoading } = useQuery({
+    ...myProfileQueryOptions(),
+    enabled: isKeycloak && authSession.status === "authenticated",
+  });
+
+  const sessionUser = isKeycloak ? (meUser ?? null) : user;
+  const sessionLoading = isKeycloak
+    ? authSession.status === "loading" || meLoading
+    : isLoading;
+
   return (
-    <SessionContext.Provider value={{ user, isLoading, setUser, signOut }}>
+    <SessionContext.Provider
+      value={{
+        user: sessionUser,
+        isLoading: sessionLoading,
+        setUser,
+        signOut,
+      }}
+    >
       {children}
     </SessionContext.Provider>
   );

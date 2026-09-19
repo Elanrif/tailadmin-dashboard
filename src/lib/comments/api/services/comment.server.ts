@@ -126,14 +126,14 @@ export async function updateComment(
 
 export async function deleteComment(
   id: number,
-): Promise<Result<{ success: boolean }, ApiError>> {
+): Promise<Result<void, ApiError>> {
   const idCheck = checkValidId(id, "comment");
   if (idCheck) return idCheck;
 
   try {
     await apiClient(true).delete(`${commentsUrl}/${id}`);
     logger.info({ id }, "Comment deleted successfully");
-    return { ok: true, data: { success: true } };
+    return { ok: true, data: undefined };
   } catch (error) {
     return { ok: false, error: ApiError(error, "deleteComment") };
   }

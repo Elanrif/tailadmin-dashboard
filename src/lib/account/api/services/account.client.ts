@@ -16,8 +16,18 @@ const {
   },
 } = proxyEnvironment;
 
-// --- Mutations ---
+// --- Queries ---
 
+export async function getMyProfile(): Promise<User> {
+  try {
+    const res = await frontendHttp().get<User>(`${accountUrl}/me`);
+    return res.data;
+  } catch (error) {
+    throw unwrapApiError(error);
+  }
+}
+
+// --- Mutations ---
 export async function updateMyProfile(
   payload: CurrentUserFormValues,
 ): Promise<User> {

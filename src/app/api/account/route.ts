@@ -2,10 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   changeMyPassword,
   deleteMyAccount,
+  getMyProfile,
   updateMyProfile,
 } from "@/lib/account/api/services/account.server";
 
 export const dynamic = "force-dynamic";
+
+export async function GET() {
+  const response = await getMyProfile();
+
+  if (!response.ok) {
+    return NextResponse.json(response.error, {
+      status: response.error.status ?? 500,
+    });
+  }
+  return NextResponse.json(response.data, { status: 200 });
+}
 
 export async function PATCH(req: NextRequest) {
   const payload = await req.json();

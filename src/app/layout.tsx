@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { SidebarProvider } from "@/context/SidebarContext";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthUserProvider } from "@/lib/auth/components/auth.context";
+import { SessionProvider } from "next-auth/react";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -31,12 +32,14 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
           <QueryProvider>
-            <AuthUserProvider>
-              <SidebarProvider>
-                <Toaster />
-                {children}
-              </SidebarProvider>
-            </AuthUserProvider>
+            <SessionProvider>
+              <AuthUserProvider>
+                <SidebarProvider>
+                  <Toaster />
+                  {children}
+                </SidebarProvider>
+              </AuthUserProvider>
+            </SessionProvider>
           </QueryProvider>
         </ThemeProvider>
       </body>

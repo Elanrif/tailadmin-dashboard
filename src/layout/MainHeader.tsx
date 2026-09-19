@@ -5,8 +5,10 @@ import { useSession } from "@/lib/auth/components/auth.context";
 import { UserRole } from "@/lib/users/api/types";
 import Image from "next/image";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
+import environment from "@/config/environment.config";
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -17,10 +19,23 @@ const navItems = [
   { label: "Pages", href: "#pages" },
 ];
 
+const {
+  auth: { provider },
+} = environment;
+
 export default function MainHeader() {
   const { user, isLoading, signOut } = useSession();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isKeycloak = provider === "keycloak";
+
+  const startKeycloakRegistration = () => {
+    window.location.assign("/api/auth/keycloak/register");
+  };
+
+  const startKeycloakSignIn = () => {
+    void signIn("keycloak", { callbackUrl: "/dashboard" });
+  };
 
   const isActiveLink = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -124,18 +139,38 @@ export default function MainHeader() {
                 </div>
               ) : (
                 <>
-                  <Link
-                    href="/sign-in"
-                    className="hidden text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-50 sm:inline-flex"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/sign-up"
-                    className="hidden rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:-translate-y-0.5 hover:bg-indigo-500 sm:inline-flex"
-                  >
-                    Sign Up
-                  </Link>
+                  {isKeycloak ? (
+                    <button
+                      type="button"
+                      onClick={startKeycloakSignIn}
+                      className="hidden text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-50 sm:inline-flex"
+                    >
+                      Sign In
+                    </button>
+                  ) : (
+                    <Link
+                      href="/sign-in"
+                      className="hidden text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-50 sm:inline-flex"
+                    >
+                      Sign In
+                    </Link>
+                  )}
+                  {isKeycloak ? (
+                    <button
+                      type="button"
+                      onClick={startKeycloakRegistration}
+                      className="hidden rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:-translate-y-0.5 hover:bg-indigo-500 sm:inline-flex"
+                    >
+                      Sign Up
+                    </button>
+                  ) : (
+                    <Link
+                      href="/sign-up"
+                      className="hidden rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:-translate-y-0.5 hover:bg-indigo-500 sm:inline-flex"
+                    >
+                      Sign Up
+                    </Link>
+                  )}
                 </>
               )}
             </>
@@ -204,20 +239,40 @@ export default function MainHeader() {
                 </>
               ) : (
                 <>
-                  <Link
-                    href="/sign-in"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/sign-up"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="inline-flex items-center justify-center rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-500"
-                  >
-                    Sign Up
-                  </Link>
+                  {isKeycloak ? (
+                    <button
+                      type="button"
+                      onClick={startKeycloakSignIn}
+                      className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
+                    >
+                      Sign In
+                    </button>
+                  ) : (
+                    <Link
+                      href="/sign-in"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
+                    >
+                      Sign In
+                    </Link>
+                  )}
+                  {isKeycloak ? (
+                    <button
+                      type="button"
+                      onClick={startKeycloakRegistration}
+                      className="inline-flex items-center justify-center rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-500"
+                    >
+                      Sign Up
+                    </button>
+                  ) : (
+                    <Link
+                      href="/sign-up"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="inline-flex items-center justify-center rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-500"
+                    >
+                      Sign Up
+                    </Link>
+                  )}
                 </>
               )}
             </div>
