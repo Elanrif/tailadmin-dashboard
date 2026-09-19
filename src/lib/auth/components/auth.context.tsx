@@ -15,6 +15,7 @@ import {
   useSession as useAuthSession,
 } from "next-auth/react";
 import { myProfileQueryOptions } from "@/lib/account/api/queries/queries.client";
+import environment from "@/config/environment.config";
 
 interface SessionContextType {
   user: User | null;
@@ -24,11 +25,14 @@ interface SessionContextType {
 }
 
 const SessionContext = createContext<SessionContextType | null>(null);
-
+const {
+  auth: { provider },
+} = environment;
+  
 export function AuthUserProvider({ children }: { children: React.ReactNode }) {
   const authSession = useAuthSession();
   const isKeycloak =
-    process.env.NEXT_PUBLIC_AUTH_PROVIDER === "keycloak";
+    provider === "keycloak";
   const [user, setUserState] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 

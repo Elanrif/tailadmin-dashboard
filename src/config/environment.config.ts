@@ -35,9 +35,9 @@ const environment = {
     secret: process.env.AUTH_SECRET,
     trustHost: process.env.AUTH_TRUST_HOST === "true",
     keycloak: {
-      clientId: process.env.AUTH_KEYCLOAK_ID,
-      clientSecret: process.env.AUTH_KEYCLOAK_SECRET,
-      issuer: process.env.AUTH_KEYCLOAK_ISSUER,
+      clientId: process.env.AUTH_KEYCLOAK_ID ?? "",
+      clientSecret: process.env.AUTH_KEYCLOAK_SECRET ?? "",
+      issuer: process.env.AUTH_KEYCLOAK_ISSUER ?? "",
     },
   },
   pagination: {

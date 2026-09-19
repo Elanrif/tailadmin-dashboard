@@ -1,13 +1,17 @@
 import SignUpForm from "@/lib/auth/components/sign-up-form";
 import KeycloakSignUp from "@/lib/auth/components/keycloak-sign-up-button";
+import environment from "@/config/environment.config";
 
 export const metadata = {
   title: "Sign Up",
   description: "Page d'inscription",
 };
+const {
+  auth: { provider },
+} = environment;
 
 export default function SignUpPage() {
-  if (process.env.NEXT_PUBLIC_AUTH_PROVIDER === "keycloak") {
+  if (provider === "keycloak") {
     return <KeycloakSignUp />;
   }
 

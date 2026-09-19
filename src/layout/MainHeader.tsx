@@ -8,6 +8,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
+import environment from "@/config/environment.config";
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -18,11 +19,15 @@ const navItems = [
   { label: "Pages", href: "#pages" },
 ];
 
+const {
+  auth: { provider },
+} = environment;
+
 export default function MainHeader() {
   const { user, isLoading, signOut } = useSession();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isKeycloak = process.env.NEXT_PUBLIC_AUTH_PROVIDER === "keycloak";
+  const isKeycloak = provider === "keycloak";
 
   const startKeycloakRegistration = () => {
     window.location.assign("/api/auth/keycloak/register");

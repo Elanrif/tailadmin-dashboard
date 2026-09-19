@@ -38,10 +38,14 @@ const {
 
 const logger = getLogger("server");
 
+const {
+  auth: { provider },
+} = environment;
+
 export async function signIn(
   login: LoginFormValues,
 ): Promise<Result<User, ApiError>> {
-  if (process.env.NEXT_PUBLIC_AUTH_PROVIDER === "keycloak") {
+  if (provider === "keycloak") {
     await keycloakSignIn("keycloak", { redirectTo: "/dashboard" });
     return { ok: true, data: {} as User };
   }
@@ -132,7 +136,7 @@ export async function forgotPassword(
 }
 
 export async function logout(): Promise<Result<void, ApiError>> {
-  if (process.env.NEXT_PUBLIC_AUTH_PROVIDER === "keycloak") {
+  if (provider === "keycloak") {
     await keycloakSignOut({ redirectTo: "/sign-in" });
     return { ok: true, data: undefined };
   }

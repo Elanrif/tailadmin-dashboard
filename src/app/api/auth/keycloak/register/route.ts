@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import { signIn } from "../../../../../../auth";
+import environment from "@/config/environment.config";
 
+const {
+  auth: { 
+    keycloak: { issuer, clientId }
+   },
+} = environment;
 export async function GET(request: Request) {
-  const issuer = process.env.AUTH_KEYCLOAK_ISSUER;
-  const clientId = process.env.AUTH_KEYCLOAK_ID;
 
   if (!issuer || !clientId) {
     return NextResponse.json(

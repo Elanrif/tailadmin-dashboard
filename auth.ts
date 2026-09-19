@@ -2,6 +2,7 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import Keycloak from "next-auth/providers/keycloak";
 import type { JWT } from "next-auth/jwt";
 import { UserRole } from "@/lib/users/api/types";
+import environment from "@/config/environment.config";
 
 type KeycloakProfile = {
   sub?: string;
@@ -11,6 +12,14 @@ type KeycloakProfile = {
   family_name?: string;
   realm_access?: { roles?: string[] };
 };
+
+const {
+  api: { backendUrl },
+  auth: {
+    trustHost,
+    keycloak: { clientId, clientSecret, issuer },
+  },
+} = environment;
 
 function mapRolesToUserRole(roles: string[] = []): UserRole {
   return roles.some((role) => role.toUpperCase().includes("ADMIN"))
@@ -43,7 +52,7 @@ function extractRealmRoles(accessToken?: string): string[] {
 // par email, et GET /api/v1/account (SecurityUtils.getCurrentUser()) le
 // résout de la même façon, que l'auth soit une session ou un JWT Keycloak.
 async function fetchDbUser(accessToken: string) {
-  const apiUrl = process.env.API_URL ?? "http://localhost:8081";
+  const apiUrl = backendUrl;
   const response = await fetch(`${apiUrl}/api/v1/account`, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
@@ -64,13 +73,13 @@ async function fetchDbUser(accessToken: string) {
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
     const response = await fetch(
-      `${process.env.AUTH_KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
+      `${issuer}/protocol/openid-connect/token`,
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
-          client_id: process.env.AUTH_KEYCLOAK_ID ?? "",
-          client_secret: process.env.AUTH_KEYCLOAK_SECRET ?? "",
+          client_id: clientId,
+          client_secret: clientSecret,
           grant_type: "refresh_token",
           refresh_token: token.refresh_token ?? "",
         }),
@@ -107,9 +116,9 @@ export const {
 } = NextAuth({
   providers: [
     Keycloak({
-      clientId: process.env.AUTH_KEYCLOAK_ID,
-      clientSecret: process.env.AUTH_KEYCLOAK_SECRET,
-      issuer: process.env.AUTH_KEYCLOAK_ISSUER,
+      clientId: clientId,
+      clientSecret: clientSecret,
+      issuer: issuer,
     }),
     // Même client Keycloak, mais pointé sur /registrations au lieu de /auth,
     // pour le bouton "Sign up". NextAuth génère PKCE + state normalement pour
@@ -120,15 +129,15 @@ export const {
     Keycloak({
       id: "keycloak-register",
       name: "Keycloak (register)",
-      clientId: process.env.AUTH_KEYCLOAK_ID,
-      clientSecret: process.env.AUTH_KEYCLOAK_SECRET,
-      issuer: process.env.AUTH_KEYCLOAK_ISSUER,
+      clientId: clientId,
+      clientSecret: clientSecret,
+      issuer: issuer,
       authorization: {
-        url: `${(process.env.AUTH_KEYCLOAK_ISSUER ?? "").replace(/\/$/, "")}/protocol/openid-connect/registrations`,
+        url: `${(issuer).replace(/\/$/, "")}/protocol/openid-connect/registrations`,
       },
     }),
   ],
-  trustHost: process.env.AUTH_TRUST_HOST === "true",
+  trustHost: trustHost,
   session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, account, profile }) {

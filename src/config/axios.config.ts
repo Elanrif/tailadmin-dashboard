@@ -8,8 +8,13 @@ import {
 import { expiredSessionInterceptor } from "@config/interceptors/auth.interceptor";
 import { sessionCookieInterceptor } from "@config/interceptors/auth.interceptor";
 import { bearerTokenInterceptor } from "@config/interceptors/bearer-token.interceptor";
-
+import environment from "./environment.config";
 export { baseRequestConfig } from "@config/axios/base-request.config";
+
+const {
+  auth: { provider },
+} = environment;
+
 export default function httpClient({
   logger,
   authenticated = false,
@@ -29,7 +34,7 @@ export default function httpClient({
   );
   if (authenticated) {
     instance.interceptors.request.use(
-      process.env.NEXT_PUBLIC_AUTH_PROVIDER === "keycloak"
+      provider === "keycloak"
         ? bearerTokenInterceptor
         : sessionCookieInterceptor,
     );
