@@ -5130,3 +5130,56 @@
 {"level":30,"time":1789817777585,"pid":31356,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
 {"level":30,"time":1789817801693,"pid":31356,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
 {"level":30,"time":1789817802193,"pid":31356,"hostname":"ELTECH","count":10,"msg":"Users fetched"}
+{"level":30,"time":1789818752131,"pid":18532,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789818754080,"pid":18532,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789818831144,"pid":18532,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789818832860,"pid":18532,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789818836693,"pid":18532,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789818844370,"pid":18532,"hostname":"ELTECH","id":5,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789818847505,"pid":18532,"hostname":"ELTECH","id":5,"liked":false,"msg":"Post like toggled"}
+{"level":30,"time":1789818849408,"pid":18532,"hostname":"ELTECH","id":5,"liked":true,"msg":"Post like toggled"}
+{"level":30,"time":1789818869190,"pid":18532,"hostname":"ELTECH","id":21,"content":"yeah for sure !","msg":"Comment created successfully"}
+{"level":30,"time":1789818869784,"pid":18532,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789818888435,"pid":18532,"hostname":"ELTECH","id":21,"msg":"Comment deleted successfully"}
+{"level":30,"time":1789819023214,"pid":18532,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":50,"time":1789819024046,"pid":18532,"hostname":"ELTECH","error":"Not Found","timestamp":"2026-09-19T11:57:04.041Z","status":404,"message":"Comment not found: 21","path":"/api/v1/comments/21","msg":"API error"}
+{"level":40,"time":1789819024047,"pid":18532,"hostname":"ELTECH","timestamp":"2026-09-19T11:57:04.041Z","status":404,"error":"Not Found","message":"Comment not found: 21","path":"/api/v1/comments/21","msg":"[API Error] [deleteComment]"}
+{"level":30,"time":1789819043449,"pid":18532,"hostname":"ELTECH","id":22,"content":"for sure","msg":"Comment created successfully"}
+{"level":30,"time":1789819044265,"pid":18532,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789819055901,"pid":18532,"hostname":"ELTECH","id":22,"content":"for sure !","msg":"Comment updated successfully"}
+{"level":30,"time":1789819056416,"pid":18532,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789819060027,"pid":18532,"hostname":"ELTECH","id":22,"msg":"Comment deleted successfully"}
+{"level":30,"time":1789819069846,"pid":18532,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789819071306,"pid":18532,"hostname":"ELTECH","count":5,"msg":"Posts fetched"}
+{"level":30,"time":1789819071826,"pid":18532,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789819127190,"pid":18532,"hostname":"ELTECH","id":5,"msg":"Post deleted"}
+{"level":30,"time":1789819142769,"pid":18532,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789819400421,"pid":18532,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789819400605,"pid":18532,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789819405996,"pid":18532,"hostname":"ELTECH","id":23,"content":"yeah","msg":"Comment created successfully"}
+{"level":30,"time":1789819406309,"pid":18532,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":50,"time":1789819427248,"pid":18532,"hostname":"ELTECH","error":"Internal Server Error","timestamp":"2026-09-19T12:03:47.187Z","status":500,"message":"An error occurred while attempting to decode the Jwt: I/O error on GET request for \"http://localhost:8080/realms/kickstart-realm/protocol/openid-connect/certs\": Read timed out","path":"/api/v1/comments/23","msg":"API error"}
+{"level":50,"time":1789819427253,"pid":18532,"hostname":"ELTECH","timestamp":"2026-09-19T12:03:47.187Z","status":500,"error":"Internal Server Error","message":"An error occurred while attempting to decode the Jwt: I/O error on GET request for \"http://localhost:8080/realms/kickstart-realm/protocol/openid-connect/certs\": Read timed out","path":"/api/v1/comments/23","msg":"[API Error] [deleteComment]"}
+{"level":30,"time":1789819434747,"pid":18532,"hostname":"ELTECH","id":23,"msg":"Comment deleted successfully"}
+{"level":30,"time":1789819449132,"pid":18532,"hostname":"ELTECH","id":24,"content":"it's me","msg":"Comment created successfully"}
+{"level":30,"time":1789819449831,"pid":18532,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789819510970,"pid":18532,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789819511354,"pid":18532,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789819513049,"pid":18532,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789819513652,"pid":18532,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789819520344,"pid":18532,"hostname":"ELTECH","id":24,"msg":"Comment deleted successfully"}
+{"level":30,"time":1789819645170,"pid":36308,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789819646865,"pid":36308,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789819650261,"pid":36308,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
+{"level":30,"time":1789819666270,"pid":36308,"hostname":"ELTECH","id":25,"content":"yeah","msg":"Comment created successfully"}
+{"level":30,"time":1789819666812,"pid":36308,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789819680332,"pid":36308,"hostname":"ELTECH","id":25,"msg":"Comment deleted successfully"}
+{"level":30,"time":1789819837001,"pid":36308,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789820253083,"pid":36308,"hostname":"ELTECH","id":1,"email":"admin@gmail.com","msg":"Profile fetched successfully"}
+{"level":50,"time":1789820253094,"pid":36308,"hostname":"ELTECH","error":"Not Found","timestamp":"2026-09-19T12:17:33.083Z","status":404,"message":"Comment not found: 25","path":"/api/v1/comments/25","msg":"API error"}
+{"level":40,"time":1789820253096,"pid":36308,"hostname":"ELTECH","timestamp":"2026-09-19T12:17:33.083Z","status":404,"error":"Not Found","message":"Comment not found: 25","path":"/api/v1/comments/25","msg":"[API Error] [deleteComment]"}
+{"level":30,"time":1789820255172,"pid":36308,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789820267914,"pid":36308,"hostname":"ELTECH","id":26,"content":"Plus one","msg":"Comment created successfully"}
+{"level":30,"time":1789820268414,"pid":36308,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
+{"level":30,"time":1789820272745,"pid":36308,"hostname":"ELTECH","id":26,"msg":"Comment deleted successfully"}
+{"level":30,"time":1789820272927,"pid":36308,"hostname":"ELTECH","count":4,"msg":"Posts fetched"}
